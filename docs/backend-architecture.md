@@ -135,8 +135,11 @@ supabase
 
 - Enable RLS on all tables.
 - **Customers**: may `insert` reservations and `select` only their own rows (`openid = auth.jwt()->>'openid'`), if using Supabase auth with a WeChat provider; otherwise route customer writes through the backend service role.
-- **Console (single manager)**: only one authenticated user (the 店长) may `select` / `update` reservations. Simplest rule = `select/update` allowed when `auth.role() = 'authenticated'` (only the manager account exists). No per-staff / per-role logic needed.
-- Never ship the Supabase **service_role** key inside the Mini Program or the console — only the anon key (or go through the backend API).
+- **Console access = single passcode / private link** (chosen approach — simplest, no accounts). The 店长 opens a private URL and enters one shared passcode.
+  - ⚠️ A passcode checked **in browser JS is not real security** (anyone can read the source). It only hides the UI.
+  - ✅ To make it actually secure without accounts: put the passcode check in a **Supabase Edge Function** that holds the DB access server-side. The browser sends `{ passcode }`; the function verifies it against a secret and returns the reservations. The DB keys never reach the browser.
+  - Passcode is a shared secret → rotate it if leaked; keep the private link unlisted.
+- Never ship the Supabase **service_role** key inside the Mini Program or the console — only the anon key (or go through the Edge Function / backend API).
 
 ## 6. Mini Program changes when the backend lands
 

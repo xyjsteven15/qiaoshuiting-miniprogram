@@ -74,9 +74,32 @@
 
   .foot-note{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
   code{background:#EFEBE3;padding:1px 6px;border-radius:4px;color:var(--accent);}
+
+  /* Passcode gate (single shared passcode, no accounts) */
+  .gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:999;}
+  .gate.hidden{display:none;}
+  .gate-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:40px 36px;width:340px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.08);}
+  .gate-title{font-size:24px;letter-spacing:6px;color:var(--ink);font-weight:600;}
+  .gate-sub{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:8px;}
+  .gate-input{width:100%;margin-top:24px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-size:15px;text-align:center;letter-spacing:2px;box-sizing:border-box;}
+  .gate-input:focus{outline:none;border-color:var(--accent);}
+  .gate-btn{width:100%;margin-top:14px;padding:12px 0;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:15px;letter-spacing:6px;cursor:pointer;}
+  .gate-err{color:#B00020;font-size:12px;margin-top:10px;min-height:16px;}
+  .gate-note{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.7;}
 </style>
 </head>
 <body>
+  <div class="gate" id="gate">
+    <div class="gate-card">
+      <div class="gate-title serif">桥水汀</div>
+      <div class="gate-sub">RESERVATION CONSOLE · 店长入口</div>
+      <input class="gate-input" id="passcode" type="password" placeholder="请输入访问口令" autocomplete="off" />
+      <button class="gate-btn" id="enter">进 入</button>
+      <div class="gate-err" id="gate-err"></div>
+      <div class="gate-note">私密链接 + 口令进入（演示口令：qst-2026）。<br/>正式版口令改由 Supabase Edge Function 在服务端校验。</div>
+    </div>
+  </div>
+
   <header>
     <div class="brand">
       <span class="name serif">桥水汀</span>
@@ -215,6 +238,21 @@
   });
 
   render();
+
+  // ---- Passcode gate (UI-only demo) ----
+  // TODO(backend): replace with a Supabase Edge Function that verifies the
+  // passcode server-side; the DB keys must never live in this file.
+  const DEMO_PASSCODE = 'qst-2026';
+  const gate = document.getElementById('gate');
+  function unlock(){ gate.classList.add('hidden'); try{ sessionStorage.setItem('qst_console_ok','1'); }catch(e){} }
+  function tryEnter(){
+    const v = document.getElementById('passcode').value.trim();
+    if(v === DEMO_PASSCODE){ document.getElementById('gate-err').textContent=''; unlock(); }
+    else { document.getElementById('gate-err').textContent = '口令不正确'; }
+  }
+  if(sessionStorage.getItem('qst_console_ok')==='1'){ unlock(); }
+  document.getElementById('enter').addEventListener('click', tryEnter);
+  document.getElementById('passcode').addEventListener('keydown', e=>{ if(e.key==='Enter') tryEnter(); });
 </script>
 </body>
 </html>
