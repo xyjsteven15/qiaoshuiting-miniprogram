@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>桥水汀 · Reservation Console</title>
+<style>
+  /* Restaurant-side console (prototype).
+     Sample data only. Real version subscribes to Supabase Realtime
+     (table: reservations) — see docs/backend-architecture.md. */
+  :root{
+    --paper:#F5F0E8; --card:#FFFFFF; --banner:#FAF6EE;
+    --ink:#1A1A1A; --ink-soft:#666056; --muted:#9E9689;
+    --accent:#8B2500; --line:#E0D8CC; --ok:#2E7D32; --ok-bg:#E2F0D9;
+    --warn:#B26A00; --warn-bg:#FBEED2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:-apple-system,"Segoe UI","PingFang SC","Helvetica Neue",sans-serif;}
+  .serif{font-family:"Lora","Songti SC","STSong",serif;}
+
+  header{display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;background:var(--card);border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:baseline;gap:12px;}
+  .brand .name{font-size:22px;font-weight:600;letter-spacing:4px;color:var(--ink);}
+  .brand .sub{font-size:12px;letter-spacing:2px;color:var(--muted);}
+  .live{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft);}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 0 rgba(46,125,50,.5);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,125,50,.45)}70%{box-shadow:0 0 0 8px rgba(46,125,50,0)}100%{box-shadow:0 0 0 0 rgba(46,125,50,0)}}
+
+  main{max-width:1120px;margin:0 auto;padding:24px 32px 60px;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;}
+  .stat .k{font-size:12px;color:var(--ink-soft);letter-spacing:1px;}
+  .stat .v{font-size:30px;font-weight:700;color:var(--accent);margin-top:6px;}
+  .stat .v small{font-size:14px;color:var(--muted);font-weight:400;margin-left:4px;}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:12px;}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{padding:7px 16px;border:1px solid var(--line);border-radius:20px;background:var(--card);
+    font-size:13px;color:var(--ink-soft);cursor:pointer;}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn{padding:8px 16px;border:1px solid var(--accent);border-radius:6px;background:var(--accent);
+    color:#fff;font-size:13px;cursor:pointer;}
+  .btn.ghost{background:#fff;color:var(--accent);}
+
+  .board{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{text-align:left;font-size:12px;letter-spacing:1px;color:var(--muted);
+    padding:14px 16px;border-bottom:1px solid var(--line);font-weight:500;}
+  tbody td{padding:14px 16px;border-bottom:1px solid #F0EBE1;font-size:14px;vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.flash{animation:flash 1.6s ease-out;}
+  @keyframes flash{0%{background:#FBEED2}100%{background:transparent}}
+  .code{font-weight:600;color:var(--ink);}
+  .when .d{color:var(--ink);} .when .t{color:var(--ink-soft);font-size:12px;}
+  .room{display:inline-flex;align-items:center;gap:6px;}
+  .ktv{font-size:10px;color:#fff;background:var(--accent);border-radius:3px;padding:1px 5px;}
+  .phone{color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .note{color:var(--muted);font-size:12px;max-width:180px;}
+
+  .status{display:inline-block;font-size:12px;border-radius:4px;padding:3px 10px;font-weight:500;}
+  .s-pending{color:var(--warn);background:var(--warn-bg);}
+  .s-confirmed{color:var(--ok);background:var(--ok-bg);}
+  .s-seated{color:#1553B2;background:#DCEAFB;}
+  .s-cancelled{color:var(--muted);background:#EFEBE3;}
+
+  .acts{display:flex;gap:6px;}
+  .mini{font-size:12px;padding:5px 10px;border-radius:5px;border:1px solid var(--line);
+    background:#fff;color:var(--ink-soft);cursor:pointer;}
+  .mini.pri{border-color:var(--accent);color:var(--accent);}
+
+  .foot-note{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
+  code{background:#EFEBE3;padding:1px 6px;border-radius:4px;color:var(--accent);}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="name serif">桥水汀</span>
+      <span class="sub">RESERVATION CONSOLE · 莘砖公路239号 G60科技云廊</span>
+    </div>
+    <div class="live"><span class="dot"></span> Live · connected (demo)</div>
+  </header>
+
+  <main>
+    <section class="stats">
+      <div class="stat"><div class="k">TODAY</div><div class="v" id="st-today">0<small>bookings</small></div></div>
+      <div class="stat"><div class="k">PENDING</div><div class="v" id="st-pending">0<small>to confirm</small></div></div>
+      <div class="stat"><div class="k">GUESTS TODAY</div><div class="v" id="st-guests">0<small>pax</small></div></div>
+      <div class="stat"><div class="k">UPCOMING</div><div class="v" id="st-upcoming">0<small>days ahead</small></div></div>
+    </section>
+
+    <div class="toolbar">
+      <div class="filters" id="filters">
+        <span class="chip on" data-f="all">All</span>
+        <span class="chip" data-f="pending">Pending</span>
+        <span class="chip" data-f="confirmed">Confirmed</span>
+        <span class="chip" data-f="seated">Seated</span>
+        <span class="chip" data-f="cancelled">Cancelled</span>
+      </div>
+      <button class="btn" id="simulate">+ Simulate incoming reservation</button>
+    </div>
+
+    <div class="board">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th><th>Date · Time</th><th>Party</th><th>Room</th>
+            <th>Guest</th><th>Phone</th><th>Note</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <p class="foot-note">
+      Prototype with sample data. Production connects to <code>Supabase Realtime</code> on
+      <code>table: reservations</code> — new bookings from the Mini Program appear here instantly.<br/>
+      See <code>docs/backend-architecture.md</code> for schema, API and RLS.
+    </p>
+  </main>
+
+<script>
+  const TODAY = '2026-08-05';
+  let filter = 'all';
+
+  let data = [
+    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'小包厢', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
+    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'小包厢', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
+    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'大包厢', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
+    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:8,  tier:'大包厢', ktv:true,  name:'赵经理', phone:'135****7788', note:'', status:'confirmed'},
+    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'小包厢', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
+    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'大包厢', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
+  ];
+
+  const STATUS_LABEL = {pending:'Pending', confirmed:'Confirmed', seated:'Seated', cancelled:'Cancelled'};
+
+  function fmtDate(d){
+    const [y,m,day] = d.split('-').map(Number);
+    const wk = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(y,m-1,day).getDay()];
+    return `${m}/${day} ${wk}`;
+  }
+
+  function render(){
+    const rows = document.getElementById('rows');
+    const list = data.filter(r => filter==='all' ? true : r.status===filter);
+    rows.innerHTML = list.map(r => `
+      <tr data-code="${r.code}">
+        <td class="code">#${r.code}</td>
+        <td class="when"><span class="d">${fmtDate(r.date)}</span> · <span class="t">${r.time} ${r.daypart==='lunch'?'午市':'晚市'}</span></td>
+        <td>${r.guests} pax</td>
+        <td><span class="room">${r.tier}${r.ktv?'<span class="ktv">KTV</span>':''}</span></td>
+        <td>${r.name}</td>
+        <td class="phone">${r.phone}</td>
+        <td class="note">${r.note||'—'}</td>
+        <td><span class="status s-${r.status}">${STATUS_LABEL[r.status]}</span></td>
+        <td class="acts">${actions(r)}</td>
+      </tr>`).join('');
+    // stats
+    const today = data.filter(r=>r.date===TODAY && r.status!=='cancelled');
+    document.getElementById('st-today').innerHTML = today.length + '<small>bookings</small>';
+    document.getElementById('st-pending').innerHTML = data.filter(r=>r.status==='pending').length + '<small>to confirm</small>';
+    document.getElementById('st-guests').innerHTML = today.reduce((s,r)=>s+r.guests,0) + '<small>pax</small>';
+    document.getElementById('st-upcoming').innerHTML = new Set(data.filter(r=>r.date>TODAY && r.status!=='cancelled').map(r=>r.date)).size + '<small>days ahead</small>';
+  }
+
+  function actions(r){
+    if(r.status==='pending')  return `<button class="mini pri" data-a="confirm">Confirm</button><button class="mini" data-a="cancel">Cancel</button>`;
+    if(r.status==='confirmed')return `<button class="mini pri" data-a="seat">Seat</button><button class="mini" data-a="cancel">Cancel</button>`;
+    if(r.status==='seated')   return `<span class="note">—</span>`;
+    return `<span class="note">—</span>`;
+  }
+
+  document.getElementById('rows').addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-a]'); if(!btn) return;
+    const code = e.target.closest('tr').dataset.code;
+    const r = data.find(x=>x.code===code); if(!r) return;
+    const a = btn.dataset.a;
+    if(a==='confirm') r.status='confirmed';
+    if(a==='seat')    r.status='seated';
+    if(a==='cancel')  r.status='cancelled';
+    render();
+  });
+
+  document.getElementById('filters').addEventListener('click', e=>{
+    const chip = e.target.closest('.chip'); if(!chip) return;
+    filter = chip.dataset.f;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on', c===chip));
+    render();
+  });
+
+  // Demo of a "new reservation arriving" (what Supabase Realtime would push)
+  let seq = 4;
+  document.getElementById('simulate').addEventListener('click', ()=>{
+    const names=['孙先生','钱女士','吴总','郑经理'];
+    const times=['17:30','18:00','18:30','19:00'];
+    const n = String(seq++).padStart(3,'0');
+    const rec = {
+      code:'QST20260805'+n, date:TODAY, time:times[Math.floor(Math.random()*times.length)],
+      daypart:'dinner', guests:2+Math.floor(Math.random()*12),
+      tier: Math.random()>0.6?'大包厢':'小包厢', ktv:Math.random()>0.7,
+      name:names[Math.floor(Math.random()*names.length)],
+      phone:'1'+(3+Math.floor(Math.random()*6))+'0****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
+      note:'', status:'pending'
+    };
+    data.unshift(rec);
+    filter='all';
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on', c.dataset.f==='all'));
+    render();
+    const tr = document.querySelector(`tr[data-code="${rec.code}"]`);
+    if(tr){ tr.classList.add('flash'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
+  });
+
+  render();
+</script>
+</body>
+</html>

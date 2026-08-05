@@ -1,4 +1,5 @@
 const data = require('../../utils/data.js');
+const { track } = require('../../utils/track.js');
 const app = getApp();
 
 Page({
@@ -67,7 +68,15 @@ Page({
       createdAt: Date.now()
     };
 
+    track('submit_reservation', {
+      code: record.code,
+      guests: record.guests,
+      tier: record.tierLabel,
+      daypart: record.daypartText
+    });
+
     // 存入内存态 + 缓存 + 更新个人资料
+    // TODO(backend): 改为 POST /reservations，写入 Supabase，餐厅端实时可见
     app.globalData.reservations.unshift(record);
     app.globalData.lastReservation = record;
     app.globalData.profile.displayName = name;

@@ -31,6 +31,8 @@ const ORNAMENT = svg(
   28
 );
 
+const { track } = require('../../utils/track.js');
+
 Page({
   data: {
     ornament: ORNAMENT
@@ -40,9 +42,11 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
+    track('view_home');
   },
 
   goReserve() {
+    track('tap_reserve', { from: 'home' });
     wx.switchTab({ url: '/pages/reserve/reserve' });
   }
 });

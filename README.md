@@ -1,40 +1,60 @@
-# 桥水汀 · 新派徽菜商务订座小程序
+# 桥水汀 (Qiáo Shuǐ Tīng) · Fine-Dining Reservation Mini Program
 
-一款定位「新派徽菜 · 融合菜」中高端商务宴请餐厅的微信小程序。视觉采用新中式徽派风格——暖米底色 `#F5F0E8`、徽州朱漆红 `#8B2500` 点缀、衬线标题，配合马头墙纹样与内景实景图，营造「大隐于市」的私密高级感。
+A WeChat Mini Program for a high-end **New Anhui (Hui) cuisine** business-banquet restaurant. The visual language is New-Chinese / Hui-style — warm rice paper background `#F5F0E8`, Huizhou vermilion-lacquer accent `#8B2500`, serif headings, horse-head-wall (马头墙) motifs, and real interior photography — to convey a private, premium "hidden in the city" atmosphere.
 
-## 功能
+## Features
 
-- **首页**：品牌形象（logo + 包厢内景）、徽派纹样装饰、品牌故事、一键订座
-- **在线订座**：日期条 · 午/晚市时段 · 用餐人数
-- **选择包厢**：小/大包厢档位，实时余量、推荐与可预订状态
-- **确认预订**：预订概要 + 联系人信息
-- **预订成功**：预订单号与详情
-- **我的预订**：历史预订、客服电话、餐厅地图定位
-- **自定义 TabBar**：内联 SVG 风格化图标（马头墙 / 择日历 / 宾客）
+- **Home** — brand identity (logo + private-room interior), Hui-style ornaments, brand story, one-tap reservation
+- **Reservation** — date strip · lunch/dinner time slots · party size stepper
+- **Select Room** — small / large private-room tiers with live availability, "recommended" and "bookable" states
+- **Confirm** — booking summary + contact details
+- **Success** — booking code and full details
+- **My Bookings** — booking history, customer-service phone, restaurant map location
+- **Custom TabBar** — inline-SVG themed icons (horse-head wall / calendar / guest)
 
-## 技术
+## Tech
 
-- 原生微信小程序（WXML / WXSS / JS）
-- 全局主题变量与通用组件（`app.wxss`）
-- 本地 mock 数据层（`utils/data.js`），无后端依赖
-- 自定义 TabBar 组件（`custom-tab-bar/`）
+- Native WeChat Mini Program (WXML / WXSS / JS)
+- Global theme variables and shared components (`app.wxss`)
+- Local mock data layer (`utils/data.js`) — no backend dependency yet
+- Lightweight analytics/tracking hook (`utils/track.js`) — buffers events locally, ready to POST to the backend
+- Custom TabBar component (`custom-tab-bar/`)
 
-## 目录
+## Project Structure
 
 ```
-├── app.js / app.json / app.wxss   # 全局逻辑、配置、主题
-├── custom-tab-bar/                # 自定义底部导航
-├── pages/                         # 首页 / 订座 / 选择包厢 / 确认 / 成功 / 我的预订
-├── utils/data.js                  # mock 数据
-├── assets/                        # 品牌与内景图片
-├── preview/index.html             # 浏览器端页面预览
-└── docs/                          # PRD、线框图、后台数据模型
+├── app.js / app.json / app.wxss   # global logic, config, theme
+├── custom-tab-bar/                # custom bottom navigation
+├── pages/                         # home / reserve / room-selection / confirm / success / my-bookings
+├── utils/
+│   ├── data.js                    # mock data
+│   └── track.js                   # analytics/tracking hook
+├── assets/                        # brand + interior images
+├── preview/index.html             # in-browser page preview (mini program screens)
+├── restaurant-admin/index.html    # restaurant-side reservation console (prototype)
+└── docs/                          # PRD, wireframes, admin data model, backend architecture
 ```
 
-## 运行
+## Roadmap: Backend
 
-1. 用微信开发者工具导入本项目目录
-2. 将 AppID 替换为你自己的小程序 AppID（当前为游客/测试）
-3. 编译预览；或直接打开 `preview/index.html` 查看静态页面预览
+Reservations are currently kept on-device (mock). The planned architecture connects the client, an API layer, and a Supabase Postgres database, so the restaurant can see reservations in real time on a separate console:
 
-> 本项目为产品原型，数据均为本地模拟，未接入真实后端。
+```
+Mini Program (client + tracking)
+        │
+        ▼
+   Backend API  (REST / Supabase Edge Functions)
+        │
+        ▼
+ Supabase PostgreSQL  ──(Realtime)──►  Restaurant Console
+```
+
+See [`docs/backend-architecture.md`](docs/backend-architecture.md) for the data model, SQL schema, API endpoints, tracking events, and security (RLS) notes.
+
+## Getting Started
+
+1. Open this folder in **WeChat DevTools**.
+2. Replace the AppID with your own Mini Program AppID (currently a test/tourist value).
+3. Compile & preview — or open `preview/index.html` for a static page preview, and `restaurant-admin/index.html` for the restaurant console prototype.
+
+> This repository is a product prototype. All data is mocked locally; no real backend is wired yet.
