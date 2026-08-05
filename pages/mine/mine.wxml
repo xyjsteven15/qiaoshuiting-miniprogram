@@ -1,0 +1,51 @@
+<view class="mine">
+  <view class="screen-header">
+    <text class="sh-title serif">我的预订</text>
+    <text class="sh-sub">MY BOOKINGS</text>
+    <view class="sh-line"></view>
+  </view>
+
+  <view class="body">
+    <!-- 预订列表 -->
+    <view class="list">
+      <view wx:for="{{reservations}}" wx:key="reservation_id" class="card rcard">
+        <view class="rc-top">
+          <text class="rc-tier serif">{{item.tierLabel}}</text>
+          <text wx:if="{{item.hasKtv}}" class="badge-accent">KTV</text>
+          <text class="rc-state">已确认</text>
+        </view>
+        <view class="divider-dash"></view>
+        <view class="rc-line"><text class="rc-k">用餐日期</text><text class="rc-v serif">{{item.dateText}}</text></view>
+        <view class="rc-line"><text class="rc-k">用餐时间</text><text class="rc-v">{{item.time}} · {{item.daypartText}}</text></view>
+        <view class="rc-line"><text class="rc-k">用餐人数</text><text class="rc-v">{{item.guests}}人</text></view>
+        <view class="rc-line"><text class="rc-k">预订编号</text><text class="rc-v code">{{item.code}}</text></view>
+      </view>
+      <view wx:if="{{reservations.length === 0}}" class="empty">
+        <text class="empty-txt">暂无预订</text>
+        <view class="btn-secondary empty-btn" bindtap="goReserve">去订座</view>
+      </view>
+    </view>
+
+    <!-- 联系与到店 -->
+    <view class="label sec-label"><view class="tick"></view><text class="label-txt serif">联系与到店</text></view>
+    <view class="card contact">
+      <view class="contact-row" bindtap="callXiaoqiao">
+        <view class="contact-main">
+          <text class="contact-k serif">联系「小桥」客服</text>
+          <text class="contact-sub">{{servicePhone}}</text>
+        </view>
+        <text class="contact-act">致电 ›</text>
+      </view>
+      <view class="divider"></view>
+      <view class="contact-row" bindtap="openLocation">
+        <view class="contact-main">
+          <text class="contact-k serif">餐厅地址</text>
+          <text class="contact-sub">{{address}}</text>
+        </view>
+        <text class="contact-act">地图定位 ›</text>
+      </view>
+    </view>
+
+    <view class="foot">桥水汀 · 大隐于市的一席私宴</view>
+  </view>
+</view>

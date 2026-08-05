@@ -1,0 +1,26 @@
+<view class="success">
+  <view class="splash floor-in">
+    <view class="check-badge"><text class="check">✓</text></view>
+    <text class="s-title serif">预订成功</text>
+    <text class="s-sub">期待为您开启徽州味觉艺术之旅</text>
+  </view>
+
+  <view class="card details">
+    <view class="label"><view class="tick"></view><text class="label-txt serif">预订信息详情</text></view>
+    <view class="divider-dash"></view>
+    <view class="grid">
+      <view class="row"><text class="k">预订编号</text><text class="v code">{{r.code}}</text></view>
+      <view class="row"><text class="k">用餐日期</text><text class="v serif">{{r.dateText}}</text></view>
+      <view class="row"><text class="k">用餐时间</text><text class="v">{{r.time}}</text></view>
+      <view class="row"><text class="k">用餐人数</text><text class="v">{{r.guests}}人</text></view>
+      <view class="row"><text class="k">包厢类型</text><text class="v accent serif">{{r.tierText}}</text></view>
+      <view class="row"><text class="k">联系人</text><text class="v">{{r.name}}</text></view>
+      <view class="row"><text class="k">手机号</text><text class="v">{{r.phoneMask}}</text></view>
+    </view>
+  </view>
+
+  <view class="actions">
+    <view class="btn-primary" hover-class="hover" bindtap="goMine">查看我的预订</view>
+    <view class="btn-secondary" hover-class="hover" bindtap="goHome">返回首页</view>
+  </view>
+</view>

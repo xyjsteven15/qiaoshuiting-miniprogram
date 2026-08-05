@@ -1,0 +1,147 @@
+/* ========= 桥水汀 · 全局主题（Figma 版）=========
+   暖米底 + 徽州朱漆红点缀 + 白卡片
+   衬线（Lora / 宋体）标题 + 无衬线（Geist / 系统）正文
+*/
+
+page {
+  --paper: #F5F0E8;        /* 暖米底 */
+  --card: #FFFFFF;         /* 卡片白 */
+  --banner: #FAF6EE;       /* 浅米横幅 */
+  --ink: #1A1A1A;          /* 主文字 近黑 */
+  --ink-soft: #666056;     /* 次级文字 暖灰 */
+  --muted: #9E9689;        /* 弱化文字 */
+  --accent: #8B2500;       /* 徽州朱漆红 */
+  --line: #E0D8CC;         /* 描边/分隔 */
+  --ok: #2E7D32;           /* 可预订绿 */
+  --ok-bg: #E2F0D9;
+
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Geist", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 衬线字：标题、品牌、中文大字 */
+.serif {
+  font-family: "Lora", "Songti SC", "STSong", "SimSun", serif;
+}
+
+.ink { color: var(--ink); }
+.soft { color: var(--ink-soft); }
+.muted { color: var(--muted); }
+.accent { color: var(--accent); }
+
+/* 屏内页头：居中标题 + 英文副标 + 短线 */
+.screen-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 48rpx;
+}
+.screen-header .sh-title {
+  font-size: 40rpx;
+  letter-spacing: 2rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+.screen-header .sh-sub {
+  font-size: 22rpx;
+  letter-spacing: 4rpx;
+  color: var(--muted);
+  margin-top: 6rpx;
+}
+.screen-header .sh-line {
+  width: 80rpx;
+  height: 3rpx;
+  background: var(--accent);
+  margin-top: 20rpx;
+}
+
+/* 段标签：朱漆小竖条 + 衬线小标题 */
+.label {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.label .tick {
+  width: 6rpx;
+  height: 24rpx;
+  background: var(--accent);
+}
+.label .label-txt {
+  font-size: 28rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* 主按钮：朱漆底白字 */
+.btn-primary {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-radius: 8rpx;
+  text-align: center;
+  padding: 28rpx 0;
+  font-size: 32rpx;
+  letter-spacing: 8rpx;
+  font-family: "Lora", "Songti SC", serif;
+  font-weight: 600;
+}
+.btn-primary.disabled { opacity: 0.45; }
+
+/* 次按钮：白底朱漆描边 */
+.btn-secondary {
+  background: #FFFFFF;
+  color: var(--accent);
+  border: 1rpx solid var(--accent);
+  border-radius: 8rpx;
+  text-align: center;
+  padding: 28rpx 0;
+  font-size: 32rpx;
+  letter-spacing: 8rpx;
+  font-family: "Lora", "Songti SC", serif;
+  font-weight: 600;
+}
+
+/* 卡片 */
+.card {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 16rpx;
+}
+
+/* 推荐/标记印章 */
+.badge-accent {
+  display: inline-block;
+  font-size: 20rpx;
+  color: #FFFFFF;
+  background: var(--accent);
+  border-radius: 4rpx;
+  padding: 4rpx 14rpx;
+  font-family: "Lora", "Songti SC", serif;
+}
+.badge-ok {
+  display: inline-block;
+  font-size: 20rpx;
+  color: var(--ok);
+  background: var(--ok-bg);
+  border-radius: 4rpx;
+  padding: 4rpx 14rpx;
+}
+
+/* 分隔线 */
+.divider {
+  height: 1rpx;
+  background: var(--line);
+}
+.divider-dash {
+  height: 0;
+  border-top: 1rpx dashed var(--line);
+}
+
+/* 缓入 */
+@keyframes floorIn {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.floor-in { animation: floorIn 380ms ease-out both; }

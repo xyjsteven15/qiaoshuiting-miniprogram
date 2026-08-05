@@ -1,0 +1,43 @@
+<view class="room-sel">
+  <view class="screen-header">
+    <text class="sh-title serif">选择包厢</text>
+    <text class="sh-sub">SELECT ROOM</text>
+    <view class="sh-line"></view>
+  </view>
+
+  <view class="banner">
+    <text class="banner-dot">◈</text>
+    <text class="banner-txt">{{banner}}</text>
+  </view>
+
+  <view class="rooms floor-in">
+    <view
+      wx:for="{{tiers}}"
+      wx:key="key"
+      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.status !== 'available' ? 'off' : ''}}"
+      data-k="{{item.key}}"
+      bindtap="pick">
+      <view class="rc-head">
+        <view class="rc-title-wrap">
+          <text class="rc-title serif">{{item.label}}</text>
+          <text class="rc-cap">可容纳：{{item.cap}}</text>
+        </view>
+        <view class="rc-badges">
+          <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
+          <text wx:if="{{item.status === 'available'}}" class="badge-ok">可预订</text>
+          <text wx:elif="{{item.status === 'full'}}" class="badge-full">已订满</text>
+          <text wx:else class="badge-full">不适用</text>
+        </view>
+      </view>
+      <view class="divider-dash"></view>
+      <view class="rc-foot">
+        <text class="rc-left">剩余数量：<text class="rc-num">{{item.remaining}} 间</text></text>
+        <text class="rc-right">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="action">
+    <view class="btn-primary {{selectedKey ? '' : 'disabled'}}" hover-class="hover" bindtap="confirm">确认选择</view>
+  </view>
+</view>

@@ -1,0 +1,73 @@
+.confirm {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  padding: 16rpx 48rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+}
+
+/* 概要卡片 */
+.summary {
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.row .k { font-size: 26rpx; color: var(--ink-soft); }
+.row .v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
+
+/* 联系人 */
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+.f-label { font-size: 26rpx; color: var(--ink-soft); }
+.f-input {
+  height: 88rpx;
+  padding: 0 32rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: var(--ink);
+}
+.f-textarea {
+  height: 160rpx;
+  padding: 24rpx 32rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: var(--ink);
+  box-sizing: border-box;
+  width: 100%;
+}
+.ph { color: var(--muted); }
+
+.action {
+  padding: 56rpx 48rpx 48rpx;
+  margin-top: auto;
+}
+.hover { opacity: 0.88; }

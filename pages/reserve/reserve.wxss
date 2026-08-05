@@ -1,0 +1,121 @@
+.reserve {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+.form-body {
+  padding: 16rpx 48rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 56rpx;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+/* 日期条 */
+.date-strip {
+  white-space: nowrap;
+}
+.date-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  width: 116rpx;
+  padding: 20rpx 0;
+  margin-right: 16rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+.date-card .dc-week {
+  font-size: 22rpx;
+  color: var(--ink-soft);
+}
+.date-card .dc-md {
+  font-size: 26rpx;
+  color: var(--ink);
+  font-weight: 700;
+}
+.date-card.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.date-card.on .dc-week,
+.date-card.on .dc-md {
+  color: #FFFFFF;
+}
+
+/* 时段 */
+.time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+.tg-title {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.chip {
+  padding: 16rpx 32rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: var(--ink);
+}
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* 人数 */
+.guests-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+.step-btn {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 36rpx;
+  color: var(--ink);
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+}
+.step-val {
+  min-width: 48rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.action {
+  padding: 64rpx 48rpx calc(48rpx + 120rpx + env(safe-area-inset-bottom));
+  margin-top: auto;
+}
+.hover { opacity: 0.88; }

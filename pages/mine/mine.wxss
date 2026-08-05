@@ -1,0 +1,87 @@
+.mine {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.body {
+  padding: 8rpx 48rpx calc(64rpx + 120rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+/* 预订卡 */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+.rcard {
+  padding: 36rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.rc-top {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.rc-tier {
+  font-size: 34rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+.rc-state {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: var(--ok);
+  background: var(--ok-bg);
+  border-radius: 4rpx;
+  padding: 4rpx 14rpx;
+}
+.rc-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.rc-k { font-size: 26rpx; color: var(--ink-soft); }
+.rc-v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
+.rc-v.code { font-weight: 600; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28rpx;
+  padding: 72rpx 0;
+}
+.empty-txt { font-size: 28rpx; color: var(--muted); }
+.empty-btn { padding: 20rpx 56rpx; }
+
+/* 联系 */
+.sec-label { margin-top: 8rpx; }
+.contact {
+  padding: 8rpx 40rpx;
+}
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 0;
+}
+.contact-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.contact-k { font-size: 30rpx; color: var(--ink); }
+.contact-sub { font-size: 24rpx; color: var(--ink-soft); }
+.contact-act { font-size: 26rpx; color: var(--accent); }
+
+.foot {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--muted);
+  margin-top: 16rpx;
+}

@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# WeChat DevTools 本地私有配置（含本机路径/设置，会自动生成）
+project.private.config.json
+
+# 依赖与构建产物
+node_modules/
+miniprogram_npm/
+dist/
+
+# 日志
+*.log

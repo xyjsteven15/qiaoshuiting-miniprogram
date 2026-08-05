@@ -1,0 +1,66 @@
+<view class="reserve">
+  <view class="screen-header">
+    <text class="sh-title serif">在线订座</text>
+    <text class="sh-sub">RESERVATION</text>
+    <view class="sh-line"></view>
+  </view>
+
+  <view class="form-body floor-in">
+    <!-- 选择日期 -->
+    <view class="section">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">选择日期</text></view>
+      <scroll-view scroll-x class="date-strip" enhanced show-scrollbar="{{false}}">
+        <view
+          wx:for="{{dates}}"
+          wx:key="date"
+          class="date-card {{dateIdx === index ? 'on' : ''}}"
+          data-i="{{index}}"
+          bindtap="pickDate">
+          <text class="dc-week">{{item.week}}</text>
+          <text class="dc-md">{{item.md}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 选择时间 -->
+    <view class="section">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">选择时间</text></view>
+      <view class="time-group">
+        <text class="tg-title serif">午餐 Lunch</text>
+        <view class="chips">
+          <view
+            wx:for="{{lunch}}"
+            wx:key="*this"
+            class="chip {{time === item ? 'on' : ''}}"
+            data-t="{{item}}"
+            bindtap="pickTime">{{item}}</view>
+        </view>
+      </view>
+      <view class="time-group">
+        <text class="tg-title serif">晚餐 Dinner</text>
+        <view class="chips">
+          <view
+            wx:for="{{dinner}}"
+            wx:key="*this"
+            class="chip {{time === item ? 'on' : ''}}"
+            data-t="{{item}}"
+            bindtap="pickTime">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 用餐人数 -->
+    <view class="guests-row">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">用餐人数</text></view>
+      <view class="stepper">
+        <view class="step-btn" bindtap="minus">−</view>
+        <view class="step-val">{{guests}}</view>
+        <view class="step-btn" bindtap="plus">＋</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action">
+    <view class="btn-primary" hover-class="hover" bindtap="next">查看可用包厢</view>
+  </view>
+</view>

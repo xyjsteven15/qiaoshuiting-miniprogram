@@ -1,0 +1,81 @@
+.room-sel {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 48rpx;
+  background: var(--banner);
+  border-top: 1rpx solid var(--line);
+  border-bottom: 1rpx solid var(--line);
+}
+.banner-dot { color: var(--accent); font-size: 22rpx; }
+.banner-txt { font-size: 24rpx; color: var(--ink-soft); }
+
+.rooms {
+  padding: 40rpx 48rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40rpx;
+}
+
+.room-card {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 16rpx;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+.room-card.on {
+  border: 3rpx solid var(--accent);
+  padding: 38rpx;
+}
+.room-card.off { opacity: 0.5; }
+
+.rc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rc-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.rc-title { font-size: 36rpx; color: var(--ink); font-weight: 600; }
+.rc-cap { font-size: 24rpx; color: var(--ink-soft); }
+.rc-badges {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.badge-full {
+  display: inline-block;
+  font-size: 20rpx;
+  color: var(--muted);
+  background: #EFEBE3;
+  border-radius: 4rpx;
+  padding: 4rpx 14rpx;
+}
+
+.rc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rc-left { font-size: 26rpx; color: var(--ink-soft); }
+.rc-num { color: var(--accent); font-weight: 700; }
+.rc-right { font-size: 24rpx; color: var(--muted); }
+
+.action {
+  padding: 64rpx 48rpx 48rpx;
+  margin-top: auto;
+}
+.hover { opacity: 0.88; }

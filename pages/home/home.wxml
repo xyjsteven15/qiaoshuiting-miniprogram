@@ -1,0 +1,41 @@
+<view class="home">
+  <view class="hero-wrap">
+    <image class="brand-logo" src="/assets/brand-logo.png" mode="widthFix"></image>
+    <image class="hero" src="/assets/interior-hero.png" mode="aspectFill"></image>
+    <view class="hero-mask"></view>
+  </view>
+
+  <view class="intro-wrap">
+    <text class="watermark serif">徽</text>
+
+    <image class="ornament" src="{{ornament}}" mode="scaleToFill"></image>
+
+    <view class="brand-intro floor-in">
+      <view class="brand-row">
+        <view class="wing left"></view>
+        <text class="brand-name serif">桥水汀</text>
+        <view class="wing right"></view>
+      </view>
+      <text class="brand-en serif">BRIDGE & WATERING</text>
+
+      <view class="poetry">
+        <view class="p-diamond"></view>
+        <view class="p-line"></view>
+        <text class="p-word serif">徽州味觉艺术</text>
+        <view class="p-line"></view>
+        <view class="p-diamond"></view>
+      </view>
+
+      <text class="brand-desc serif">桥水汀，源自徽州的味觉艺术。我们将传统徽菜精髓与现代烹饪理念相融合，为您呈现一场精致的东方味觉之旅。</text>
+    </view>
+  </view>
+
+  <view class="cta-wrap">
+    <view class="btn-primary" hover-class="hover" bindtap="goReserve">立即订座</view>
+    <view class="cta-sub">
+      <view class="cs-line"></view>
+      <text class="cs-word serif">大隐于市 · 一席徽味</text>
+      <view class="cs-line"></view>
+    </view>
+  </view>
+</view>

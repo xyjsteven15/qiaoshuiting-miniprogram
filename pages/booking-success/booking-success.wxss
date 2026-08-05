@@ -1,0 +1,68 @@
+.success {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  padding: 72rpx 48rpx 40rpx;
+}
+.check-badge {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.check {
+  color: #FFFFFF;
+  font-size: 64rpx;
+  line-height: 1;
+}
+.s-title {
+  font-size: 48rpx;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 4rpx;
+}
+.s-sub {
+  font-size: 26rpx;
+  color: var(--ink-soft);
+}
+
+.details {
+  margin: 0 48rpx;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.row .k { font-size: 26rpx; color: var(--ink-soft); }
+.row .v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
+.row .code { font-weight: 600; }
+
+.actions {
+  padding: 64rpx 48rpx 48rpx;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.hover { opacity: 0.88; }
