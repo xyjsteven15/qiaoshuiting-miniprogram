@@ -9,5 +9,8 @@ node_modules/
 miniprogram_npm/
 dist/
 
+# Agent Skills 物化副本（用 skills-lock.json 可还原）
+.agents/
+
 # 日志
 *.log
