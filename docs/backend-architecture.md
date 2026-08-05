@@ -1,6 +1,17 @@
 # Backend Architecture (Planned)
 
-Status: **design / not yet implemented.** The Mini Program currently stores reservations on-device (`wx.setStorageSync` + in-memory `globalData`). This document describes the target backend so the **restaurant can see reservations in real time** on a separate console.
+Status: **partially implemented.**
+
+| Piece | State |
+|---|---|
+| `reservations` table + RLS on Supabase | ✅ done (project `wkfplrhiigsdfnmylgov`) |
+| Mini Program writes bookings to the DB | ✅ done (`utils/supabase.js`) |
+| Restaurant console reads from the DB | ⬜ next (Edge Function + passcode) |
+| Tracking events pipeline | ⬜ later |
+
+**Access model in place:** the Mini Program ships a *publishable* key that has **INSERT only** — all other privileges were revoked, so a leaked key cannot read customer names or phone numbers. Verified: `POST` → `201`, `GET` → `401 permission denied`. The console will therefore read through an Edge Function using the service role, never the publishable key.
+
+The Mini Program still keeps a local copy of each booking for its own "My Bookings" screen, since it has no read access to the database.
 
 ## 1. High-level flow
 

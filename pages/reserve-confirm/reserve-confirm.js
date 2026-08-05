@@ -1,5 +1,6 @@
 const data = require('../../utils/data.js');
 const { track } = require('../../utils/track.js');
+const { createReservation, genCode } = require('../../utils/supabase.js');
 const app = getApp();
 
 Page({
@@ -7,7 +8,8 @@ Page({
     summary: {},
     name: '',
     phone: '',
-    note: ''
+    note: '',
+    submitting: false
   },
 
   onLoad() {
@@ -31,6 +33,8 @@ Page({
   onNote(e) { this.setData({ note: e.detail.value }); },
 
   submit() {
+    if (this.data.submitting) return;
+
     const name = this.data.name.trim();
     const phone = this.data.phone.trim();
     if (!name) {
@@ -44,8 +48,7 @@ Page({
 
     const draft = app.globalData.reserveDraft || {};
     const d = draft.date || {};
-    const seq = String(app.globalData.reservations.length + 1).padStart(3, '0');
-    const code = `#QST${(d.date || '').replace(/-/g, '')}${seq}`;
+    const code = genCode(d.date);
     const phoneMask = phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2');
 
     const record = {
@@ -75,14 +78,49 @@ Page({
       daypart: record.daypartText
     });
 
-    // 存入内存态 + 缓存 + 更新个人资料
-    // TODO(backend): 改为 POST /reservations，写入 Supabase，餐厅端实时可见
-    app.globalData.reservations.unshift(record);
-    app.globalData.lastReservation = record;
-    app.globalData.profile.displayName = name;
-    app.globalData.profile.phone = phone;
-    app.persist();
+    // 写入云端数据库（店长控制台的数据来源）
+    const payload = {
+      code,
+      reserve_date: d.date,
+      reserve_time: draft.time,
+      daypart: draft.daypart,
+      guests: draft.guests,
+      room_tier: draft.tierKey,
+      room_name: draft.roomName || null,
+      has_ktv: !!draft.hasKtv,
+      contact_name: name,
+      contact_phone: phone,
+      note: record.note || null
+    };
 
-    wx.redirectTo({ url: '/pages/booking-success/booking-success' });
+    this.setData({ submitting: true });
+    wx.showLoading({ title: '提交中', mask: true });
+
+    createReservation(payload)
+      .then(() => {
+        wx.hideLoading();
+        this.setData({ submitting: false });
+
+        // 本地留一份，供「我的预订」「预订成功」展示
+        // （小程序侧无读取权限，故不回读云端）
+        app.globalData.reservations.unshift(record);
+        app.globalData.lastReservation = record;
+        app.globalData.profile.displayName = name;
+        app.globalData.profile.phone = phone;
+        app.persist();
+
+        wx.redirectTo({ url: '/pages/booking-success/booking-success' });
+      })
+      .catch((err) => {
+        wx.hideLoading();
+        this.setData({ submitting: false });
+        track('submit_reservation_failed', { code, reason: err.message });
+        wx.showModal({
+          title: '提交失败',
+          content: (err.message || '网络异常') + '\n请稍后重试，或致电门店预订。',
+          confirmText: '知道了',
+          showCancel: false
+        });
+      });
   }
 });
