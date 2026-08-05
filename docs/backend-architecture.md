@@ -103,14 +103,9 @@ create table tracking_events (
   created_at  timestamptz default now()
 );
 
--- Restaurant staff (who can read/manage the console)
-create table staff (
-  id             uuid primary key default gen_random_uuid(),
-  restaurant_id  uuid references restaurants(id),
-  auth_user_id   uuid,          -- Supabase auth.users id
-  display_name   text,
-  role           text default 'staff' check (role in ('staff','manager','admin'))
-);
+-- Console access: single manager only (no multi-staff / roles for now).
+-- Simplest = one Supabase auth user (the 店长). No `staff` table needed.
+-- If multi-staff is ever required later, add a staff table then.
 ```
 
 ## 3. API endpoints (Option B) / RPC
@@ -140,8 +135,8 @@ supabase
 
 - Enable RLS on all tables.
 - **Customers**: may `insert` reservations and `select` only their own rows (`openid = auth.jwt()->>'openid'`), if using Supabase auth with a WeChat provider; otherwise route customer writes through the backend service role.
-- **Restaurant staff**: `select` / `update` reservations where `restaurant_id` matches their `staff.restaurant_id`.
-- Never ship the Supabase **service_role** key inside the Mini Program — only the anon key (or go through the backend API).
+- **Console (single manager)**: only one authenticated user (the 店长) may `select` / `update` reservations. Simplest rule = `select/update` allowed when `auth.role() = 'authenticated'` (only the manager account exists). No per-staff / per-role logic needed.
+- Never ship the Supabase **service_role** key inside the Mini Program or the console — only the anon key (or go through the backend API).
 
 ## 6. Mini Program changes when the backend lands
 
