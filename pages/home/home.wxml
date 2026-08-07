@@ -1,40 +1,94 @@
 <view class="home">
+
+  <!-- 门面全景 · 沉浸头图 -->
   <view class="hero-wrap">
-    <image class="brand-logo" src="/assets/brand-logo.png" mode="widthFix"></image>
-    <image class="hero" src="/assets/interior-hero.png" mode="aspectFill"></image>
+    <image class="hero" src="/assets/facade.png" mode="aspectFill"></image>
+    <view class="hero-scrim"></view>
     <view class="hero-mask"></view>
   </view>
 
-  <view class="intro-wrap">
-    <text class="watermark serif">徽</text>
-
-    <image class="ornament" src="{{ornament}}" mode="scaleToFill"></image>
-
-    <view class="brand-intro floor-in">
-      <view class="brand-row">
-        <view class="wing left"></view>
-        <text class="brand-name serif">桥水汀</text>
-        <view class="wing right"></view>
-      </view>
-      <text class="brand-en serif">BRIDGE & WATERING</text>
-
-      <view class="poetry">
-        <view class="p-diamond"></view>
-        <view class="p-line"></view>
-        <text class="p-word serif">徽州味觉艺术</text>
-        <view class="p-line"></view>
-        <view class="p-diamond"></view>
-      </view>
-
-      <text class="brand-desc serif">桥水汀，源自徽州的味觉艺术。我们将传统徽菜精髓与现代烹饪理念相融合，为您呈现一场精致的东方味觉之旅。</text>
+  <!-- 品牌卡 · 上叠门面图 -->
+  <view class="brand-card card floor-in">
+    <image class="brand-logo" src="/assets/logo.png" mode="widthFix"></image>
+    <view class="brand-row">
+      <view class="wing left"></view>
+      <text class="brand-slogan serif">一席山水，等你归来</text>
+      <view class="wing right"></view>
     </view>
   </view>
 
+  <!-- 桥水汀 · 三字笺 -->
+  <view class="triad-card card floor-in">
+    <view class="triad-item">
+      <text class="triad-char serif c-red">桥</text>
+      <text class="triad-line serif">一桥相逢</text>
+      <text class="triad-line serif">心意相通</text>
+    </view>
+    <view class="triad-sep"></view>
+    <view class="triad-item">
+      <text class="triad-char serif c-teal">水</text>
+      <text class="triad-line serif">一水流年</text>
+      <text class="triad-line serif">百味长新</text>
+    </view>
+    <view class="triad-sep"></view>
+    <view class="triad-item">
+      <text class="triad-char serif c-olive">汀</text>
+      <text class="triad-line serif">一方静泊</text>
+      <text class="triad-line serif">身心归安</text>
+    </view>
+  </view>
+
+  <!-- 典故入口 -->
+  <view class="story-card card floor-in" hover-class="hover" bindtap="goStory">
+    <view class="story-txt">
+      <view class="label">
+        <view class="tick"></view>
+        <text class="label-txt serif">品牌典故</text>
+      </view>
+      <text class="story-sub serif">从皖江风流，到华亭鹤唳；\n从归去来兮，到今日相逢。</text>
+      <view class="story-more">
+        <text class="serif">读一段千古风流</text>
+        <text class="story-arrow serif">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空间一览 -->
+  <view class="space-wrap">
+    <view class="label space-label">
+      <view class="tick"></view>
+      <text class="label-txt serif">归来之席</text>
+    </view>
+
+    <view class="space-card card floor-in" hover-class="hover" bindtap="goReserve">
+      <image class="space-img lg" src="/assets/room-grand.png" mode="aspectFill"></image>
+      <view class="space-bar">
+        <view class="space-names">
+          <text class="space-name serif">徽来堂</text>
+          <text class="space-note">大宴包间 · 一席团圆</text>
+        </view>
+        <text class="badge-accent">可预订</text>
+      </view>
+    </view>
+
+    <view class="space-card card floor-in" hover-class="hover" bindtap="goReserve">
+      <image class="space-img" src="/assets/room-hall.png" mode="aspectFill"></image>
+      <view class="space-bar">
+        <view class="space-names">
+          <text class="space-name serif">雅间</text>
+          <text class="space-note">三五小聚 · 各得其所</text>
+        </view>
+        <text class="badge-accent">可预订</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部行动区 -->
   <view class="cta-wrap">
     <view class="btn-primary" hover-class="hover" bindtap="goReserve">立即订座</view>
     <view class="cta-sub">
       <view class="cs-line"></view>
-      <text class="cs-word serif">大隐于市 · 一席徽味</text>
+      <text class="cs-word serif">归去来兮 · 请君入席</text>
       <view class="cs-line"></view>
     </view>
   </view>

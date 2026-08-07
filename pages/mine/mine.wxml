@@ -8,17 +8,20 @@
   <view class="body">
     <!-- 预订列表 -->
     <view class="list">
-      <view wx:for="{{reservations}}" wx:key="reservation_id" class="card rcard">
+      <view wx:for="{{reservations}}" wx:key="reservation_id" class="card rcard {{item.status === 'cancelled' ? 'cancelled' : ''}}">
         <view class="rc-top">
           <text class="rc-tier serif">{{item.tierLabel}}</text>
           <text wx:if="{{item.hasKtv}}" class="badge-accent">KTV</text>
-          <text class="rc-state">已确认</text>
+          <text class="rc-state {{item.status === 'cancelled' ? 'off' : ''}}">{{item.status === 'cancelled' ? '已取消' : '已确认'}}</text>
         </view>
         <view class="divider-dash"></view>
         <view class="rc-line"><text class="rc-k">用餐日期</text><text class="rc-v serif">{{item.dateText}}</text></view>
         <view class="rc-line"><text class="rc-k">用餐时间</text><text class="rc-v">{{item.time}} · {{item.daypartText}}</text></view>
         <view class="rc-line"><text class="rc-k">用餐人数</text><text class="rc-v">{{item.guests}}人</text></view>
         <view class="rc-line"><text class="rc-k">预订编号</text><text class="rc-v code">{{item.code}}</text></view>
+        <view wx:if="{{item.status !== 'cancelled'}}" class="rc-actions">
+          <view class="rc-cancel" hover-class="hover" catchtap="onCancel" data-id="{{item.reservation_id}}" data-code="{{item.code}}" data-phone="{{item.phone}}">取消预订</view>
+        </view>
       </view>
       <view wx:if="{{reservations.length === 0}}" class="empty">
         <text class="empty-txt">暂无预订</text>

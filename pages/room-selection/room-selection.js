@@ -1,4 +1,5 @@
 const data = require('../../utils/data.js');
+const { checkAvailability } = require('../../utils/supabase.js');
 const app = getApp();
 
 const TIER_DEFS = [
@@ -25,17 +26,12 @@ Page({
     });
 
     // 是否有可容纳该人数的“小包厢”，用于推荐判定
-    let recommendKey = '';
+    // remaining 先按满房态容量渲染，真实库存由 loadAvailability 覆盖
     const tiers = TIER_DEFS.map((t) => {
       const rooms = data.ROOMS.filter((r) => r.room_size_tier === t.roomTier);
       const minG = Math.min(...rooms.map((r) => r.min_guests));
       const maxG = Math.max(...rooms.map((r) => r.max_guests));
       const fits = guests >= minG && guests <= maxG;
-      const remaining = rooms.filter(
-        (r) => data.seededStatus(r.room_id, dateStr, daypart) === 'available'
-      ).length;
-      let status = 'unfit';
-      if (fits) status = remaining > 0 ? 'available' : 'full';
       return {
         key: t.key,
         label: t.label,
@@ -43,25 +39,51 @@ Page({
         cap: `${minG}-${maxG}人`,
         minG,
         maxG,
-        remaining,
-        status,
+        remaining: rooms.length,
+        status: fits ? 'available' : 'unfit',
         recommend: false,
         rooms
       };
     });
 
-    // 推荐：可预订且容量最贴合的档位（优先较小者）
+    this.setData({ tiers, selectedKey: this.pickRecommend(tiers) });
+    this.loadAvailability(dateStr, daypart);
+  },
+
+  // 推荐：可预订且容量最贴合的档位（优先较小者）
+  pickRecommend(tiers) {
     const fitAvailable = tiers
       .filter((t) => t.status === 'available')
       .sort((a, b) => a.maxG - b.maxG);
-    if (fitAvailable.length) {
-      recommendKey = fitAvailable[0].key;
-      tiers.forEach((t) => {
-        if (t.key === recommendKey) t.recommend = true;
-      });
-    }
+    const key = fitAvailable.length ? fitAvailable[0].key : '';
+    tiers.forEach((t) => {
+      t.recommend = t.key === key;
+    });
+    return key;
+  },
 
-    this.setData({ tiers, selectedKey: recommendKey });
+  // 拉取真实库存（同日期+时段，各档位剩余间数），失败时保留乐观展示，
+  // 真正的兜底由数据库容量守卫在提交时拦截
+  loadAvailability(dateStr, daypart) {
+    if (!dateStr) return;
+    checkAvailability(dateStr, daypart)
+      .then((map) => {
+        const tiers = this.data.tiers.map((t) => {
+          const info = map[t.key];
+          if (!info) return t;
+          let status = t.status;
+          if (status !== 'unfit') status = info.remaining > 0 ? 'available' : 'full';
+          return Object.assign({}, t, { remaining: info.remaining, status });
+        });
+        const recommendKey = this.pickRecommend(tiers);
+        // 若当前选中档位已订满，自动切换到推荐档
+        const cur = tiers.find((t) => t.key === this.data.selectedKey);
+        const selectedKey = cur && cur.status === 'available' ? cur.key : recommendKey;
+        this.setData({ tiers, selectedKey });
+      })
+      .catch(() => {
+        wx.showToast({ title: '实时库存加载失败，可继续尝试预订', icon: 'none' });
+      });
   },
 
   pick(e) {

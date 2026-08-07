@@ -47,6 +47,70 @@ function createReservation(payload) {
   });
 }
 
+/**
+ * 取消预订
+ * 经 Edge Function 校验「预订编号 + 下单手机号」后，云端 status 置为 cancelled。
+ * @param {string} code  预订编号，如 QST20260808XXXX
+ * @param {string} phone 下单手机号
+ * @returns {Promise}
+ */
+function cancelReservation(code, phone) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/functions/v1/cancel-reservation',
+      method: 'POST',
+      header: headers(),
+      data: { code, phone },
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.ok) {
+          resolve(res);
+        } else if (res.statusCode === 404) {
+          reject(new Error('未找到匹配的预订，可能已被取消'));
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.error)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
+/**
+ * 查询某日期+时段的实时包厢库存
+ * 经 Edge Function（service role 统计），返回各档位 capacity/taken/remaining。
+ * @param {string} date    YYYY-MM-DD
+ * @param {string} daypart lunch | dinner
+ * @returns {Promise<{small:{remaining:number}, large:{remaining:number}}>} 以档位为键
+ */
+function checkAvailability(date, daypart) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/functions/v1/check-availability',
+      method: 'POST',
+      header: headers(),
+      data: { date, daypart },
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.ok) {
+          resolve(res.data.tiers || {});
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.error)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
 /** 生成不易冲突的预订编号：QST + 日期 + 4 位随机 */
 function genCode(dateStr) {
   const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -57,4 +121,4 @@ function genCode(dateStr) {
   return 'QST' + String(dateStr || '').replace(/-/g, '') + suffix;
 }
 
-module.exports = { createReservation, genCode, SUPABASE_URL };
+module.exports = { createReservation, cancelReservation, checkAvailability, genCode, SUPABASE_URL };

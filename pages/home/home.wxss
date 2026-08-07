@@ -3,71 +3,58 @@
   display: flex;
   flex-direction: column;
   background: var(--paper);
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
 
-/* 顶部：品牌图 + 内景图 + 融入底色的柔化蒙版 */
+/* ===== 门面头图 ===== */
 .hero-wrap {
   position: relative;
 }
-.brand-logo {
-  width: 100%;
-  display: block;
-}
 .hero {
   width: 100%;
-  height: 480rpx;
+  height: 460rpx;
   display: block;
 }
+/* 底部轻压暗，让照片与叠卡衔接更沉稳 */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27, 30, 25, 0) 55%, rgba(27, 30, 25, 0.28) 100%);
+}
+/* 最底缘融入纸色 */
 .hero-mask {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 130rpx;
-  background: linear-gradient(180deg, rgba(245, 240, 232, 0) 0%, var(--paper) 100%);
+  height: 60rpx;
+  background: linear-gradient(180deg, rgba(239, 240, 236, 0) 0%, var(--paper) 100%);
 }
 
-/* 品牌介绍区（含淡雅水印） */
-.intro-wrap {
-  position: relative;
-  overflow: hidden;
-  padding-top: 12rpx;
-}
-.watermark {
-  position: absolute;
-  right: -30rpx;
-  top: -80rpx;
-  font-size: 400rpx;
-  line-height: 1;
-  color: rgba(139, 37, 0, 0.045);
-  pointer-events: none;
-}
-.ornament {
-  display: block;
-  width: 280rpx;
-  height: 28rpx;
-  margin: 28rpx auto 0;
-}
-
-.brand-intro {
-  padding: 20rpx 48rpx 12rpx;
+/* ===== 品牌卡（上叠头图） ===== */
+.brand-card {
+  margin: -110rpx 48rpx 0;
+  padding: 44rpx 40rpx 40rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  z-index: 1;
+  border-radius: 20rpx;
 }
-
-/* 品牌名 + 两侧翼纹 */
+.brand-logo {
+  width: 380rpx;
+  margin-bottom: 30rpx;
+}
 .brand-row {
   display: flex;
   align-items: center;
   gap: 22rpx;
-  margin-top: 8rpx;
 }
 .wing {
   width: 60rpx;
   height: 1rpx;
-  background: var(--accent);
+  background: var(--brand-red);
   opacity: 0.5;
   position: relative;
 }
@@ -77,62 +64,140 @@
   top: -3rpx;
   width: 7rpx;
   height: 7rpx;
-  background: var(--accent);
+  background: var(--brand-red);
   transform: rotate(45deg);
 }
 .wing.left::after { right: 0; }
 .wing.right::after { left: 0; }
 
-.brand-name {
-  font-size: 50rpx;
-  letter-spacing: 16rpx;
-  color: var(--ink);
-  font-weight: 500;
-  text-indent: 16rpx;
-}
-.brand-en {
-  font-size: 26rpx;
+.brand-slogan {
+  font-size: 28rpx;
   letter-spacing: 6rpx;
-  color: var(--ink-soft);
-  margin-top: 16rpx;
+  text-indent: 6rpx;
+  color: var(--accent);
+  white-space: nowrap;
 }
 
-/* 诗意分隔 */
-.poetry {
+/* ===== 桥水汀 · 三字笺 ===== */
+.triad-card {
+  margin: 36rpx 48rpx 0;
+  padding: 40rpx 24rpx;
   display: flex;
   align-items: center;
-  gap: 14rpx;
-  margin: 30rpx 0;
+  border-radius: 20rpx;
 }
-.poetry .p-line {
-  width: 44rpx;
-  height: 1rpx;
-  background: var(--muted);
+.triad-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.poetry .p-diamond {
-  width: 8rpx;
-  height: 8rpx;
-  background: var(--accent);
-  transform: rotate(45deg);
+.triad-char {
+  font-size: 64rpx;
+  line-height: 1.15;
+  font-weight: 600;
+  margin-bottom: 16rpx;
 }
-.poetry .p-word {
+.c-red { color: var(--brand-red); }
+.c-teal { color: var(--brand-teal); }
+.c-olive { color: var(--brand-olive); }
+.triad-line {
+  font-size: 24rpx;
+  letter-spacing: 4rpx;
+  text-indent: 4rpx;
+  line-height: 1.9;
+  color: var(--ink-soft);
+}
+.triad-sep {
+  width: 1rpx;
+  height: 128rpx;
+  background: var(--line);
+}
+
+/* ===== 典故入口卡 ===== */
+.story-card {
+  margin: 36rpx 48rpx 0;
+  padding: 36rpx 40rpx;
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  position: relative;
+}
+.story-txt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.story-sub {
+  font-size: 32rpx;
+  line-height: 2;
+  letter-spacing: 2rpx;
+  color: var(--ink-soft);
+  margin-top: 20rpx;
+}
+.story-more {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 20rpx;
   font-size: 24rpx;
   color: var(--accent);
-  font-style: italic;
-  letter-spacing: 4rpx;
-}
-
-.brand-desc {
-  font-size: 30rpx;
-  line-height: 1.95;
   letter-spacing: 2rpx;
-  color: var(--ink);
-  text-align: center;
+}
+.story-arrow {
+  font-size: 26rpx;
 }
 
-/* 底部行动区 */
+/* ===== 空间一览 ===== */
+.space-wrap {
+  padding: 44rpx 48rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+.space-label {
+  margin-bottom: 4rpx;
+}
+.space-card {
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+.space-img {
+  width: 100%;
+  height: 260rpx;
+  display: block;
+}
+.space-img.lg {
+  height: 320rpx;
+}
+.space-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+}
+.space-names {
+  display: flex;
+  align-items: baseline;
+  gap: 18rpx;
+}
+.space-name {
+  font-size: 34rpx;
+  letter-spacing: 4rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+.space-note {
+  font-size: 22rpx;
+  letter-spacing: 2rpx;
+  color: var(--muted);
+}
+
+/* ===== 底部行动区 ===== */
 .cta-wrap {
-  padding: 24rpx 48rpx calc(96rpx + env(safe-area-inset-bottom));
+  padding: 48rpx 48rpx 0;
   margin-top: auto;
 }
 .cta-sub {

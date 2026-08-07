@@ -12,7 +12,8 @@ Page({
   },
 
   onLoad() {
-    const dates = data.nextDays(6).map((x) => ({
+    // 开放未来 30 天可订
+    const dates = data.nextDays(30).map((x) => ({
       ...x,
       md: `${parseInt(x.date.slice(5, 7), 10)}/${parseInt(x.date.slice(8, 10), 10)}`
     }));

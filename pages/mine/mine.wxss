@@ -49,6 +49,28 @@
 .rc-v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
 .rc-v.code { font-weight: 600; }
 
+/* 已取消：整卡置灰，状态章变灰 */
+.rcard.cancelled { opacity: 0.55; }
+.rc-state.off {
+  color: var(--muted);
+  background: var(--rose-bg);
+}
+
+/* 取消操作区 */
+.rc-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4rpx;
+}
+.rc-cancel {
+  font-size: 24rpx;
+  letter-spacing: 2rpx;
+  color: var(--brand-red);
+  border: 1rpx solid var(--brand-red);
+  border-radius: 6rpx;
+  padding: 10rpx 28rpx;
+}
+
 .empty {
   display: flex;
   flex-direction: column;

@@ -6,28 +6,35 @@
 <title>桥水汀小程序 · 页面预览</title>
 <style>
   /* ===== 说明 =====
-     「桥水汀」微信小程序浏览器预览（Figma 版配色布局）。
-     暖米底 #F5F0E8 ｜ 徽州朱漆 #8B2500 ｜ 近黑 #1A1A1A。
+     「桥水汀」微信小程序浏览器预览（官方 logo 墨色版配色布局）。
+     素纸底 #EFF0EC ｜ 黛墨 #262A24 ｜ 朱砂 #9E3B32 ｜ 黛青 #4E7672 ｜ 铜金 #8A6D3F。
      由实际 WXML/WXSS 忠实转换（1rpx≈0.5px，机型宽 375px），仅供视觉浏览。
   */
   :root {
-    --paper: #F5F0E8;
+    --paper: #EFF0EC;
     --card: #FFFFFF;
-    --banner: #FAF6EE;
-    --ink: #1A1A1A;
-    --ink-soft: #666056;
-    --muted: #9E9689;
-    --accent: #8B2500;
-    --line: #E0D8CC;
+    --banner: #F6F7F3;
+    --ink: #292B26;
+    --ink-soft: #64665E;
+    --muted: #9CA093;
+    --accent: #262A24;
+    --accent-deep: #1B1E19;
+    --brand-red: #9E3B32;
+    --brand-teal: #4E7672;
+    --brand-olive: #8A6D3F;
+    --rose: #7FA8A4;
+    --rose-bg: #E9F0EE;
+    --wood: #5C5648;
+    --line: #DBDBD2;
     --ok: #2E7D32;
     --ok-bg: #E2F0D9;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #2a2420;
+    background: #24261f;
     font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
-    color: #e7e2d6;
+    color: #e2e3da;
     padding: 32px 16px 80px;
   }
   .serif { font-family: "Lora", "Songti SC", "STSong", serif; }
@@ -35,7 +42,7 @@
   .page-sub { text-align:center; color:#b8ad9c; font-size:13px; margin-bottom:30px; }
   .gallery { display:flex; flex-wrap:wrap; gap:40px; justify-content:center; align-items:flex-start; }
   .device { width:375px; }
-  .device-label { text-align:center; color:#c9a24a; letter-spacing:4px; font-size:15px; margin-bottom:12px; }
+  .device-label { text-align:center; color:#b09a5c; letter-spacing:4px; font-size:15px; margin-bottom:12px; }
   .phone {
     width:375px; height:760px; background:var(--paper);
     border-radius:30px; box-shadow:0 14px 40px rgba(0,0,0,.5);
@@ -51,48 +58,85 @@
   .screen-header { display:flex; flex-direction:column; align-items:center; padding:16px 24px; }
   .sh-title { font-size:20px; letter-spacing:1px; color:var(--ink); font-weight:600; }
   .sh-sub { font-size:11px; letter-spacing:2px; color:var(--muted); margin-top:3px; }
-  .sh-line { width:40px; height:1.5px; background:var(--accent); margin-top:10px; }
+  .sh-line { width:40px; height:1.5px; background:var(--brand-red); margin-top:10px; }
   .label { display:flex; align-items:center; gap:8px; }
-  .tick { width:3px; height:12px; background:var(--accent); }
+  .tick { width:3px; height:12px; background:var(--brand-red); }
   .label-txt { font-size:14px; color:var(--ink); font-weight:600; }
   .btn-primary { background:var(--accent); color:#fff; border-radius:4px; text-align:center; padding:14px 0; font-size:16px; letter-spacing:4px; }
   .btn-secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); border-radius:4px; text-align:center; padding:14px 0; font-size:16px; letter-spacing:4px; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:8px; }
   .badge-accent { display:inline-block; font-size:11px; color:#fff; background:var(--accent); border-radius:2px; padding:2px 8px; }
   .badge-ok { display:inline-block; font-size:11px; color:var(--ok); background:var(--ok-bg); border-radius:2px; padding:2px 8px; }
-  .badge-full { display:inline-block; font-size:11px; color:var(--muted); background:#EFEBE3; border-radius:2px; padding:2px 8px; }
+  .badge-full { display:inline-block; font-size:11px; color:var(--muted); background:#EBECE5; border-radius:2px; padding:2px 8px; }
   .divider { height:1px; background:var(--line); }
   .divider-dash { border-top:1px dashed var(--line); }
 
   .tabbar { position:absolute; left:0; right:0; bottom:0; height:56px; background:var(--paper); display:flex; border-top:1px solid var(--line); }
-  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--ink-soft); font-size:11px; letter-spacing:1px; }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--ink-soft); font-size:12px; letter-spacing:1px; }
   .tab.on { color:var(--accent); font-weight:600; }
-  .tab svg { width:20px; height:20px; }
+  .tab svg { width:28px; height:28px; }
+  .tab.on svg { background:#E2E4DC; border-radius:16px; padding:4px 14px; box-sizing:content-box; }
 
   /* 首页 */
   .hero-wrap { position:relative; }
-  .brand-logo { width:100%; display:block; }
-  .hero-img { width:100%; height:240px; object-fit:cover; display:block; }
-  .hero-mask { position:absolute; left:0; right:0; bottom:0; height:65px; background:linear-gradient(180deg, rgba(245,240,232,0), var(--paper)); }
-  .intro-wrap { position:relative; overflow:hidden; padding-top:6px; }
-  .watermark { position:absolute; right:-15px; top:-40px; font-size:200px; line-height:1; color:rgba(139,37,0,0.045); pointer-events:none; }
-  .ornament { display:block; width:140px; height:14px; margin:14px auto 0; }
-  .brand-intro { padding:10px 24px 12px; display:flex; flex-direction:column; align-items:center; position:relative; }
-  .brand-row { display:flex; align-items:center; gap:11px; margin-top:4px; }
-  .wing { width:30px; height:1px; background:var(--accent); opacity:.5; position:relative; }
-  .wing::after { content:''; position:absolute; top:-1.5px; width:4px; height:4px; background:var(--accent); transform:rotate(45deg); }
+  .hero-img { width:100%; height:230px; object-fit:cover; display:block; }
+  .hero-scrim { position:absolute; inset:0; background:linear-gradient(180deg, rgba(27,30,25,0) 55%, rgba(27,30,25,.28) 100%); }
+  .hero-mask { position:absolute; left:0; right:0; bottom:0; height:30px; background:linear-gradient(180deg, rgba(239,240,236,0), var(--paper)); }
+  .brand-card { margin:-55px 24px 0; padding:22px 20px 20px; display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; border-radius:10px; }
+  .brand-logo { width:190px; margin-bottom:15px; }
+  .ornament { display:block; width:140px; height:14px; margin:15px auto 0; }
+  .brand-row { display:flex; align-items:center; gap:11px; }
+  .wing { width:30px; height:1px; background:var(--brand-red); opacity:.5; position:relative; }
+  .wing::after { content:''; position:absolute; top:-1.5px; width:4px; height:4px; background:var(--brand-red); transform:rotate(45deg); }
   .wing.left::after { right:0; } .wing.right::after { left:0; }
-  .brand-name { font-size:25px; letter-spacing:8px; color:var(--ink); font-weight:500; text-indent:8px; }
-  .brand-en { font-size:13px; letter-spacing:3px; color:var(--ink-soft); margin-top:8px; }
-  .poetry { display:flex; align-items:center; gap:7px; margin:15px 0; }
-  .p-line { width:22px; height:1px; background:var(--muted); }
-  .p-diamond { width:4px; height:4px; background:var(--accent); transform:rotate(45deg); }
-  .p-word { font-size:12px; color:var(--accent); font-style:italic; letter-spacing:2px; }
-  .brand-desc { font-size:15px; line-height:1.9; letter-spacing:1px; color:var(--ink); text-align:center; }
-  .cta-wrap { padding:12px 24px 24px; margin-top:auto; }
+  .brand-slogan { font-size:14px; letter-spacing:3px; text-indent:3px; color:var(--accent); white-space:nowrap; }
+  .triad-card { margin:18px 24px 0; padding:20px 12px; display:flex; align-items:center; border-radius:10px; }
+  .triad-item { flex:1; display:flex; flex-direction:column; align-items:center; }
+  .triad-char { font-size:32px; line-height:1.15; font-weight:600; margin-bottom:8px; }
+  .c-red { color:var(--brand-red); } .c-teal { color:var(--brand-teal); } .c-olive { color:var(--brand-olive); }
+  .triad-line { font-size:12px; letter-spacing:2px; text-indent:2px; line-height:1.9; color:var(--ink-soft); }
+  .triad-sep { width:1px; height:64px; background:var(--line); }
+  .story-card { margin:18px 24px 0; padding:18px 20px; display:flex; align-items:center; gap:14px; border-radius:10px; }
+  .story-txt { flex:1; display:flex; flex-direction:column; }
+  .story-sub { font-size:16px; line-height:2; letter-spacing:1px; color:var(--ink-soft); margin-top:10px; font-family:"Songti SC","STSong","SimSun",serif; }
+  .story-more { display:flex; align-items:center; gap:5px; margin-top:10px; font-size:12px; color:var(--accent); letter-spacing:1px; }
+  .space-wrap { padding:22px 24px 0; display:flex; flex-direction:column; gap:14px; }
+  .space-card { border-radius:10px; overflow:hidden; }
+  .space-img { width:100%; height:130px; object-fit:cover; display:block; }
+  .space-img.lg { height:160px; }
+  .space-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; }
+  .space-names { display:flex; align-items:baseline; gap:9px; }
+  .space-name { font-size:17px; letter-spacing:2px; color:var(--ink); font-weight:600; }
+  .space-note { font-size:11px; letter-spacing:1px; color:var(--muted); }
+  .cta-wrap { padding:24px 24px 24px; margin-top:auto; }
   .cta-sub { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; }
   .cs-line { width:20px; height:1px; background:var(--muted); opacity:.6; }
   .cs-word { font-size:11px; letter-spacing:2px; color:var(--muted); }
+
+  /* 典故页 */
+  .st-hero-title { position:absolute; left:24px; bottom:28px; display:flex; flex-direction:column; color:#fff; }
+  .ht-sub { font-size:12px; letter-spacing:3px; opacity:.85; }
+  .ht-main { font-size:24px; letter-spacing:4px; font-weight:600; margin-top:6px; text-shadow:0 1px 8px rgba(27,30,25,.4); }
+  .couplet { display:flex; flex-direction:column; align-items:center; padding:20px 24px 4px; }
+  .couplet-line { font-size:15px; line-height:2; letter-spacing:2px; color:var(--ink); }
+  .chapter { padding:24px 24px 0; }
+  .chapter-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .chapter-no { width:28px; height:28px; border:1px solid var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--accent); }
+  .chapter-title { font-size:18px; letter-spacing:3px; color:var(--ink); font-weight:600; }
+  .para { display:block; font-size:14px; line-height:2; color:var(--ink-soft); text-align:justify; }
+  .para + .para { margin-top:8px; }
+  .triad { display:flex; justify-content:space-between; margin-top:20px; gap:10px; }
+  .triad .triad-line { font-size:11px; letter-spacing:1px; color:var(--muted); }
+  .quote { margin:14px 0; padding:14px 16px; border-left:3px solid var(--brand-red); background:var(--banner); border-radius:0 6px 6px 0; }
+  .quote-txt { font-size:16px; letter-spacing:2px; color:var(--ink); }
+  .figure { margin-top:16px; border-radius:10px; overflow:hidden; }
+  .figure-img { width:100%; height:140px; object-fit:cover; display:block; }
+  .figure-cap { padding:10px 16px; font-size:12px; letter-spacing:1px; color:var(--muted); text-align:center; }
+  .finale { display:flex; flex-direction:column; align-items:center; padding:28px 24px 24px; }
+  .finale .ornament { margin:0 auto 18px; }
+  .finale-line { font-size:14px; line-height:2; letter-spacing:1px; color:var(--ink-soft); }
+  .finale-big { font-size:22px; letter-spacing:4px; color:var(--ink); font-weight:600; margin-top:16px; }
+  .finale-btn { width:100%; margin-top:24px; }
 
   /* 订座 */
   .form-body { padding:8px 24px 0; display:flex; flex-direction:column; gap:28px; }
@@ -159,6 +203,10 @@
   .rc-top { display:flex; align-items:center; gap:8px; }
   .rc-tier { font-size:17px; color:var(--ink); font-weight:600; }
   .rc-state { margin-left:auto; font-size:11px; color:var(--ok); background:var(--ok-bg); border-radius:2px; padding:2px 8px; }
+  .rcard.cancelled { opacity:.55; }
+  .rc-state.off { color:var(--muted); background:var(--rose-bg); }
+  .rc-actions { display:flex; justify-content:flex-end; margin-top:2px; }
+  .rc-cancel { font-size:12px; letter-spacing:1px; color:var(--brand-red); border:1px solid var(--brand-red); border-radius:3px; padding:5px 14px; }
   .rc-line { display:flex; justify-content:space-between; align-items:center; }
   .rc-k { font-size:13px; color:var(--ink-soft); }
   .rc-v { font-size:14px; color:var(--ink); font-weight:500; }
@@ -174,7 +222,7 @@
 <body>
 
   <div class="page-title serif">桥水汀</div>
-  <div class="page-sub">新派徽菜 · 商务订座小程序 · 页面预览（暖米 #F5F0E8 ｜ 徽州朱漆 #8B2500）</div>
+  <div class="page-sub">新派徽菜 · 商务订座小程序 · 页面预览（素纸 #EFF0EC ｜ 黛墨 #262A24 ｜ 朱砂 #9E3B32 ｜ 黛青 #4E7672 ｜ 铜金 #8A6D3F）</div>
 
   <div class="gallery">
 
@@ -184,29 +232,117 @@
       <div class="phone">
         <div class="screen">
           <div class="hero-wrap">
-            <img class="brand-logo" src="../assets/brand-logo.png" alt="桥水汀" />
-            <img class="hero-img" src="../assets/interior-hero.png" alt="包厢内景" />
+            <img class="hero-img" src="../assets/facade.png" alt="桥水汀门面" />
+            <div class="hero-scrim"></div>
             <div class="hero-mask"></div>
           </div>
-          <div class="intro-wrap">
-            <div class="watermark serif">徽</div>
-            <svg class="ornament" viewBox="0 0 280 28"><g fill="none" stroke="#8B2500" stroke-width="1"><line x1="24" y1="14" x2="104" y2="14"/><line x1="176" y1="14" x2="256" y2="14"/><rect x="131" y="5" width="18" height="18" transform="rotate(45 140 14)"/><rect x="135.5" y="9.5" width="9" height="9" transform="rotate(45 140 14)"/></g><circle cx="116" cy="14" r="2.4" fill="#8B2500"/><circle cx="164" cy="14" r="2.4" fill="#8B2500"/></svg>
-            <div class="brand-intro">
-              <div class="brand-row"><div class="wing left"></div><div class="brand-name serif">桥水汀</div><div class="wing right"></div></div>
-              <div class="brand-en serif">BRIDGE &amp; WATERING</div>
-              <div class="poetry"><div class="p-diamond"></div><div class="p-line"></div><div class="p-word serif">徽州味觉艺术</div><div class="p-line"></div><div class="p-diamond"></div></div>
-              <div class="brand-desc serif">桥水汀，源自徽州的味觉艺术。我们将传统徽菜精髓与现代烹饪理念相融合，为您呈现一场精致的东方味觉之旅。</div>
+          <div class="brand-card card">
+            <img class="brand-logo" src="../assets/logo.png" alt="桥水汀官方 logo" />
+            <div class="brand-row"><div class="wing left"></div><div class="brand-slogan serif">一席山水，等你归来</div><div class="wing right"></div></div>
+          </div>
+          <div class="triad-card card">
+            <div class="triad-item">
+              <div class="triad-char serif c-red">桥</div>
+              <div class="triad-line serif">一桥相逢</div>
+              <div class="triad-line serif">心意相通</div>
+            </div>
+            <div class="triad-sep"></div>
+            <div class="triad-item">
+              <div class="triad-char serif c-teal">水</div>
+              <div class="triad-line serif">一水流年</div>
+              <div class="triad-line serif">百味长新</div>
+            </div>
+            <div class="triad-sep"></div>
+            <div class="triad-item">
+              <div class="triad-char serif c-olive">汀</div>
+              <div class="triad-line serif">一方静泊</div>
+              <div class="triad-line serif">身心归安</div>
+            </div>
+          </div>
+          <div class="story-card card">
+            <div class="story-txt">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">品牌典故</div></div>
+              <div class="story-sub">从皖江风流，到华亭鹤唳；<br/>从归去来兮，到今日相逢。</div>
+              <div class="story-more serif">读一段千古风流 <span>→</span></div>
+            </div>
+          </div>
+          <div class="space-wrap">
+            <div class="label"><div class="tick"></div><div class="label-txt serif">归来之席</div></div>
+            <div class="space-card card">
+              <img class="space-img lg" src="../assets/room-grand.png" alt="徽来堂" />
+              <div class="space-bar"><div class="space-names"><div class="space-name serif">徽来堂</div><div class="space-note">大宴包间 · 一席团圆</div></div><div class="badge-accent">可预订</div></div>
+            </div>
+            <div class="space-card card">
+              <img class="space-img" src="../assets/room-hall.png" alt="雅间" />
+              <div class="space-bar"><div class="space-names"><div class="space-name serif">雅间</div><div class="space-note">三五小聚 · 各得其所</div></div><div class="badge-accent">可预订</div></div>
             </div>
           </div>
           <div class="cta-wrap">
             <div class="btn-primary serif">立即订座</div>
-            <div class="cta-sub"><div class="cs-line"></div><div class="cs-word serif">大隐于市 · 一席徽味</div><div class="cs-line"></div></div>
+            <div class="cta-sub"><div class="cs-line"></div><div class="cs-word serif">归去来兮 · 请君入席</div><div class="cs-line"></div></div>
           </div>
         </div>
         <div class="tabbar">
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 典故 ============ -->
+    <div class="device">
+      <div class="device-label">典故 · Our Story</div>
+      <div class="phone">
+        <div class="screen" style="inset:0;">
+          <div class="hero-wrap">
+            <img class="hero-img" style="height:220px;" src="../assets/room-grand.png" alt="徽来堂" />
+            <div class="hero-scrim" style="background:linear-gradient(180deg, rgba(27,30,25,.05) 30%, rgba(27,30,25,.5) 100%);"></div>
+            <div class="st-hero-title">
+              <div class="ht-sub serif">桥水汀 · 典故</div>
+              <div class="ht-main serif">一席山水，等你归来</div>
+            </div>
+            <div class="hero-mask" style="height:20px;"></div>
+          </div>
+          <div class="couplet">
+            <div class="couplet-line serif">从皖江风流，到华亭鹤唳；</div>
+            <div class="couplet-line serif">从归去来兮，到今日相逢。</div>
+            <svg class="ornament" viewBox="0 0 280 28"><g fill="none" stroke="#9E3B32" stroke-width="1"><line x1="24" y1="14" x2="104" y2="14"/><line x1="176" y1="14" x2="256" y2="14"/><rect x="131" y="5" width="18" height="18" transform="rotate(45 140 14)"/><rect x="135.5" y="9.5" width="9" height="9" transform="rotate(45 140 14)"/></g><circle cx="116" cy="14" r="2.4" fill="#9E3B32"/><circle cx="164" cy="14" r="2.4" fill="#9E3B32"/></svg>
+          </div>
+          <div class="chapter">
+            <div class="chapter-head"><div class="chapter-no serif">壹</div><div class="chapter-title serif">皖江风流</div></div>
+            <div class="para">东汉建安年间，孙策与周瑜从攻皖城，史载「策纳大桥，瑜纳小桥」。烽烟远去，英雄与佳人的故事却长留于皖江烟水之间。桥水汀，便从这段千古风流中生发出一重东方意象——</div>
+            <div class="triad">
+              <div class="triad-item"><div class="triad-char serif c-red">桥</div><div class="triad-line serif">一桥相逢</div><div class="triad-line serif">心意相通</div></div>
+              <div class="triad-item"><div class="triad-char serif c-teal">水</div><div class="triad-line serif">一水流年</div><div class="triad-line serif">百味长新</div></div>
+              <div class="triad-item"><div class="triad-char serif c-olive">汀</div><div class="triad-line serif">一方静泊</div><div class="triad-line serif">身心归安</div></div>
+            </div>
+          </div>
+          <div class="chapter">
+            <div class="chapter-head"><div class="chapter-no serif">贰</div><div class="chapter-title serif">华亭鹤唳</div></div>
+            <div class="para">餐厅所在的上海松江，古称华亭。西晋文学家陆机生于此地，身处人生尽头时，仍惦念故乡的一声鹤唳。</div>
+            <div class="quote"><div class="quote-txt serif">「华亭鹤唳，岂可复闻乎？」</div></div>
+            <div class="para">千年之后，这份对故土的眷恋，依然藏在每一个远行之人的心中。</div>
+          </div>
+          <div class="chapter">
+            <div class="chapter-head"><div class="chapter-no serif">叁</div><div class="chapter-title serif">徽来堂</div></div>
+            <div class="para">桥水汀将包厢命名为「徽来堂」，取意陶渊明《归去来兮辞》。「徽来」谐音「归来」：不是退回过去，而是在匆忙与喧嚣之后，重新找回食物的本味、团聚的温度，以及那个未被岁月改变的自己。</div>
+          </div>
+          <div class="chapter">
+            <div class="chapter-head"><div class="chapter-no serif">肆</div><div class="chapter-title serif">同席</div></div>
+            <div class="para">于是，徽州风味与江南时令在此同席，传统技法与当代表达彼此相融。每一道菜，都是一封寄往故乡的信；每一次推门而入，都是味蕾的归家、心灵的靠岸。</div>
+            <div class="figure card">
+              <img class="figure-img" src="../assets/room-hall.png" alt="雅间" />
+              <div class="figure-cap serif">雅间 · 三五小聚，各得其所</div>
+            </div>
+          </div>
+          <div class="finale">
+            <svg class="ornament" viewBox="0 0 280 28"><g fill="none" stroke="#9E3B32" stroke-width="1"><line x1="24" y1="14" x2="104" y2="14"/><line x1="176" y1="14" x2="256" y2="14"/><rect x="131" y="5" width="18" height="18" transform="rotate(45 140 14)"/><rect x="135.5" y="9.5" width="9" height="9" transform="rotate(45 140 14)"/></g><circle cx="116" cy="14" r="2.4" fill="#9E3B32"/><circle cx="164" cy="14" r="2.4" fill="#9E3B32"/></svg>
+            <div class="finale-line serif">桥水汀不只等待一场宴席，</div>
+            <div class="finale-line serif">更在等待每一位穿行城市的人——</div>
+            <div class="finale-big serif">归去来兮，请君入席。</div>
+            <div class="btn-primary serif finale-btn">立即订座</div>
+          </div>
         </div>
       </div>
     </div>
@@ -241,9 +377,9 @@
           <div class="action"><div class="btn-primary serif">查看可用包厢</div></div>
         </div>
         <div class="tabbar">
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
         </div>
       </div>
     </div>
@@ -276,9 +412,9 @@
           <div class="action"><div class="btn-primary serif">确认选择</div></div>
         </div>
         <div class="tabbar">
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
         </div>
       </div>
     </div>
@@ -310,9 +446,9 @@
           <div class="action"><div class="btn-primary serif">确认预订</div></div>
         </div>
         <div class="tabbar">
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
         </div>
       </div>
     </div>
@@ -343,9 +479,9 @@
           <div class="actions"><div class="btn-primary serif">查看我的预订</div><div class="btn-secondary serif">返回首页</div></div>
         </div>
         <div class="tabbar">
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
         </div>
       </div>
     </div>
@@ -364,9 +500,10 @@
               <div class="rc-line"><div class="rc-k">用餐时间</div><div class="rc-v">18:00 · 晚市</div></div>
               <div class="rc-line"><div class="rc-k">用餐人数</div><div class="rc-v">12人</div></div>
               <div class="rc-line"><div class="rc-k">预订编号</div><div class="rc-v code">#QST20250725001</div></div>
+              <div class="rc-actions"><div class="rc-cancel">取消预订</div></div>
             </div>
-            <div class="card rcard">
-              <div class="rc-top"><div class="rc-tier serif">小包厢</div><div class="rc-state">已确认</div></div>
+            <div class="card rcard cancelled">
+              <div class="rc-top"><div class="rc-tier serif">小包厢</div><div class="rc-state off">已取消</div></div>
               <div class="divider-dash"></div>
               <div class="rc-line"><div class="rc-k">用餐日期</div><div class="rc-v serif">7/28 周一</div></div>
               <div class="rc-line"><div class="rc-k">用餐时间</div><div class="rc-v">12:00 · 午市</div></div>
@@ -376,7 +513,7 @@
 
             <div class="label" style="margin-top:8px;"><div class="tick"></div><div class="label-txt serif">联系与到店</div></div>
             <div class="card contact">
-              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小桥」客服</div><div class="contact-sub">021-88888888</div></div><div class="contact-act">致电 ›</div></div>
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小桥」客服</div><div class="contact-sub">021-57772033</div></div><div class="contact-act">致电 ›</div></div>
               <div class="divider"></div>
               <div class="contact-row"><div class="contact-main"><div class="contact-k serif">餐厅地址</div><div class="contact-sub">莘砖公路239号 G60科技云廊8号楼2层</div></div><div class="contact-act">地图定位 ›</div></div>
             </div>
@@ -384,9 +521,9 @@
           </div>
         </div>
         <div class="tabbar">
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
-          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
-          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
         </div>
       </div>
     </div>

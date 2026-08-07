@@ -7,7 +7,9 @@
     data-index="{{index}}"
     data-path="{{item.pagePath}}"
     bindtap="switchTab">
-    <image class="tab-icon" src="{{selected === index ? item.iconOn : item.icon}}"></image>
+    <view class="tab-icon-wrap {{selected === index ? 'on' : ''}}">
+      <image class="tab-icon" src="{{selected === index ? item.iconOn : item.icon}}"></image>
+    </view>
     <text class="tab-text {{selected === index ? 'on' : ''}}">{{item.text}}</text>
   </view>
 </view>

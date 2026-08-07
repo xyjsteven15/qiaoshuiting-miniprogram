@@ -68,6 +68,7 @@ Page({
       phone,
       phoneMask,
       note: this.data.note.trim(),
+      status: 'confirmed',
       createdAt: Date.now()
     };
 
@@ -115,6 +116,19 @@ Page({
         wx.hideLoading();
         this.setData({ submitting: false });
         track('submit_reservation_failed', { code, reason: err.message });
+
+        // 数据库容量守卫：该时段该档位包厢已被订满（含并发抢单）
+        if (/room_fully_booked/.test((err && err.message) || '')) {
+          wx.showModal({
+            title: '包厢刚被订满',
+            content: '手慢了，该时段的' + (draft.tierLabel || '包厢') + '已订满。\n请返回更换时段或包厢档位。',
+            confirmText: '重新选择',
+            showCancel: false,
+            success: () => wx.navigateBack()
+          });
+          return;
+        }
+
         wx.showModal({
           title: '提交失败',
           content: (err.message || '网络异常') + '\n请稍后重试，或致电门店预订。',
