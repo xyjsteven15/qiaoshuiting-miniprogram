@@ -131,6 +131,17 @@
   .rc-left { font-size:13px; color:var(--ink-soft); }
   .rc-num { color:var(--accent); font-weight:700; }
   .rc-right { font-size:12px; color:var(--muted); }
+  .room-card.off { opacity:0.5; }
+  .badge-full { display:inline-block; font-size:10px; color:var(--muted); background:#EFEBE3; border-radius:2px; padding:2px 7px; }
+
+  /* 等位回电（订满兜底） */
+  .wait-card { margin:20px 24px 0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .wc-head { display:flex; align-items:center; justify-content:space-between; }
+  .wc-title { font-size:16px; color:var(--ink); font-weight:600; }
+  .wc-body { display:flex; flex-direction:column; gap:16px; }
+  .wc-desc { font-size:13px; color:var(--ink-soft); line-height:1.7; }
+  .wait-hint { font-size:11px; color:var(--muted); }
+  .rc-state.wait { color:var(--accent); background:#F5E9E2; }
 
   /* 确认 / 概要 / 详情 */
   .body-pad { padding:8px 24px 0; display:flex; flex-direction:column; gap:24px; }
@@ -283,6 +294,48 @@
       </div>
     </div>
 
+    <!-- ============ 选择包厢（订满 · 等位回电） ============ -->
+    <div class="device">
+      <div class="device-label">选择包厢 · 订满 → 留电话等回电</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="screen-header"><div class="sh-title serif">选择包厢</div><div class="sh-sub">SELECT ROOM</div><div class="sh-line"></div></div>
+          <div class="banner"><div class="banner-dot">◈</div><div class="banner-txt">7/25 周五 · 19:00 · 12人</div></div>
+          <div class="rooms">
+            <div class="room-card off">
+              <div class="rc-head">
+                <div class="rc-title-wrap"><div class="rc-title serif">小包厢</div><div class="rc-cap">可容纳：2-10人</div></div>
+                <div class="rc-badges"><div class="badge-full">不适用</div></div>
+              </div>
+              <div class="divider-dash"></div>
+              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">0 间</span></div><div class="rc-right">静谧雅致 · 独立影音</div></div>
+            </div>
+            <div class="room-card off">
+              <div class="rc-head">
+                <div class="rc-title-wrap"><div class="rc-title serif">大包厢</div><div class="rc-cap">可容纳：11-20人</div></div>
+                <div class="rc-badges"><div class="badge-full">已订满</div></div>
+              </div>
+              <div class="divider-dash"></div>
+              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">0 间</span></div><div class="rc-right">宽敞大气 · 徽派照壁 · KTV</div></div>
+            </div>
+          </div>
+          <div class="wait-card">
+            <div class="wc-head"><div class="wc-title serif">该时段包厢已订满</div></div>
+            <div class="divider-dash"></div>
+            <div class="wc-body">
+              <div class="wc-desc">留下电话，包厢空出时「小桥」将第一时间致电您。</div>
+              <div class="btn-primary serif">留电话 · 有位回电</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ============ 确认预订 ============ -->
     <div class="device">
       <div class="device-label">确认预订 · Confirm</div>
@@ -374,11 +427,21 @@
               <div class="rc-line"><div class="rc-k">预订编号</div><div class="rc-v code">#QST20250728002</div></div>
             </div>
 
+            <div class="label" style="margin-top:8px;"><div class="tick"></div><div class="label-txt serif">等位登记</div></div>
+            <div class="card rcard">
+              <div class="rc-top"><div class="rc-tier serif">12人 · 晚市</div><div class="rc-state wait">等回电</div></div>
+              <div class="divider-dash"></div>
+              <div class="rc-line"><div class="rc-k">用餐日期</div><div class="rc-v serif">7/25 周五</div></div>
+              <div class="rc-line"><div class="rc-k">用餐时间</div><div class="rc-v">19:00</div></div>
+              <div class="rc-line"><div class="rc-k">回电号码</div><div class="rc-v code">138****8888</div></div>
+              <div class="wait-hint">包厢空出时「小桥」将致电您，请留意来电。</div>
+            </div>
+
             <div class="label" style="margin-top:8px;"><div class="tick"></div><div class="label-txt serif">联系与到店</div></div>
             <div class="card contact">
               <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小桥」客服</div><div class="contact-sub">021-88888888</div></div><div class="contact-act">致电 ›</div></div>
               <div class="divider"></div>
-              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">餐厅地址</div><div class="contact-sub">莘砖公路239号 G60科技云廊8号楼2层</div></div><div class="contact-act">地图定位 ›</div></div>
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">餐厅地址</div><div class="contact-sub">上海市松江区千帆路239弄8号楼2楼</div></div><div class="contact-act">地图定位 ›</div></div>
             </div>
             <div class="foot">桥水汀 · 大隐于市的一席私宴</div>
           </div>

@@ -7,6 +7,7 @@ A WeChat Mini Program for a high-end **New Anhui (Hui) cuisine** business-banque
 - **Home** — brand identity (logo + private-room interior), Hui-style ornaments, brand story, one-tap reservation
 - **Reservation** — date strip · lunch/dinner time slots · party size stepper
 - **Select Room** — small / large private-room tiers with live availability, "recommended" and "bookable" states
+- **Waitlist Call-back (等位回电)** — when fully booked, guests can leave a phone number and the restaurant calls back when a room opens up; requests sync to Supabase `callback_requests` and appear on the restaurant console
 - **Confirm** — booking summary + contact details
 - **Success** — booking code and full details
 - **My Bookings** — booking history, customer-service phone, restaurant map location

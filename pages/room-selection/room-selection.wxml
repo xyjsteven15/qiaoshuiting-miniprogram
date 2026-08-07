@@ -37,7 +37,41 @@
     </view>
   </view>
 
-  <view class="action">
+  <!-- 订满兜底：等位回电 -->
+  <view wx:if="{{allFull}}" class="wait-card floor-in">
+    <view class="wc-head">
+      <text class="wc-title serif">该时段包厢已订满</text>
+      <text wx:if="{{cbDone}}" class="badge-ok">已登记</text>
+    </view>
+    <view class="divider-dash"></view>
+    <view wx:if="{{!cbDone}}" class="wc-body">
+      <text class="wc-desc">留下电话，包厢空出时「小桥」将第一时间致电您。</text>
+      <view class="btn-primary wc-btn" hover-class="hover" bindtap="openCallback">留电话 · 有位回电</view>
+    </view>
+    <view wx:else class="wc-body">
+      <text class="wc-desc">已登记 {{cbPhoneMask}}。{{banner}} 包厢空出时，我们将致电您，请留意来电。</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!allFull}}" class="action">
     <view class="btn-primary {{selectedKey ? '' : 'disabled'}}" hover-class="hover" bindtap="confirm">确认选择</view>
+  </view>
+
+  <!-- 等位回电表单弹层 -->
+  <view wx:if="{{showCallback}}" class="cb-mask" bindtap="closeCallback">
+    <view class="cb-panel" catchtap="">
+      <view class="cb-title serif">留个电话，有位回电</view>
+      <view class="cb-sub">{{banner}}</view>
+      <view class="cb-field">
+        <text class="cb-label">称呼（选填）</text>
+        <input class="cb-input" placeholder="如：张先生 / 李女士" value="{{cbName}}" bindinput="onCbName" />
+      </view>
+      <view class="cb-field">
+        <text class="cb-label">手机号</text>
+        <input class="cb-input" type="number" maxlength="11" placeholder="用于接收回电" value="{{cbPhone}}" bindinput="onCbPhone" />
+      </view>
+      <view class="btn-primary cb-submit {{cbSubmitting ? 'disabled' : ''}}" hover-class="hover" bindtap="submitCallback">{{cbSubmitting ? '登记中…' : '登记等位'}}</view>
+      <view class="cb-cancel" bindtap="closeCallback">再想想</view>
+    </view>
   </view>
 </view>
