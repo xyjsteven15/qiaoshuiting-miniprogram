@@ -2,7 +2,7 @@
 
   <!-- 头图：徽来堂大宴包间 -->
   <view class="hero-wrap">
-    <image class="hero" src="/assets/room-grand.png" mode="aspectFill"></image>
+    <image class="hero" src="/assets/room-grand.jpg" mode="aspectFill"></image>
     <view class="hero-scrim"></view>
     <view class="hero-title">
       <text class="ht-sub serif">桥水汀 · 典故</text>
@@ -75,7 +75,7 @@
     </view>
     <text class="para">于是，徽州风味与江南时令在此同席，传统技法与当代表达彼此相融。每一道菜，都是一封寄往故乡的信；每一次推门而入，都是味蕾的归家、心灵的靠岸。</text>
     <view class="figure card">
-      <image class="figure-img" src="/assets/room-hall.png" mode="aspectFill"></image>
+      <image class="figure-img" src="/assets/room-hall.jpg" mode="aspectFill"></image>
       <view class="figure-cap">
         <text class="serif">雅间 · 三五小聚，各得其所</text>
       </view>

@@ -2,14 +2,14 @@
 
   <!-- 门面全景 · 沉浸头图 -->
   <view class="hero-wrap">
-    <image class="hero" src="/assets/facade.png" mode="aspectFill"></image>
+    <image class="hero" src="/assets/facade.jpg" mode="aspectFill"></image>
     <view class="hero-scrim"></view>
     <view class="hero-mask"></view>
   </view>
 
   <!-- 品牌卡 · 上叠门面图 -->
   <view class="brand-card card floor-in">
-    <image class="brand-logo" src="/assets/logo.png" mode="widthFix"></image>
+    <image class="brand-logo" src="/assets/logo.jpg" mode="widthFix"></image>
     <view class="brand-row">
       <view class="wing left"></view>
       <text class="brand-slogan serif">一席山水，等你归来</text>
@@ -61,7 +61,7 @@
     </view>
 
     <view class="space-card card floor-in" hover-class="hover" bindtap="goReserve">
-      <image class="space-img lg" src="/assets/room-grand.png" mode="aspectFill"></image>
+      <image class="space-img lg" src="/assets/room-grand.jpg" mode="aspectFill"></image>
       <view class="space-bar">
         <view class="space-names">
           <text class="space-name serif">徽来堂</text>
@@ -72,7 +72,7 @@
     </view>
 
     <view class="space-card card floor-in" hover-class="hover" bindtap="goReserve">
-      <image class="space-img" src="/assets/room-hall.png" mode="aspectFill"></image>
+      <image class="space-img" src="/assets/room-hall.jpg" mode="aspectFill"></image>
       <view class="space-bar">
         <view class="space-names">
           <text class="space-name serif">雅间</text>

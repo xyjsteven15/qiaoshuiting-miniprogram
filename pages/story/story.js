@@ -22,7 +22,7 @@ Page({
     return {
       title: '桥水汀｜一席山水，等你归来',
       path: '/pages/story/story',
-      imageUrl: '/assets/room-grand.png'
+      imageUrl: '/assets/room-grand.jpg'
     };
   }
 });
