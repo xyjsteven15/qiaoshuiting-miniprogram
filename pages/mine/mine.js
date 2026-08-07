@@ -1,11 +1,11 @@
 const app = getApp();
 
-// 餐厅定位信息（接入真实门店时替换坐标与地址）
+// 餐厅定位信息（坐标为 GCJ-02，对应地图POI：桥水汀（龙湖上海云廊天街店））
 const RESTAURANT = {
-  name: '桥水汀 · 新派徽菜',
-  address: '莘砖公路239号 G60科技云廊8号楼2层',
-  latitude: 31.0326,
-  longitude: 121.2190,
+  name: '桥水汀（龙湖上海云廊天街店）',
+  address: '上海市松江区千帆路239弄8号楼2楼',
+  latitude: 31.088473,
+  longitude: 121.324174,
   phone: '021-88888888'
 };
 
