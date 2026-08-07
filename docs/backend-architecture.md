@@ -6,7 +6,7 @@ Status: **partially implemented.**
 |---|---|
 | `reservations` table + RLS on Supabase | ✅ done (project `wkfplrhiigsdfnmylgov`) |
 | Mini Program writes bookings to the DB | ✅ done (`utils/supabase.js`) |
-| `callback_requests` table + RLS (等位回电) | ⬜ SQL ready in §2 — run it in the Supabase SQL editor |
+| `callback_requests` table + RLS (等位回电) | ⬜ SQL ready in §2 — run it in the Supabase SQL editor, or via the Supabase MCP server (`.cursor/mcp.json`) |
 | Mini Program writes callback requests | ✅ done (`createCallbackRequest` in `utils/supabase.js`; needs the table above) |
 | Restaurant console reads from the DB | ⬜ next (Edge Function + passcode) |
 | Tracking events pipeline | ⬜ later |
