@@ -111,6 +111,37 @@ function checkAvailability(date, daypart) {
   });
 }
 
+/**
+ * 核对本地订单在云端的最新状态（店长在控制台的操作会反映回来）
+ * 校验方式与取消一致：手机号 + 预订编号双匹配；仅返回状态字符串。
+ * @param {string} phone 下单手机号
+ * @param {string[]} codes 预订编号数组
+ * @returns {Promise<{statuses: Object<string,string>}>}
+ */
+function lookupReservations(phone, codes) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/functions/v1/lookup-reservations',
+      method: 'POST',
+      header: headers(),
+      data: { phone, codes },
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.ok) {
+          resolve({ statuses: res.data.statuses || {} });
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.error)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
 /** 生成不易冲突的预订编号：QST + 日期 + 4 位随机 */
 function genCode(dateStr) {
   const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -121,4 +152,4 @@ function genCode(dateStr) {
   return 'QST' + String(dateStr || '').replace(/-/g, '') + suffix;
 }
 
-module.exports = { createReservation, cancelReservation, checkAvailability, genCode, SUPABASE_URL };
+module.exports = { createReservation, cancelReservation, checkAvailability, lookupReservations, genCode, SUPABASE_URL };

@@ -68,7 +68,8 @@ Page({
       phone,
       phoneMask,
       note: this.data.note.trim(),
-      status: 'confirmed',
+      // 与云端默认值一致：待店长在控制台确认后变为 confirmed
+      status: 'pending',
       createdAt: Date.now()
     };
 

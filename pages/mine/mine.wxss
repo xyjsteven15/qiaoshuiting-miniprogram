@@ -55,6 +55,11 @@
   color: var(--muted);
   background: var(--rose-bg);
 }
+/* 待确认：金色章，提示店长还未确认 */
+.rc-state.pend {
+  color: #8A6D3F;
+  background: #F4EEE1;
+}
 
 /* 取消操作区 */
 .rc-actions {

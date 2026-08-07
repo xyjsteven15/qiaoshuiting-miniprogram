@@ -1,6 +1,27 @@
 const app = getApp();
 const { track } = require('../../utils/track.js');
-const { cancelReservation } = require('../../utils/supabase.js');
+const { cancelReservation, lookupReservations } = require('../../utils/supabase.js');
+
+// 云端状态 → 客人端展示（待确认=店长还没在控制台确认；off=整卡置灰）
+const STATUS_VIEW = {
+  pending: { text: '待确认', off: false },
+  confirmed: { text: '已确认', off: false },
+  seated: { text: '已到店', off: false },
+  no_show: { text: '未到店', off: true },
+  cancelled: { text: '已取消', off: true }
+};
+
+function decorate(list) {
+  return (list || []).map((r) => {
+    const v = STATUS_VIEW[r.status] || STATUS_VIEW.confirmed;
+    return {
+      ...r,
+      statusText: v.text,
+      statusOff: v.off,
+      canCancel: r.status === 'pending' || r.status === 'confirmed'
+    };
+  });
+}
 
 // 餐厅定位信息（接入真实门店时替换坐标与地址）
 const RESTAURANT = {
@@ -20,13 +41,51 @@ Page({
   },
 
   onShow() {
-    this.setData({
-      profile: app.globalData.profile,
-      reservations: app.globalData.reservations
-    });
+    this.renderList();
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
+    this.syncCloud();
+  },
+
+  renderList() {
+    this.setData({
+      profile: app.globalData.profile,
+      reservations: decorate(app.globalData.reservations)
+    });
+  },
+
+  // 打开页面时向云端核对进行中的订单状态（店长取消/确认等操作会同步到客人端）
+  // 静默失败：网络异常时本地缓存照常展示
+  syncCloud() {
+    const active = (app.globalData.reservations || []).filter(
+      (r) => r.code && r.phone && (r.status === 'pending' || r.status === 'confirmed')
+    );
+    if (!active.length) return;
+    const byPhone = {};
+    active.forEach((r) => {
+      (byPhone[r.phone] = byPhone[r.phone] || []).push(r.code);
+    });
+    Object.keys(byPhone).forEach((phone) => {
+      lookupReservations(phone, byPhone[phone])
+        .then(({ statuses }) => {
+          let changed = false;
+          const next = (app.globalData.reservations || []).map((r) => {
+            const cloud = r.code ? statuses[r.code] : null;
+            if (cloud && cloud !== r.status) {
+              changed = true;
+              return { ...r, status: cloud };
+            }
+            return r;
+          });
+          if (changed) {
+            app.globalData.reservations = next;
+            app.persist();
+            this.renderList();
+          }
+        })
+        .catch(() => {});
+    });
   },
 
   goReserve() {
