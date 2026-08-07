@@ -13,6 +13,7 @@ Page({
   data: {
     profile: {},
     reservations: [],
+    waitlists: [],
     servicePhone: RESTAURANT.phone,
     address: RESTAURANT.address
   },
@@ -20,7 +21,8 @@ Page({
   onShow() {
     this.setData({
       profile: app.globalData.profile,
-      reservations: app.globalData.reservations
+      reservations: app.globalData.reservations,
+      waitlists: app.globalData.callbackRequests || []
     });
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });

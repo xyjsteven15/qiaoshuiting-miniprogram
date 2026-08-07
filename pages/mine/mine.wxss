@@ -49,6 +49,13 @@
 .rc-v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
 .rc-v.code { font-weight: 600; }
 
+/* 等位登记卡 */
+.rc-state.wait {
+  color: var(--accent);
+  background: #F5E9E2;
+}
+.wait-hint { font-size: 22rpx; color: var(--muted); }
+
 .empty {
   display: flex;
   flex-direction: column;
