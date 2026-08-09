@@ -57,4 +57,35 @@ function genCode(dateStr) {
   return 'QST' + String(dateStr || '').replace(/-/g, '') + suffix;
 }
 
-module.exports = { createReservation, genCode, SUPABASE_URL };
+/**
+ * 新建等位回电登记（订满时客人留电话，有位后门店回电）
+ * 依赖 public.callback_requests 表，权限模型同 reservations：
+ * publishable key 仅允许 INSERT（建表 SQL 见 docs/backend-architecture.md）。
+ * @param {object} payload 字段需与 public.callback_requests 列名一致
+ * @returns {Promise}
+ */
+function createCallbackRequest(payload) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/rest/v1/callback_requests',
+      method: 'POST',
+      header: headers(),
+      data: payload,
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res);
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.hint)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
+module.exports = { createReservation, createCallbackRequest, genCode, SUPABASE_URL };

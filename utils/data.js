@@ -3,12 +3,13 @@
 */
 
 // 四个包间（一期种子数据）
+// 注：三个小包间之间为可拆卸隔断，可任意拼间连通（见 ROOM_COMBOS）
 const ROOMS = [
   {
     room_id: 'r_qiaoyu',
-    name: '桥遇厅',
+    name: '桥瑜汀',
     min_guests: 2,
-    max_guests: 10,
+    max_guests: 17,
     has_ktv: false,
     room_size_tier: 'small_medium',
     description: '临水一隅，宜二三知己小酌雅叙。',
@@ -19,7 +20,7 @@ const ROOMS = [
     room_id: 'r_xianyu',
     name: '羡鱼轩',
     min_guests: 2,
-    max_guests: 10,
+    max_guests: 14,
     has_ktv: false,
     room_size_tier: 'small_medium',
     description: '临渊羡鱼之意，取臭鳜鱼一味成席。',
@@ -48,6 +49,14 @@ const ROOMS = [
     deposit_meal_standard: 188800,
     tone: '#2A3634'
   }
+];
+
+// 可拆卸隔断拼间：三个小包间任意组合，容量相加（三间全拼最多 17+14+10=41 人）
+const ROOM_COMBOS = [
+  { combo_id: 'c_qiaoyu_xianyu', room_ids: ['r_qiaoyu', 'r_xianyu'] },
+  { combo_id: 'c_qiaoyu_chuihong', room_ids: ['r_qiaoyu', 'r_chuihong'] },
+  { combo_id: 'c_xianyu_chuihong', room_ids: ['r_xianyu', 'r_chuihong'] },
+  { combo_id: 'c_all_three', room_ids: ['r_qiaoyu', 'r_xianyu', 'r_chuihong'] }
 ];
 
 // 生成未来 7 天日期
@@ -187,6 +196,7 @@ const ROOM_SCENES = ROOMS.map((r) => ({
 
 module.exports = {
   ROOMS,
+  ROOM_COMBOS,
   SET_MENUS,
   CULTURE_ARTICLES,
   INGREDIENT_ORIGINS,
@@ -198,6 +208,76 @@ module.exports = {
   // 按人数过滤可选包间
   roomsForGuests(count) {
     return ROOMS.filter((r) => count >= r.min_guests && count <= r.max_guests);
+  },
+
+  // 单间最大容纳人数（徽来堂 20）
+  maxSingleGuests() {
+    return Math.max(...ROOMS.map((r) => r.max_guests));
+  },
+
+  // 全部拼间后的最大容纳人数（三间小包间全拼 = 41）
+  maxComboGuests() {
+    return ROOMS.filter((r) => r.room_size_tier === 'small_medium')
+      .reduce((s, r) => s + r.max_guests, 0);
+  },
+
+  /**
+   * 为指定人数/日期/时段构建可选方案：
+   * - singles：容量适配的单间（含各自可订状态）
+   * - combos：拼间方案——仅当单间容不下该人数、或适配单间全部订满时返回（作兜底）
+   * - allFull：无任何可订方案（触发「留电话 · 有位回电」）
+   */
+  optionsForGuests(guests, dateStr, daypart) {
+    const avail = (id) => seededStatus(id, dateStr, daypart) === 'available';
+
+    const singles = ROOMS
+      .filter((r) => guests >= r.min_guests && guests <= r.max_guests)
+      .map((r) => ({
+        key: r.room_id,
+        type: 'single',
+        label: r.name,
+        desc: r.description,
+        cap: `${r.min_guests}-${r.max_guests}人`,
+        maxG: r.max_guests,
+        roomTier: r.room_size_tier === 'large' ? 'large' : 'small',
+        hasKtv: r.has_ktv,
+        available: avail(r.room_id),
+        roomIds: [r.room_id]
+      }))
+      // 可订优先，其次容量最贴合者优先——保证「最合适的可订包间」排在列表最上方
+      .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
+
+    const singleFits = singles.length > 0;
+    const singleAvailable = singles.some((s) => s.available);
+    const showCombos = !singleFits || !singleAvailable;
+
+    const combos = (showCombos ? ROOM_COMBOS : [])
+      .map((c) => {
+        const parts = c.room_ids.map((id) => ROOMS.find((r) => r.room_id === id));
+        const maxG = parts.reduce((s, r) => s + r.max_guests, 0);
+        const minG = Math.max(...parts.map((r) => r.min_guests));
+        return {
+          key: c.combo_id,
+          type: 'combo',
+          label: parts.map((r) => r.name).join(' + '),
+          desc: '可拆卸隔断 · 拼间连通',
+          cap: `最多${maxG}人`,
+          maxG,
+          minG,
+          roomTier: 'combo',
+          hasKtv: parts.some((r) => r.has_ktv),
+          available: parts.every((r) => avail(r.room_id)),
+          roomIds: c.room_ids.slice()
+        };
+      })
+      .filter((c) => guests >= c.minG && guests <= c.maxG)
+      .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
+
+    return {
+      singles,
+      combos,
+      allFull: !singleAvailable && !combos.some((c) => c.available)
+    };
   },
 
   // 金额格式化：分 -> 元

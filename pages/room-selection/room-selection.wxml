@@ -11,33 +11,97 @@
   </view>
 
   <view class="rooms floor-in">
+    <!-- 单间 -->
+    <view wx:if="{{singles.length > 0}}" class="opt-label">
+      <view class="tick"></view><text class="label-txt serif">独立包间</text>
+    </view>
     <view
-      wx:for="{{tiers}}"
+      wx:for="{{singles}}"
       wx:key="key"
-      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.status !== 'available' ? 'off' : ''}}"
+      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
       data-k="{{item.key}}"
       bindtap="pick">
       <view class="rc-head">
         <view class="rc-title-wrap">
           <text class="rc-title serif">{{item.label}}</text>
-          <text class="rc-cap">可容纳：{{item.cap}}</text>
+          <text class="rc-cap">可容纳 {{item.cap}}</text>
         </view>
         <view class="rc-badges">
           <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
-          <text wx:if="{{item.status === 'available'}}" class="badge-ok">可预订</text>
-          <text wx:elif="{{item.status === 'full'}}" class="badge-full">已订满</text>
-          <text wx:else class="badge-full">不适用</text>
+          <text wx:if="{{item.hasKtv}}" class="badge-accent">KTV</text>
+          <text wx:if="{{item.available}}" class="badge-ok">可预订</text>
+          <text wx:else class="badge-full">已订满</text>
         </view>
       </view>
       <view class="divider-dash"></view>
       <view class="rc-foot">
-        <text class="rc-left">剩余数量：<text class="rc-num">{{item.remaining}} 间</text></text>
+        <text class="rc-right">{{item.desc}}</text>
+      </view>
+    </view>
+
+    <!-- 拼间（可拆卸隔断）：单间容不下或全订满时出现 -->
+    <view wx:if="{{combos.length > 0}}" class="opt-label">
+      <view class="tick"></view><text class="label-txt serif">拼间 · 隔断可拆卸</text>
+    </view>
+    <view
+      wx:for="{{combos}}"
+      wx:key="key"
+      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
+      data-k="{{item.key}}"
+      bindtap="pick">
+      <view class="rc-head">
+        <view class="rc-title-wrap">
+          <text class="rc-title serif">{{item.label}}</text>
+          <text class="rc-cap">{{item.cap}}</text>
+        </view>
+        <view class="rc-badges">
+          <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
+          <text wx:if="{{item.available}}" class="badge-ok">可预订</text>
+          <text wx:else class="badge-full">已订满</text>
+        </view>
+      </view>
+      <view class="divider-dash"></view>
+      <view class="rc-foot">
         <text class="rc-right">{{item.desc}}</text>
       </view>
     </view>
   </view>
 
-  <view class="action">
+  <!-- 订满兜底：等位回电 -->
+  <view wx:if="{{allFull}}" class="wait-card floor-in">
+    <view class="wc-head">
+      <text class="wc-title serif">该时段包厢已订满</text>
+      <text wx:if="{{cbDone}}" class="badge-ok">已登记</text>
+    </view>
+    <view class="divider-dash"></view>
+    <view wx:if="{{!cbDone}}" class="wc-body">
+      <text class="wc-desc">留下电话，包厢空出时「小桥」将第一时间致电您。</text>
+      <view class="btn-primary wc-btn" hover-class="hover" bindtap="openCallback">留电话 · 有位回电</view>
+    </view>
+    <view wx:else class="wc-body">
+      <text class="wc-desc">已登记 {{cbPhoneMask}}。{{banner}} 包厢空出时，我们将致电您，请留意来电。</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!allFull}}" class="action">
     <view class="btn-primary {{selectedKey ? '' : 'disabled'}}" hover-class="hover" bindtap="confirm">确认选择</view>
+  </view>
+
+  <!-- 等位回电表单弹层 -->
+  <view wx:if="{{showCallback}}" class="cb-mask" bindtap="closeCallback">
+    <view class="cb-panel" catchtap="">
+      <view class="cb-title serif">留个电话，有位回电</view>
+      <view class="cb-sub">{{banner}}</view>
+      <view class="cb-field">
+        <text class="cb-label">称呼（选填）</text>
+        <input class="cb-input" placeholder="如：张先生 / 李女士" value="{{cbName}}" bindinput="onCbName" />
+      </view>
+      <view class="cb-field">
+        <text class="cb-label">手机号</text>
+        <input class="cb-input" type="number" maxlength="11" placeholder="用于接收回电" value="{{cbPhone}}" bindinput="onCbPhone" />
+      </view>
+      <view class="btn-primary cb-submit {{cbSubmitting ? 'disabled' : ''}}" hover-class="hover" bindtap="submitCallback">{{cbSubmitting ? '登记中…' : '登记等位'}}</view>
+      <view class="cb-cancel" bindtap="closeCallback">再想想</view>
+    </view>
   </view>
 </view>

@@ -6,6 +6,8 @@ Status: **partially implemented.**
 |---|---|
 | `reservations` table + RLS on Supabase | ✅ done (project `wkfplrhiigsdfnmylgov`) |
 | Mini Program writes bookings to the DB | ✅ done (`utils/supabase.js`) |
+| `callback_requests` table + RLS (等位回电) | ⬜ SQL ready in §2 — run it in the Supabase SQL editor, or via the Supabase MCP server (`.cursor/mcp.json`) |
+| Mini Program writes callback requests | ✅ done (`createCallbackRequest` in `utils/supabase.js`; needs the table above) |
 | Restaurant console reads from the DB | ⬜ next (Edge Function + passcode) |
 | Tracking events pipeline | ⬜ later |
 
@@ -103,6 +105,31 @@ create table reservations (
 create index on reservations (reserve_date, status);
 create index on reservations (restaurant_id, reserve_date);
 
+-- Callback requests (等位回电：订满时客人留电话，有位后门店回电)
+create table callback_requests (
+  id             uuid primary key default gen_random_uuid(),
+  reserve_date   date not null,
+  reserve_time   text not null,               -- '18:00'
+  daypart        text not null check (daypart in ('lunch','dinner')),
+  guests         int  not null,
+  room_tier      text,                        -- small | large | null = 无偏好
+  contact_name   text,                        -- 称呼可空，客人只愿留电话时
+  contact_phone  text not null,
+  status         text not null default 'waiting'
+                 check (status in ('waiting','contacted','closed')),
+  source         text default 'miniprogram',
+  created_at     timestamptz default now(),
+  updated_at     timestamptz default now()
+);
+create index on callback_requests (reserve_date, status);
+
+-- RLS: same model as reservations — the publishable key may INSERT only,
+-- the console reads/updates via the Edge Function (service role), never the key.
+alter table callback_requests enable row level security;
+create policy "miniprogram insert only"
+  on callback_requests for insert to anon
+  with check (true);
+
 -- Analytics / 埋点
 create table tracking_events (
   id          bigint generated always as identity primary key,
@@ -126,6 +153,9 @@ create table tracking_events (
 | POST   | `/reservations`              | customer   | Create a booking (validates availability)|
 | GET    | `/reservations?date=&status=`| restaurant | List bookings for the console            |
 | PATCH  | `/reservations/:id/status`   | restaurant | confirm / seat / cancel / no_show        |
+| POST   | `/callback_requests`         | customer   | Fully booked → leave phone for call-back |
+| GET    | `/callback_requests?date=&status=` | restaurant | List waitlist entries for the console |
+| PATCH  | `/callback_requests/:id/status` | restaurant | mark contacted / close                |
 | GET    | `/rooms/availability?date=&daypart=&guests=` | customer | Remaining rooms per tier      |
 | POST   | `/track`                     | customer   | Batch-ingest tracking events             |
 
@@ -140,6 +170,9 @@ supabase
       { event: 'INSERT', schema: 'public', table: 'reservations' },
       (payload) => addReservationToBoard(payload.new))
   .subscribe();
+
+// Same pattern for 等位回电: subscribe to INSERTs on callback_requests
+// and surface them in the console's Callback board.
 ```
 
 ## 5. Security (RLS) notes
@@ -155,7 +188,7 @@ supabase
 ## 6. Mini Program changes when the backend lands
 
 - `pages/reserve-confirm/reserve-confirm.js` `submit()` → `POST /reservations` instead of `app.globalData.reservations.unshift(...)`.
-- `pages/room-selection/room-selection.js` availability → `GET /rooms/availability`.
-- `pages/mine/mine.js` list → `GET /reservations` for the current user.
+- `pages/room-selection/room-selection.js` availability → `GET /rooms/availability`; when a date/daypart/party-size is fully booked, the page offers 「留电话 · 有位回电」 → `POST /callback_requests` (already wired via `createCallbackRequest`, backed by the local `seededStatus` mock until availability API lands).
+- `pages/mine/mine.js` list → `GET /reservations` for the current user; waitlist entries (`callbackRequests`) likewise stay local until read access exists.
 - `utils/track.js` `flush()` → `POST /track` (currently buffers in storage).
 - Add request domains in the mp console; keep keys in a config not committed to git.

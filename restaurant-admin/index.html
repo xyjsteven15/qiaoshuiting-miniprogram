@@ -75,6 +75,13 @@
   .foot-note{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
   code{background:#EFEBE3;padding:1px 6px;border-radius:4px;color:var(--accent);}
 
+  /* Callback / 等位回电 */
+  .callback-sec{margin-top:32px;}
+  .sec-title{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:1px;}
+  .sec-sub{font-size:12px;color:var(--muted);font-weight:400;margin-left:10px;letter-spacing:0;}
+  .s-waiting{color:var(--warn);background:var(--warn-bg);}
+  .s-contacted{color:var(--muted);background:#EFEBE3;}
+
   /* Passcode gate (single shared passcode, no accounts) */
   .gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:999;}
   .gate.hidden{display:none;}
@@ -103,7 +110,7 @@
   <header>
     <div class="brand">
       <span class="name serif">桥水汀</span>
-      <span class="sub">RESERVATION CONSOLE · 莘砖公路239号 G60科技云廊</span>
+      <span class="sub">RESERVATION CONSOLE · 千帆路239弄 G60科创云廊</span>
     </div>
     <div class="live"><span class="dot"></span> Live · connected (demo)</div>
   </header>
@@ -139,9 +146,27 @@
       </table>
     </div>
 
+    <section class="callback-sec">
+      <div class="toolbar">
+        <div class="sec-title">Callback · 等位回电 <span class="sec-sub">订满时客人留下的电话，有位后回电通知</span></div>
+        <button class="btn ghost" id="simulate-cb">+ Simulate callback request</button>
+      </div>
+      <div class="board">
+        <table>
+          <thead>
+            <tr>
+              <th>Requested At</th><th>Date · Time</th><th>Party</th><th>Tier</th>
+              <th>Guest</th><th>Phone</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cb-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
     <p class="foot-note">
       Prototype with sample data. Production connects to <code>Supabase Realtime</code> on
-      <code>table: reservations</code> — new bookings from the Mini Program appear here instantly.<br/>
+      <code>table: reservations</code> and <code>table: callback_requests</code> — new bookings and callback requests from the Mini Program appear here instantly.<br/>
       See <code>docs/backend-architecture.md</code> for schema, API and RLS.
     </p>
   </main>
@@ -151,12 +176,12 @@
   let filter = 'all';
 
   let data = [
-    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'小包厢', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
-    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'小包厢', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
-    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'大包厢', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
-    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:8,  tier:'大包厢', ktv:true,  name:'赵经理', phone:'135****7788', note:'', status:'confirmed'},
-    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'小包厢', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
-    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'大包厢', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
+    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'垂虹居', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
+    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'羡鱼轩', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
+    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'徽来堂', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
+    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:22, tier:'桥瑜汀+羡鱼轩', ktv:false, name:'赵经理', phone:'135****7788', note:'拼间', status:'confirmed'},
+    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'桥瑜汀', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
+    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'垂虹居', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
   ];
 
   const STATUS_LABEL = {pending:'Pending', confirmed:'Confirmed', seated:'Seated', cancelled:'Cancelled'};
@@ -221,10 +246,11 @@
     const names=['孙先生','钱女士','吴总','郑经理'];
     const times=['17:30','18:00','18:30','19:00'];
     const n = String(seq++).padStart(3,'0');
+    const rooms=['桥瑜汀','羡鱼轩','垂虹居','徽来堂','桥瑜汀+垂虹居'];
     const rec = {
       code:'QST20260805'+n, date:TODAY, time:times[Math.floor(Math.random()*times.length)],
       daypart:'dinner', guests:2+Math.floor(Math.random()*12),
-      tier: Math.random()>0.6?'大包厢':'小包厢', ktv:Math.random()>0.7,
+      tier:rooms[Math.floor(Math.random()*rooms.length)], ktv:Math.random()>0.7,
       name:names[Math.floor(Math.random()*names.length)],
       phone:'1'+(3+Math.floor(Math.random()*6))+'0****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
       note:'', status:'pending'
@@ -238,6 +264,61 @@
   });
 
   render();
+
+  // ---- Callback requests (等位回电) demo ----
+  // Production: Supabase Realtime on table callback_requests — 客人在小程序
+  // 「订满 → 留电话」后出现在这里，回电后标记 Contacted。
+  let callbacks = [
+    {id:'cb01', created:'2026-08-05 10:12', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:4,  tier:'小包厢', name:'刘女士', phone:'138****6677', status:'waiting'},
+    {id:'cb02', created:'2026-08-05 11:03', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:12, tier:'大包厢', name:'孙总',   phone:'139****2233', status:'waiting'},
+    {id:'cb03', created:'2026-08-04 16:40', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:2,  tier:'',       name:'',       phone:'136****8890', status:'contacted'}
+  ];
+  const CB_STATUS_LABEL = {waiting:'Waiting', contacted:'Contacted'};
+
+  function renderCallbacks(){
+    const rows = document.getElementById('cb-rows');
+    rows.innerHTML = callbacks.map(c => `
+      <tr data-id="${c.id}">
+        <td class="when"><span class="t">${c.created.slice(5)}</span></td>
+        <td class="when"><span class="d">${fmtDate(c.date)}</span> · <span class="t">${c.time} ${c.daypart==='lunch'?'午市':'晚市'}</span></td>
+        <td>${c.guests} pax</td>
+        <td>${c.tier||'无偏好'}</td>
+        <td>${c.name||'—'}</td>
+        <td class="phone">${c.phone}</td>
+        <td><span class="status s-${c.status}">${CB_STATUS_LABEL[c.status]}</span></td>
+        <td class="acts">${c.status==='waiting'
+          ? `<button class="mini pri" data-a="contacted">Mark contacted</button><button class="mini" data-a="close">Close</button>`
+          : `<span class="note">—</span>`}</td>
+      </tr>`).join('');
+  }
+
+  document.getElementById('cb-rows').addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-a]'); if(!btn) return;
+    const id = e.target.closest('tr').dataset.id;
+    const c = callbacks.find(x=>x.id===id); if(!c) return;
+    if(btn.dataset.a==='contacted') c.status='contacted';
+    if(btn.dataset.a==='close') callbacks = callbacks.filter(x=>x.id!==id);
+    renderCallbacks();
+  });
+
+  let cbSeq = 4;
+  document.getElementById('simulate-cb').addEventListener('click', ()=>{
+    const names=['周先生','吴女士','徐经理',''];
+    const rec = {
+      id:'cb'+String(cbSeq++).padStart(2,'0'), created:'2026-08-05 12:'+String(10+Math.floor(Math.random()*49)),
+      date:TODAY, time:Math.random()>0.5?'18:00':'19:00', daypart:'dinner',
+      guests:2+Math.floor(Math.random()*10), tier:Math.random()>0.5?'小包厢':'大包厢',
+      name:names[Math.floor(Math.random()*names.length)],
+      phone:'1'+(3+Math.floor(Math.random()*6))+'5****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
+      status:'waiting'
+    };
+    callbacks.unshift(rec);
+    renderCallbacks();
+    const tr = document.querySelector(`#cb-rows tr[data-id="${rec.id}"]`);
+    if(tr){ tr.classList.add('flash'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
+  });
+
+  renderCallbacks();
 
   // ---- Passcode gate (UI-only demo) ----
   // TODO(backend): replace with a Supabase Edge Function that verifies the

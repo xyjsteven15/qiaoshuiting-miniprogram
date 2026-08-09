@@ -7,6 +7,10 @@
 | 约定 | 字段名采用 snake_case；时间为 ISO 8601；金额单位为分（CNY） |
 
 > v1.1 变更：移除 `invite_letters`（邀请函）、`banquet_orders`（私宴订餐）两张表；`reservations` 移除尊享套餐、代客泊车、桌面布置、邀请函/私宴关联字段，`pay_type` 仅保留 `deposit`；`set_menus` 降级为「时令展示菜单」（仅用于首页展示，不参与下单）；新增门店信息 `restaurant_info`。
+>
+> v1.2 变更：新增 `callback_requests`（等位回电）：订满时客人留下电话，有位后门店回电通知。
+>
+> v1.3 变更：「桥遇厅」更名为「桥瑜汀」并扩容至 ≤17 人；羡鱼轩扩容至 ≤14 人；三个小包间为可拆卸隔断，支持任意拼间连通（容量相加，三间全拼 ≤41 人）；徽来堂（11-20 人 + KTV）不变。
 
 ---
 
@@ -19,6 +23,7 @@ erDiagram
   reservations ||--o{ payments : paid_by
   culture_articles ||--o{ ingredient_origins : may_ref
   chef_interviews ||--o{ culture_articles : related
+  callback_requests  %% 独立表：订满等位回电登记，无外键
 ```
 
 ---
@@ -48,12 +53,12 @@ erDiagram
 
 | name | min_guests | max_guests | has_ktv | room_size_tier |
 |------|------------|------------|---------|----------------|
-| 桥遇厅 | 2 | 10 | false | small_medium |
-| 羡鱼轩 | 2 | 10 | false | small_medium |
+| 桥瑜汀 | 2 | 17 | false | small_medium |
+| 羡鱼轩 | 2 | 14 | false | small_medium |
 | 垂虹居 | 2 | 10 | false | small_medium |
 | 徽来堂 | 11 | 20 | true | large |
 
-> 垂虹居若实装为大包，将 `max_guests` / `room_size_tier` 改为 large 并调整 `min_guests` 即可，无需改前端逻辑。
+> 三个小包间（桥瑜汀/羡鱼轩/垂虹居）之间为**可拆卸隔断**，可任意拼间连通：两两拼间 ≤24/≤27/≤31 人，三间全拼 ≤41 人。拼间不单独建 `rooms` 行——预订侧按组成厅的 `room_slots` 同时占用来建模，C 端拼间方案的容量 = 组成厅 `max_guests` 之和。
 
 ---
 
@@ -123,7 +128,33 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 5. 时令展示菜单 `set_menus`（仅展示，不下单）
+## 5. 等位回电 `callback_requests`
+
+订满兜底：客人在「选择包厢」页看到所选日期/时段/人数无可订包厢时，可留下电话；门店有位后回电通知。不锁位、不收款，仅作联系登记。
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| callback_id | string / UUID | 是 | 主键 |
+| user_openid | string | 否 | 微信用户（若已授权） |
+| date | date | 是 | 期望用餐日期 |
+| time | string | 是 | 期望到店时间，如 `18:00` |
+| daypart | enum | 是 | `lunch` \| `dinner` |
+| guest_count | int | 是 | 就餐人数 |
+| room_tier | enum | 否 | `small` \| `large`；仅一个档位适配该人数时带上，否则为 null（无偏好） |
+| contact_name | string | 否 | 称呼（选填） |
+| contact_phone | string | 是 | 回电手机号 |
+| request_status | enum | 是 | `waiting` \| `contacted` \| `closed` |
+| source | string | 是 | 默认 `miniprogram` |
+| created_at | datetime | 是 | |
+| updated_at | datetime | 是 | |
+
+**request_status 流转**：`waiting`（等待回电）→ `contacted`（已回电，是否转成预订口头确认即可）｜ `waiting` → `closed`（客人取消/放弃）。
+
+> 线上表名为 `callback_requests`，列名对齐现行 `reservations` 线上表（`reserve_date` / `reserve_time` / `guests`），建表 SQL 见 [backend-architecture.md](./backend-architecture.md) §2。
+
+---
+
+## 6. 时令展示菜单 `set_menus`（仅展示，不下单）
 
 用于首页「时令一席」展示，一期不参与线上下单/支付。
 
@@ -147,7 +178,7 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 6. 支付流水 `payments`
+## 7. 支付流水 `payments`
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -167,7 +198,7 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 7. 门店信息 `restaurant_info`
+## 8. 门店信息 `restaurant_info`
 
 用于「我的」页联系客服与地址地图定位（`wx.openLocation`）。
 
@@ -183,9 +214,9 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 8. 内容运营（溯源最小集）
+## 9. 内容运营（溯源最小集）
 
-### 8.1 `culture_articles`（徽商叙事等）
+### 9.1 `culture_articles`（徽商叙事等）
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -199,7 +230,7 @@ booked → available（取消预订且释放，需业务规则）
 | is_published | boolean | 是 | |
 | updated_at | datetime | 是 | |
 
-### 8.2 `ingredient_origins`（食材溯源）
+### 9.2 `ingredient_origins`（食材溯源）
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -213,7 +244,7 @@ booked → available（取消预订且释放，需业务规则）
 | sort_order | int | 是 | |
 | is_published | boolean | 是 | |
 
-### 8.3 `chef_interviews`（主厨专访）
+### 9.3 `chef_interviews`（主厨专访）
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -226,7 +257,7 @@ booked → available（取消预订且释放，需业务规则）
 | is_published | boolean | 是 | |
 | sort_order | int | 是 | |
 
-### 8.4 首页运营位（可选薄表 `home_contents`）
+### 9.4 首页运营位（可选薄表 `home_contents`）
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -241,7 +272,7 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 9. 用户偏好（「我的」最小）`user_profiles`
+## 10. 用户偏好（「我的」最小）`user_profiles`
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -256,13 +287,14 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 10. 后台管理界面 · 一期必要能力
+## 11. 后台管理界面 · 一期必要能力
 
 | 模块 | 能力 |
 |------|------|
 | 包间管理 | 增改四厅容量、KTV、媒体、定金餐标、上下架 |
 | 排期看板 | 按日查看午/晚市；手动 blocked；处理超时 held |
 | 预订列表 | 筛选状态、联系人、厅房；确认到店/取消/no-show |
+| 等位回电 | 查看 waiting 登记（电话、人数、期望时段）；回电后标记 contacted / 关闭 |
 | 时令菜单 | 上架/下架时令展示菜单；主厨推荐与酒水文案（仅展示） |
 | 溯源内容 | 叙事、溯源卡、主厨专访发布 |
 | 门店信息 | 维护地址、经纬度、「小桥」客服电话 |
@@ -270,9 +302,9 @@ booked → available（取消预订且释放，需业务规则）
 
 ---
 
-## 11. 校验规则（实现时必须遵守）
+## 12. 校验规则（实现时必须遵守）
 
-1. `guest_count` 必须落在目标 `room.min_guests`–`max_guests` 之间，否则不可选该厅。  
+1. `guest_count` 必须落在目标 `room.min_guests`–`max_guests` 之间，否则不可选该厅；拼间时 `guest_count` 不得超过组成厅 `max_guests` 之和，且组成厅当日当时段须全部可订。  
 2. `has_ktv=true` 的厅在 C 端列表/详情必须展示「含 KTV」。  
 3. 仅当 `pay_status=paid` 且支付成功回调完成后，`room_slots.slot_status` 才从 `held` 变为 `booked`。  
 4. `held` 超过 `hold_expire_at` 必须自动回到 `available`，并关闭对应 `pending_pay` 预订。  

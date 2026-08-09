@@ -9,33 +9,53 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  padding: 20rpx 48rpx;
+  padding: 18rpx 48rpx;
   background: var(--banner);
   border-top: 1rpx solid var(--line);
   border-bottom: 1rpx solid var(--line);
 }
-.banner-dot { color: var(--accent); font-size: 22rpx; }
-.banner-txt { font-size: 24rpx; color: var(--ink-soft); }
+.banner-dot { color: var(--accent); font-size: 20rpx; }
+.banner-txt { font-size: 22rpx; color: var(--ink-soft); }
+
+/* 本页标题整体缩小一级 */
+.room-sel .sh-title { font-size: 34rpx; }
+.room-sel .sh-sub { font-size: 20rpx; }
+
+.opt-label {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.opt-label .tick {
+  width: 6rpx;
+  height: 22rpx;
+  background: var(--accent);
+}
+.opt-label .label-txt {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
 
 .rooms {
-  padding: 40rpx 48rpx 0;
+  padding: 32rpx 48rpx 0;
   display: flex;
   flex-direction: column;
-  gap: 40rpx;
+  gap: 28rpx;
 }
 
 .room-card {
   background: var(--card);
   border: 1rpx solid var(--line);
   border-radius: 16rpx;
-  padding: 40rpx;
+  padding: 30rpx 32rpx;
   display: flex;
   flex-direction: column;
-  gap: 32rpx;
+  gap: 22rpx;
 }
 .room-card.on {
   border: 3rpx solid var(--accent);
-  padding: 38rpx;
+  padding: 28rpx 30rpx;
 }
 .room-card.off { opacity: 0.5; }
 
@@ -43,26 +63,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16rpx;
 }
 .rc-title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 6rpx;
 }
-.rc-title { font-size: 36rpx; color: var(--ink); font-weight: 600; }
-.rc-cap { font-size: 24rpx; color: var(--ink-soft); }
+.rc-title { font-size: 30rpx; color: var(--ink); font-weight: 600; }
+.rc-cap { font-size: 22rpx; color: var(--ink-soft); }
 .rc-badges {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 10rpx;
+  flex-shrink: 0;
+}
+/* 页面级缩小徽章字号（不改全局样式，避免影响其他页面） */
+.room-sel .badge-ok,
+.room-sel .badge-full,
+.room-sel .badge-accent {
+  font-size: 18rpx;
+  padding: 3rpx 12rpx;
 }
 .badge-full {
   display: inline-block;
-  font-size: 20rpx;
   color: var(--muted);
   background: #EFEBE3;
   border-radius: 4rpx;
-  padding: 4rpx 14rpx;
 }
 
 .rc-foot {
@@ -70,12 +97,75 @@
   align-items: center;
   justify-content: space-between;
 }
-.rc-left { font-size: 26rpx; color: var(--ink-soft); }
-.rc-num { color: var(--accent); font-weight: 700; }
-.rc-right { font-size: 24rpx; color: var(--muted); }
+.rc-right { font-size: 22rpx; color: var(--muted); }
 
 .action {
   padding: 64rpx 48rpx 48rpx;
   margin-top: auto;
 }
 .hover { opacity: 0.88; }
+
+/* 等位回电卡（订满兜底） */
+.wait-card {
+  margin: 32rpx 48rpx 0;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 16rpx;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.wc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wc-title { font-size: 28rpx; color: var(--ink); font-weight: 600; }
+.wc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.wc-desc { font-size: 24rpx; color: var(--ink-soft); line-height: 1.7; }
+.wc-btn { letter-spacing: 4rpx; font-size: 28rpx; padding: 24rpx 0; }
+
+/* 等位回电弹层 */
+.cb-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.45);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+.cb-panel {
+  width: 100%;
+  background: var(--paper);
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  animation: floorIn 320ms ease-out both;
+}
+.cb-title { font-size: 32rpx; color: var(--ink); font-weight: 600; text-align: center; }
+.cb-sub { font-size: 22rpx; color: var(--muted); text-align: center; }
+.cb-field {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 12rpx;
+  padding: 22rpx 26rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+.cb-label { font-size: 20rpx; color: var(--muted); }
+.cb-input { font-size: 28rpx; color: var(--ink); }
+.cb-submit { letter-spacing: 4rpx; font-size: 28rpx; padding: 24rpx 0; }
+.cb-cancel {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--muted);
+  padding: 8rpx 0;
+}
