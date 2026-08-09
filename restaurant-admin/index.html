@@ -176,12 +176,12 @@
   let filter = 'all';
 
   let data = [
-    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'小包厢', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
-    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'小包厢', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
-    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'大包厢', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
-    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:8,  tier:'大包厢', ktv:true,  name:'赵经理', phone:'135****7788', note:'', status:'confirmed'},
-    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'小包厢', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
-    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'大包厢', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
+    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'垂虹居', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
+    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'羡鱼轩', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
+    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'徽来堂', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
+    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:22, tier:'桥瑜汀+羡鱼轩', ktv:false, name:'赵经理', phone:'135****7788', note:'拼间', status:'confirmed'},
+    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'桥瑜汀', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
+    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'垂虹居', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
   ];
 
   const STATUS_LABEL = {pending:'Pending', confirmed:'Confirmed', seated:'Seated', cancelled:'Cancelled'};
@@ -246,10 +246,11 @@
     const names=['孙先生','钱女士','吴总','郑经理'];
     const times=['17:30','18:00','18:30','19:00'];
     const n = String(seq++).padStart(3,'0');
+    const rooms=['桥瑜汀','羡鱼轩','垂虹居','徽来堂','桥瑜汀+垂虹居'];
     const rec = {
       code:'QST20260805'+n, date:TODAY, time:times[Math.floor(Math.random()*times.length)],
       daypart:'dinner', guests:2+Math.floor(Math.random()*12),
-      tier: Math.random()>0.6?'大包厢':'小包厢', ktv:Math.random()>0.7,
+      tier:rooms[Math.floor(Math.random()*rooms.length)], ktv:Math.random()>0.7,
       name:names[Math.floor(Math.random()*names.length)],
       phone:'1'+(3+Math.floor(Math.random()*6))+'0****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
       note:'', status:'pending'

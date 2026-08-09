@@ -48,8 +48,11 @@ Page({
     if (this.data.guests > 1) this.setData({ guests: this.data.guests - 1 });
   },
 
+  // 上限 = 三个小包间全拼（可拆卸隔断）的最大容纳 41 人
   plus() {
-    if (this.data.guests < 20) this.setData({ guests: this.data.guests + 1 });
+    if (this.data.guests < data.maxComboGuests()) {
+      this.setData({ guests: this.data.guests + 1 });
+    }
   },
 
   next() {

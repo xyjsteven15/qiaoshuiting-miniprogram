@@ -48,7 +48,7 @@
   .accent { color:var(--accent); }
   .soft { color:var(--ink-soft); }
   .muted { color:var(--muted); }
-  .screen-header { display:flex; flex-direction:column; align-items:center; padding:16px 24px; }
+  .screen-header { display:flex; flex-direction:column; align-items:center; padding:12px 24px; }
   .sh-title { font-size:20px; letter-spacing:1px; color:var(--ink); font-weight:600; }
   .sh-sub { font-size:11px; letter-spacing:2px; color:var(--muted); margin-top:3px; }
   .sh-line { width:40px; height:1.5px; background:var(--accent); margin-top:10px; }
@@ -113,14 +113,14 @@
   .stepper { display:flex; align-items:center; gap:16px; }
   .step-btn { width:32px; height:32px; line-height:30px; text-align:center; font-size:18px; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:4px; }
   .step-val { min-width:24px; text-align:center; font-size:16px; font-weight:700; color:var(--ink); }
-  .action { padding:32px 24px 24px; margin-top:auto; }
+  .action { padding:20px 24px 16px; margin-top:auto; }
 
   /* 选择包厢 */
   .banner { display:flex; align-items:center; gap:6px; padding:10px 24px; background:var(--banner); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .banner-dot { color:var(--accent); font-size:11px; }
   .banner-txt { font-size:12px; color:var(--ink-soft); }
-  .rooms { padding:20px 24px 0; display:flex; flex-direction:column; gap:20px; }
-  .room-card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .rooms { padding:16px 24px 0; display:flex; flex-direction:column; gap:14px; }
+  .room-card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:18px; display:flex; flex-direction:column; gap:13px; }
   .room-card.on { border:1.5px solid var(--accent); }
   .rc-head { display:flex; align-items:center; justify-content:space-between; }
   .rc-title-wrap { display:flex; flex-direction:column; gap:4px; }
@@ -135,10 +135,10 @@
   .badge-full { display:inline-block; font-size:10px; color:var(--muted); background:#EFEBE3; border-radius:2px; padding:2px 7px; }
 
   /* 等位回电（订满兜底） */
-  .wait-card { margin:20px 24px 0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .wait-card { margin:14px 24px 0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; display:flex; flex-direction:column; gap:12px; }
   .wc-head { display:flex; align-items:center; justify-content:space-between; }
   .wc-title { font-size:16px; color:var(--ink); font-weight:600; }
-  .wc-body { display:flex; flex-direction:column; gap:16px; }
+  .wc-body { display:flex; flex-direction:column; gap:12px; }
   .wc-desc { font-size:13px; color:var(--ink-soft); line-height:1.7; }
   .wait-hint { font-size:11px; color:var(--muted); }
   .rc-state.wait { color:var(--accent); background:#F5E9E2; }
@@ -267,21 +267,30 @@
           <div class="screen-header"><div class="sh-title serif">选择包厢</div><div class="sh-sub">SELECT ROOM</div><div class="sh-line"></div></div>
           <div class="banner"><div class="banner-dot">◈</div><div class="banner-txt">7/25 周五 · 18:00 · 6人</div></div>
           <div class="rooms">
+            <div class="label"><div class="tick"></div><div class="label-txt serif">独立包间</div></div>
             <div class="room-card on">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">小包厢</div><div class="rc-cap">可容纳：2-10人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">垂虹居</div><div class="rc-cap">可容纳 2-10人</div></div>
                 <div class="rc-badges"><div class="badge-accent">推荐</div><div class="badge-ok">可预订</div></div>
               </div>
               <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">2 间</span></div><div class="rc-right">静谧雅致 · 独立影音</div></div>
+              <div class="rc-foot"><div class="rc-right">长桥卧波，垂虹入席，商务小宴之选。</div></div>
             </div>
             <div class="room-card">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">大包厢</div><div class="rc-cap">可容纳：11-20人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">羡鱼轩</div><div class="rc-cap">可容纳 2-14人</div></div>
                 <div class="rc-badges"><div class="badge-ok">可预订</div></div>
               </div>
               <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">1 间</span></div><div class="rc-right">宽敞大气 · 徽派照壁 · KTV</div></div>
+              <div class="rc-foot"><div class="rc-right">临渊羡鱼之意，取臭鳜鱼一味成席。</div></div>
+            </div>
+            <div class="room-card off">
+              <div class="rc-head">
+                <div class="rc-title-wrap"><div class="rc-title serif">桥瑜汀</div><div class="rc-cap">可容纳 2-17人</div></div>
+                <div class="rc-badges"><div class="badge-full">已订满</div></div>
+              </div>
+              <div class="divider-dash"></div>
+              <div class="rc-foot"><div class="rc-right">临水一隅，宜二三知己小酌雅叙。</div></div>
             </div>
           </div>
           <div class="action"><div class="btn-primary serif">确认选择</div></div>
@@ -300,23 +309,24 @@
       <div class="phone">
         <div class="screen">
           <div class="screen-header"><div class="sh-title serif">选择包厢</div><div class="sh-sub">SELECT ROOM</div><div class="sh-line"></div></div>
-          <div class="banner"><div class="banner-dot">◈</div><div class="banner-txt">7/25 周五 · 19:00 · 12人</div></div>
+          <div class="banner"><div class="banner-dot">◈</div><div class="banner-txt">7/25 周五 · 19:00 · 22人</div></div>
           <div class="rooms">
+            <div class="label"><div class="tick"></div><div class="label-txt serif">拼间 · 隔断可拆卸</div></div>
             <div class="room-card off">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">小包厢</div><div class="rc-cap">可容纳：2-10人</div></div>
-                <div class="rc-badges"><div class="badge-full">不适用</div></div>
-              </div>
-              <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">0 间</span></div><div class="rc-right">静谧雅致 · 独立影音</div></div>
-            </div>
-            <div class="room-card off">
-              <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">大包厢</div><div class="rc-cap">可容纳：11-20人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">羡鱼轩 + 垂虹居</div><div class="rc-cap">最多24人</div></div>
                 <div class="rc-badges"><div class="badge-full">已订满</div></div>
               </div>
               <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-left">剩余数量：<span class="rc-num">0 间</span></div><div class="rc-right">宽敞大气 · 徽派照壁 · KTV</div></div>
+              <div class="rc-foot"><div class="rc-right">可拆卸隔断 · 拼间连通</div></div>
+            </div>
+            <div class="room-card off">
+              <div class="rc-head">
+                <div class="rc-title-wrap"><div class="rc-title serif">桥瑜汀 + 羡鱼轩 + 垂虹居</div><div class="rc-cap">最多41人</div></div>
+                <div class="rc-badges"><div class="badge-full">已订满</div></div>
+              </div>
+              <div class="divider-dash"></div>
+              <div class="rc-foot"><div class="rc-right">可拆卸隔断 · 拼间连通</div></div>
             </div>
           </div>
           <div class="wait-card">

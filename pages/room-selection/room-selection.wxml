@@ -11,27 +11,57 @@
   </view>
 
   <view class="rooms floor-in">
+    <!-- 单间 -->
+    <view wx:if="{{singles.length > 0}}" class="opt-label">
+      <view class="tick"></view><text class="label-txt serif">独立包间</text>
+    </view>
     <view
-      wx:for="{{tiers}}"
+      wx:for="{{singles}}"
       wx:key="key"
-      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.status !== 'available' ? 'off' : ''}}"
+      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
       data-k="{{item.key}}"
       bindtap="pick">
       <view class="rc-head">
         <view class="rc-title-wrap">
           <text class="rc-title serif">{{item.label}}</text>
-          <text class="rc-cap">可容纳：{{item.cap}}</text>
+          <text class="rc-cap">可容纳 {{item.cap}}</text>
         </view>
         <view class="rc-badges">
           <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
-          <text wx:if="{{item.status === 'available'}}" class="badge-ok">可预订</text>
-          <text wx:elif="{{item.status === 'full'}}" class="badge-full">已订满</text>
-          <text wx:else class="badge-full">不适用</text>
+          <text wx:if="{{item.hasKtv}}" class="badge-accent">KTV</text>
+          <text wx:if="{{item.available}}" class="badge-ok">可预订</text>
+          <text wx:else class="badge-full">已订满</text>
         </view>
       </view>
       <view class="divider-dash"></view>
       <view class="rc-foot">
-        <text class="rc-left">剩余数量：<text class="rc-num">{{item.remaining}} 间</text></text>
+        <text class="rc-right">{{item.desc}}</text>
+      </view>
+    </view>
+
+    <!-- 拼间（可拆卸隔断）：单间容不下或全订满时出现 -->
+    <view wx:if="{{combos.length > 0}}" class="opt-label">
+      <view class="tick"></view><text class="label-txt serif">拼间 · 隔断可拆卸</text>
+    </view>
+    <view
+      wx:for="{{combos}}"
+      wx:key="key"
+      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
+      data-k="{{item.key}}"
+      bindtap="pick">
+      <view class="rc-head">
+        <view class="rc-title-wrap">
+          <text class="rc-title serif">{{item.label}}</text>
+          <text class="rc-cap">{{item.cap}}</text>
+        </view>
+        <view class="rc-badges">
+          <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
+          <text wx:if="{{item.available}}" class="badge-ok">可预订</text>
+          <text wx:else class="badge-full">已订满</text>
+        </view>
+      </view>
+      <view class="divider-dash"></view>
+      <view class="rc-foot">
         <text class="rc-right">{{item.desc}}</text>
       </view>
     </view>

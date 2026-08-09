@@ -3,15 +3,11 @@ const { track } = require('../../utils/track.js');
 const { createCallbackRequest } = require('../../utils/supabase.js');
 const app = getApp();
 
-const TIER_DEFS = [
-  { key: 'small', label: '小包厢', roomTier: 'small_medium', desc: '静谧雅致 · 独立影音' },
-  { key: 'large', label: '大包厢', roomTier: 'large', desc: '宽敞大气 · 徽派照壁' }
-];
-
 Page({
   data: {
     banner: '',
-    tiers: [],
+    singles: [],
+    combos: [],
     selectedKey: '',
     allFull: false,
     showCallback: false,
@@ -29,56 +25,35 @@ Page({
     const dateStr = d.date || '';
     const daypart = draft.daypart || 'dinner';
 
-    this.setData({
-      banner: `${d.md || ''} ${d.week || ''} · ${draft.time || ''} · ${guests}人`
-    });
+    const { singles, combos, allFull } = data.optionsForGuests(guests, dateStr, daypart);
 
-    // 是否有可容纳该人数的“小包厢”，用于推荐判定
+    // 推荐：优先可订单间中容量最贴合者；单间全满时退到最贴合的可订拼间
     let recommendKey = '';
-    const tiers = TIER_DEFS.map((t) => {
-      const rooms = data.ROOMS.filter((r) => r.room_size_tier === t.roomTier);
-      const minG = Math.min(...rooms.map((r) => r.min_guests));
-      const maxG = Math.max(...rooms.map((r) => r.max_guests));
-      const fits = guests >= minG && guests <= maxG;
-      const remaining = rooms.filter(
-        (r) => data.seededStatus(r.room_id, dateStr, daypart) === 'available'
-      ).length;
-      let status = 'unfit';
-      if (fits) status = remaining > 0 ? 'available' : 'full';
-      return {
-        key: t.key,
-        label: t.label,
-        desc: t.desc,
-        cap: `${minG}-${maxG}人`,
-        minG,
-        maxG,
-        remaining,
-        status,
-        recommend: false,
-        rooms
-      };
+    const bestSingle = singles.find((s) => s.available);
+    const bestCombo = combos.find((c) => c.available);
+    if (bestSingle) recommendKey = bestSingle.key;
+    else if (bestCombo) recommendKey = bestCombo.key;
+    singles.concat(combos).forEach((o) => {
+      o.recommend = o.key === recommendKey;
     });
 
-    // 推荐：可预订且容量最贴合的档位（优先较小者）
-    const fitAvailable = tiers
-      .filter((t) => t.status === 'available')
-      .sort((a, b) => a.maxG - b.maxG);
-    if (fitAvailable.length) {
-      recommendKey = fitAvailable[0].key;
-      tiers.forEach((t) => {
-        if (t.key === recommendKey) t.recommend = true;
-      });
-    }
+    this.setData({
+      banner: `${d.md || ''} ${d.week || ''} · ${draft.time || ''} · ${guests}人`,
+      singles,
+      combos,
+      selectedKey: recommendKey,
+      allFull
+    });
+  },
 
-    // 无可预订档位（订满或不适用）时，开放「留电话 · 有位回电」
-    const allFull = !tiers.some((t) => t.status === 'available');
-    this.setData({ tiers, selectedKey: recommendKey, allFull });
+  findOption(key) {
+    return this.data.singles.concat(this.data.combos).find((o) => o.key === key);
   },
 
   pick(e) {
     const key = e.currentTarget.dataset.k;
-    const tier = this.data.tiers.find((t) => t.key === key);
-    if (!tier || tier.status !== 'available') {
+    const option = this.findOption(key);
+    if (!option || !option.available) {
       wx.showToast({ title: '该包厢暂不可选', icon: 'none' });
       return;
     }
@@ -91,21 +66,18 @@ Page({
       return;
     }
     const draft = app.globalData.reserveDraft || {};
-    const tier = this.data.tiers.find((t) => t.key === this.data.selectedKey);
-    const dateStr = (draft.date && draft.date.date) || '';
-    const daypart = draft.daypart || 'dinner';
-    const room =
-      tier.rooms.find(
-        (r) => data.seededStatus(r.room_id, dateStr, daypart) === 'available'
-      ) || tier.rooms[0];
+    const option = this.findOption(this.data.selectedKey);
+    if (!option) return;
 
+    const isCombo = option.type === 'combo';
     app.globalData.reserveDraft = Object.assign({}, draft, {
-      tierKey: tier.key,
-      tierLabel: tier.label,
-      tierCap: tier.cap,
-      roomName: room.name,
-      hasKtv: room.has_ktv,
-      roomId: room.room_id
+      tierKey: option.roomTier,
+      tierLabel: isCombo ? `拼间 · ${option.label}` : option.label,
+      tierCap: option.cap,
+      roomName: option.label,
+      hasKtv: option.hasKtv,
+      roomId: isCombo ? null : option.roomIds[0],
+      roomIds: option.roomIds
     });
 
     wx.navigateTo({ url: '/pages/reserve-confirm/reserve-confirm' });
@@ -148,15 +120,15 @@ Page({
 
     const draft = app.globalData.reserveDraft || {};
     const d = draft.date || {};
-    // 仅一个档位适配该人数时带上偏好档位，否则视为无偏好
-    const fitKeys = this.data.tiers.filter((t) => t.status !== 'unfit').map((t) => t.key);
+    // 仅一种档位适配该人数时带上偏好档位，否则视为无偏好
+    const fitTiers = [...new Set(this.data.singles.map((s) => s.roomTier))];
 
     const payload = {
       reserve_date: d.date,
       reserve_time: draft.time,
       daypart: draft.daypart,
       guests: draft.guests,
-      room_tier: fitKeys.length === 1 ? fitKeys[0] : null,
+      room_tier: fitTiers.length === 1 ? fitTiers[0] : null,
       contact_name: name || null,
       contact_phone: phone
     };

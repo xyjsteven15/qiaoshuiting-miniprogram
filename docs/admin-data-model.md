@@ -9,6 +9,8 @@
 > v1.1 变更：移除 `invite_letters`（邀请函）、`banquet_orders`（私宴订餐）两张表；`reservations` 移除尊享套餐、代客泊车、桌面布置、邀请函/私宴关联字段，`pay_type` 仅保留 `deposit`；`set_menus` 降级为「时令展示菜单」（仅用于首页展示，不参与下单）；新增门店信息 `restaurant_info`。
 >
 > v1.2 变更：新增 `callback_requests`（等位回电）：订满时客人留下电话，有位后门店回电通知。
+>
+> v1.3 变更：「桥遇厅」更名为「桥瑜汀」并扩容至 ≤17 人；羡鱼轩扩容至 ≤14 人；三个小包间为可拆卸隔断，支持任意拼间连通（容量相加，三间全拼 ≤41 人）；徽来堂（11-20 人 + KTV）不变。
 
 ---
 
@@ -51,12 +53,12 @@ erDiagram
 
 | name | min_guests | max_guests | has_ktv | room_size_tier |
 |------|------------|------------|---------|----------------|
-| 桥遇厅 | 2 | 10 | false | small_medium |
-| 羡鱼轩 | 2 | 10 | false | small_medium |
+| 桥瑜汀 | 2 | 17 | false | small_medium |
+| 羡鱼轩 | 2 | 14 | false | small_medium |
 | 垂虹居 | 2 | 10 | false | small_medium |
 | 徽来堂 | 11 | 20 | true | large |
 
-> 垂虹居若实装为大包，将 `max_guests` / `room_size_tier` 改为 large 并调整 `min_guests` 即可，无需改前端逻辑。
+> 三个小包间（桥瑜汀/羡鱼轩/垂虹居）之间为**可拆卸隔断**，可任意拼间连通：两两拼间 ≤24/≤27/≤31 人，三间全拼 ≤41 人。拼间不单独建 `rooms` 行——预订侧按组成厅的 `room_slots` 同时占用来建模，C 端拼间方案的容量 = 组成厅 `max_guests` 之和。
 
 ---
 
@@ -302,7 +304,7 @@ booked → available（取消预订且释放，需业务规则）
 
 ## 12. 校验规则（实现时必须遵守）
 
-1. `guest_count` 必须落在目标 `room.min_guests`–`max_guests` 之间，否则不可选该厅。  
+1. `guest_count` 必须落在目标 `room.min_guests`–`max_guests` 之间，否则不可选该厅；拼间时 `guest_count` 不得超过组成厅 `max_guests` 之和，且组成厅当日当时段须全部可订。  
 2. `has_ktv=true` 的厅在 C 端列表/详情必须展示「含 KTV」。  
 3. 仅当 `pay_status=paid` 且支付成功回调完成后，`room_slots.slot_status` 才从 `held` 变为 `booked`。  
 4. `held` 超过 `hold_expire_at` 必须自动回到 `available`，并关闭对应 `pending_pay` 预订。  
