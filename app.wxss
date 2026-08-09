@@ -1,17 +1,25 @@
-/* ========= 桥水汀 · 全局主题（Figma 版）=========
-   暖米底 + 徽州朱漆红点缀 + 白卡片
+/* ========= 桥水汀 · 全局主题（官方 logo 墨色版）=========
+   素纸中性底 + 黛墨控件，取色自官方 logo：
+   墨（书法）/ 朱砂（印章，仅小面积点缀）/ 铜金（东方味来）
    衬线（Lora / 宋体）标题 + 无衬线（Geist / 系统）正文
 */
 
 page {
-  --paper: #F5F0E8;        /* 暖米底 */
+  --paper: #EFF0EC;        /* 素纸底（中性微凉，不橙） */
   --card: #FFFFFF;         /* 卡片白 */
-  --banner: #FAF6EE;       /* 浅米横幅 */
-  --ink: #1A1A1A;          /* 主文字 近黑 */
-  --ink-soft: #666056;     /* 次级文字 暖灰 */
-  --muted: #9E9689;        /* 弱化文字 */
-  --accent: #8B2500;       /* 徽州朱漆红 */
-  --line: #E0D8CC;         /* 描边/分隔 */
+  --banner: #F6F7F3;       /* 浅素横幅 */
+  --ink: #292B26;          /* 主文字 墨色 */
+  --ink-soft: #64665E;     /* 次级文字 灰墨 */
+  --muted: #9CA093;        /* 弱化文字 */
+  --accent: #262A24;       /* 黛墨 · 主操作/强调 */
+  --accent-deep: #1B1E19;  /* 黛墨加深 · 按压态 */
+  --brand-red: #9E3B32;    /* 桥 · 朱砂（取印章色，深而不橙） */
+  --brand-teal: #4E7672;   /* 水 · 黛青（加深） */
+  --brand-olive: #8A6D3F;  /* 汀 · 铜金（取「东方味来」） */
+  --rose: #7FA8A4;         /* 黛青软色 */
+  --rose-bg: #E9F0EE;      /* 黛青浅底 */
+  --wood: #5C5648;         /* 胡桃木（去暖） */
+  --line: #DBDBD2;         /* 描边/分隔 */
   --ok: #2E7D32;           /* 可预订绿 */
   --ok-bg: #E2F0D9;
 
@@ -54,11 +62,11 @@ page {
 .screen-header .sh-line {
   width: 80rpx;
   height: 3rpx;
-  background: var(--accent);
+  background: var(--brand-red);
   margin-top: 20rpx;
 }
 
-/* 段标签：朱漆小竖条 + 衬线小标题 */
+/* 段标签：绛红小竖条 + 衬线小标题 */
 .label {
   display: flex;
   align-items: center;
@@ -67,7 +75,7 @@ page {
 .label .tick {
   width: 6rpx;
   height: 24rpx;
-  background: var(--accent);
+  background: var(--brand-red);
 }
 .label .label-txt {
   font-size: 28rpx;
@@ -75,7 +83,7 @@ page {
   font-weight: 600;
 }
 
-/* 主按钮：朱漆底白字 */
+/* 主按钮：墨色底白字 */
 .btn-primary {
   background: var(--accent);
   color: #FFFFFF;
@@ -86,10 +94,11 @@ page {
   letter-spacing: 8rpx;
   font-family: "Lora", "Songti SC", serif;
   font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(27, 30, 25, 0.28);
 }
 .btn-primary.disabled { opacity: 0.45; }
 
-/* 次按钮：白底朱漆描边 */
+/* 次按钮：白底墨色描边 */
 .btn-secondary {
   background: #FFFFFF;
   color: var(--accent);
@@ -108,6 +117,7 @@ page {
   background: var(--card);
   border: 1rpx solid var(--line);
   border-radius: 16rpx;
+  box-shadow: 0 6rpx 28rpx rgba(38, 42, 36, 0.06);
 }
 
 /* 推荐/标记印章 */

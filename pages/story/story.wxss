@@ -1,0 +1,205 @@
+.story {
+  min-height: 100vh;
+  background: var(--paper);
+  padding-bottom: calc(96rpx + env(safe-area-inset-bottom));
+}
+
+/* ===== 头图 ===== */
+.hero-wrap {
+  position: relative;
+}
+.hero {
+  width: 100%;
+  height: 440rpx;
+  display: block;
+}
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27, 30, 25, 0.05) 30%, rgba(27, 30, 25, 0.5) 100%);
+}
+.hero-title {
+  position: absolute;
+  left: 48rpx;
+  bottom: 56rpx;
+  display: flex;
+  flex-direction: column;
+  color: #FFFFFF;
+}
+.ht-sub {
+  font-size: 24rpx;
+  letter-spacing: 6rpx;
+  opacity: 0.85;
+}
+.ht-main {
+  font-size: 48rpx;
+  letter-spacing: 8rpx;
+  font-weight: 600;
+  margin-top: 12rpx;
+  text-shadow: 0 2rpx 16rpx rgba(27, 30, 25, 0.4);
+}
+.hero-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40rpx;
+  background: linear-gradient(180deg, rgba(239, 240, 236, 0) 0%, var(--paper) 100%);
+}
+
+/* ===== 起兴对句 ===== */
+.couplet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 48rpx 8rpx;
+}
+.couplet-line {
+  font-size: 30rpx;
+  line-height: 2;
+  letter-spacing: 4rpx;
+  color: var(--ink);
+}
+.ornament {
+  display: block;
+  width: 280rpx;
+  height: 28rpx;
+  margin: 28rpx auto 0;
+}
+
+/* ===== 章节 ===== */
+.chapter {
+  padding: 48rpx 48rpx 0;
+}
+.chapter-head {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.chapter-no {
+  width: 56rpx;
+  height: 56rpx;
+  border: 2rpx solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: var(--accent);
+}
+.chapter-title {
+  font-size: 36rpx;
+  letter-spacing: 6rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+.para {
+  display: block;
+  font-size: 28rpx;
+  line-height: 2;
+  letter-spacing: 1rpx;
+  color: var(--ink-soft);
+  text-align: justify;
+}
+.para + .para {
+  margin-top: 16rpx;
+}
+
+/* 桥·水·汀 三字意象（官方 logo 三色，无圆圈） */
+.triad {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40rpx;
+  gap: 20rpx;
+}
+.triad-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.triad-char {
+  font-size: 64rpx;
+  line-height: 1.15;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+.c-red { color: var(--brand-red); }
+.c-teal { color: var(--brand-teal); }
+.c-olive { color: var(--brand-olive); }
+.triad-line {
+  font-size: 22rpx;
+  letter-spacing: 3rpx;
+  text-indent: 3rpx;
+  line-height: 1.9;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* 引文 */
+.quote {
+  margin: 28rpx 0;
+  padding: 28rpx 32rpx;
+  border-left: 6rpx solid var(--brand-red);
+  background: var(--banner);
+  border-radius: 0 12rpx 12rpx 0;
+}
+.quote-txt {
+  font-size: 32rpx;
+  letter-spacing: 4rpx;
+  color: var(--ink);
+}
+
+/* 配图 */
+.figure {
+  margin-top: 32rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+.figure-img {
+  width: 100%;
+  height: 280rpx;
+  display: block;
+}
+.figure-cap {
+  padding: 20rpx 32rpx;
+  font-size: 24rpx;
+  letter-spacing: 2rpx;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ===== 收束 ===== */
+.finale {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56rpx 48rpx 0;
+}
+.finale .ornament {
+  margin: 0 auto 36rpx;
+}
+.finale-line {
+  font-size: 28rpx;
+  line-height: 2;
+  letter-spacing: 2rpx;
+  color: var(--ink-soft);
+}
+.finale-big {
+  font-size: 44rpx;
+  letter-spacing: 8rpx;
+  color: var(--ink);
+  font-weight: 600;
+  margin-top: 32rpx;
+}
+.finale-btn {
+  width: 100%;
+  margin-top: 48rpx;
+}
+.hover { opacity: 0.88; }
+
+/* 缓入 */
+.floor-in {
+  animation: floorIn 380ms ease-out both;
+}

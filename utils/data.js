@@ -226,9 +226,23 @@ module.exports = {
    * - singles：容量适配的单间（含各自可订状态）
    * - combos：拼间方案——仅当单间容不下该人数、或适配单间全部订满时返回（作兜底）
    * - allFull：无任何可订方案（触发「留电话 · 有位回电」）
+   *
+   * tierRemaining：来自云端 check-availability 的档位余量 { small, large }；
+   * 传入时以其判定可订状态（档位粒度，DB 触发器做提交硬兜底），
+   * 不传则退回本地 seededStatus 乐观展示。
    */
-  optionsForGuests(guests, dateStr, daypart) {
-    const avail = (id) => seededStatus(id, dateStr, daypart) === 'available';
+  optionsForGuests(guests, dateStr, daypart, tierRemaining) {
+    const seeded = (id) => seededStatus(id, dateStr, daypart) === 'available';
+    const singleAvail = (r) => {
+      if (!tierRemaining) return seeded(r.room_id);
+      const rem = r.room_size_tier === 'large' ? tierRemaining.large : tierRemaining.small;
+      return (rem || 0) >= 1;
+    };
+    // 拼间全部由小包间组成：剩余小包间数 >= 拼间所含间数才可订
+    const comboAvail = (parts) => {
+      if (!tierRemaining) return parts.every((r) => seeded(r.room_id));
+      return (tierRemaining.small || 0) >= parts.length;
+    };
 
     const singles = ROOMS
       .filter((r) => guests >= r.min_guests && guests <= r.max_guests)
@@ -241,7 +255,7 @@ module.exports = {
         maxG: r.max_guests,
         roomTier: r.room_size_tier === 'large' ? 'large' : 'small',
         hasKtv: r.has_ktv,
-        available: avail(r.room_id),
+        available: singleAvail(r),
         roomIds: [r.room_id]
       }))
       // 可订优先，其次容量最贴合者优先——保证「最合适的可订包间」排在列表最上方
@@ -266,7 +280,7 @@ module.exports = {
           minG,
           roomTier: 'combo',
           hasKtv: parts.some((r) => r.has_ktv),
-          available: parts.every((r) => avail(r.room_id)),
+          available: comboAvail(parts),
           roomIds: c.room_ids.slice()
         };
       })

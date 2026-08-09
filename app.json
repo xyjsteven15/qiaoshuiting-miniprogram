@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/home",
+    "pages/story/story",
     "pages/reserve/reserve",
     "pages/room-selection/room-selection",
     "pages/reserve-confirm/reserve-confirm",
@@ -8,18 +9,18 @@
     "pages/mine/mine"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#F5F0E8",
+    "navigationBarBackgroundColor": "#EFF0EC",
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "桥水汀",
-    "backgroundColor": "#F5F0E8",
+    "backgroundColor": "#EFF0EC",
     "backgroundTextStyle": "dark",
     "enablePullDownRefresh": false
   },
   "tabBar": {
     "custom": true,
-    "color": "#666056",
-    "selectedColor": "#8B2500",
-    "backgroundColor": "#F5F0E8",
+    "color": "#64665E",
+    "selectedColor": "#262A24",
+    "backgroundColor": "#EFF0EC",
     "borderStyle": "white",
     "list": [
       { "pagePath": "pages/home/home", "text": "首页" },

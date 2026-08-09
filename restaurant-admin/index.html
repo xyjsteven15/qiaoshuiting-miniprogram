@@ -1,339 +1,350 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>桥水汀 · Reservation Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex,nofollow" />
+<title>桥水汀 · 店长控制台</title>
 <style>
-  /* Restaurant-side console (prototype).
-     Sample data only. Real version subscribes to Supabase Realtime
-     (table: reservations) — see docs/backend-architecture.md. */
-  :root{
-    --paper:#F5F0E8; --card:#FFFFFF; --banner:#FAF6EE;
-    --ink:#1A1A1A; --ink-soft:#666056; --muted:#9E9689;
-    --accent:#8B2500; --line:#E0D8CC; --ok:#2E7D32; --ok-bg:#E2F0D9;
-    --warn:#B26A00; --warn-bg:#FBEED2;
+  :root {
+    --paper: #EFF0EC;
+    --card: #FFFFFF;
+    --ink: #262A24;
+    --ink-soft: #5C6156;
+    --muted: #9CA093;
+    --line: #DBDBD2;
+    --red: #9E3B32;
+    --teal: #4E7672;
+    --gold: #8A6D3F;
+    --ok-bg: #E4EDE6;
+    --rose-bg: #EEF1ED;
+    --serif: "Songti SC", "STSong", "SimSun", serif;
   }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:-apple-system,"Segoe UI","PingFang SC","Helvetica Neue",sans-serif;}
-  .serif{font-family:"Lora","Songti SC","STSong",serif;}
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .serif { font-family: var(--serif); }
 
-  header{display:flex;align-items:center;justify-content:space-between;
-    padding:20px 32px;background:var(--card);border-bottom:1px solid var(--line);}
-  .brand{display:flex;align-items:baseline;gap:12px;}
-  .brand .name{font-size:22px;font-weight:600;letter-spacing:4px;color:var(--ink);}
-  .brand .sub{font-size:12px;letter-spacing:2px;color:var(--muted);}
-  .live{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft);}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);
-    box-shadow:0 0 0 0 rgba(46,125,50,.5);animation:pulse 1.8s infinite;}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,125,50,.45)}70%{box-shadow:0 0 0 8px rgba(46,125,50,0)}100%{box-shadow:0 0 0 0 rgba(46,125,50,0)}}
+  /* ===== 登录页 ===== */
+  #login {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 14px;
+  }
+  #login .wordmark { font-size: 40px; letter-spacing: 14px; text-indent: 14px; color: var(--ink); font-weight: 600; }
+  #login .en { font-size: 10px; letter-spacing: 3px; color: var(--muted); margin: 2px 0 8px; }
+  #login h1 { font-size: 20px; letter-spacing: 4px; font-weight: 600; }
+  #login .sub { font-size: 12px; color: var(--muted); letter-spacing: 2px; margin-bottom: 12px; }
+  #login input {
+    width: 260px;
+    padding: 14px 16px;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    outline: none;
+  }
+  #login input:focus { border-color: var(--ink); }
+  #login button {
+    width: 260px;
+    padding: 14px 0;
+    font-size: 16px;
+    letter-spacing: 6px;
+    color: #fff;
+    background: var(--ink);
+    border: none;
+    border-radius: 8px;
+  }
+  #login .err { font-size: 13px; color: var(--red); min-height: 18px; }
 
-  main{max-width:1120px;margin:0 auto;padding:24px 32px 60px;}
+  /* ===== 控制台 ===== */
+  #dash { display: none; max-width: 640px; margin: 0 auto; padding: 0 16px 60px; }
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--paper);
+    padding: 14px 0 10px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .title { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
+  .topbar .spacer { flex: 1; }
+  .icon-btn {
+    font-size: 13px; color: var(--ink-soft);
+    border: 1px solid var(--line); background: var(--card);
+    border-radius: 6px; padding: 6px 12px;
+  }
+  .stats { display: flex; gap: 10px; padding: 14px 0; }
+  .stat {
+    flex: 1; background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 4px; text-align: center;
+  }
+  .stat .n { font-size: 22px; font-weight: 700; font-family: var(--serif); }
+  .stat .t { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .stat.pending .n { color: var(--gold); }
+  .stat.confirmed .n { color: var(--teal); }
+  .stat.cancelled .n { color: var(--muted); }
 
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px;}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;}
-  .stat .k{font-size:12px;color:var(--ink-soft);letter-spacing:1px;}
-  .stat .v{font-size:30px;font-weight:700;color:var(--accent);margin-top:6px;}
-  .stat .v small{font-size:14px;color:var(--muted);font-weight:400;margin-left:4px;}
+  .filters { display: flex; gap: 8px; padding-bottom: 12px; overflow-x: auto; }
+  .chip {
+    flex: none; font-size: 13px; padding: 6px 14px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--card); color: var(--ink-soft);
+  }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-  .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:12px;}
-  .filters{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{padding:7px 16px;border:1px solid var(--line);border-radius:20px;background:var(--card);
-    font-size:13px;color:var(--ink-soft);cursor:pointer;}
-  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .btn{padding:8px 16px;border:1px solid var(--accent);border-radius:6px;background:var(--accent);
-    color:#fff;font-size:13px;cursor:pointer;}
-  .btn.ghost{background:#fff;color:var(--accent);}
+  .day-group { margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px; margin-top: 8px;
+  }
+  .card.dim { opacity: .55; }
+  .row1 { display: flex; align-items: center; gap: 8px; }
+  .code { font-weight: 600; font-size: 15px; }
+  .st {
+    margin-left: auto; font-size: 11px; border-radius: 4px; padding: 3px 10px;
+  }
+  .st.pending { color: var(--gold); background: #F4EEE1; }
+  .st.confirmed { color: var(--teal); background: var(--ok-bg); }
+  .st.seated { color: #fff; background: var(--teal); }
+  .st.no_show, .st.cancelled { color: var(--muted); background: var(--rose-bg); }
+  .meta { margin-top: 8px; font-size: 14px; line-height: 1.9; }
+  .meta .who { color: var(--ink-soft); }
+  .meta a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  .note { margin-top: 6px; font-size: 13px; color: var(--gold); background: #FAF7EF; border-radius: 6px; padding: 6px 10px; }
+  .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .act {
+    flex: 1; text-align: center; font-size: 14px; padding: 9px 0;
+    border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); background: #fff;
+  }
+  .act.primary { background: var(--ink); color: #fff; }
+  .act.danger { border-color: var(--red); color: var(--red); }
+  .act:disabled { opacity: .4; }
 
-  .board{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
-  table{width:100%;border-collapse:collapse;}
-  thead th{text-align:left;font-size:12px;letter-spacing:1px;color:var(--muted);
-    padding:14px 16px;border-bottom:1px solid var(--line);font-weight:500;}
-  tbody td{padding:14px 16px;border-bottom:1px solid #F0EBE1;font-size:14px;vertical-align:middle;}
-  tbody tr:last-child td{border-bottom:none;}
-  tbody tr.flash{animation:flash 1.6s ease-out;}
-  @keyframes flash{0%{background:#FBEED2}100%{background:transparent}}
-  .code{font-weight:600;color:var(--ink);}
-  .when .d{color:var(--ink);} .when .t{color:var(--ink-soft);font-size:12px;}
-  .room{display:inline-flex;align-items:center;gap:6px;}
-  .ktv{font-size:10px;color:#fff;background:var(--accent);border-radius:3px;padding:1px 5px;}
-  .phone{color:var(--ink-soft);font-variant-numeric:tabular-nums;}
-  .note{color:var(--muted);font-size:12px;max-width:180px;}
-
-  .status{display:inline-block;font-size:12px;border-radius:4px;padding:3px 10px;font-weight:500;}
-  .s-pending{color:var(--warn);background:var(--warn-bg);}
-  .s-confirmed{color:var(--ok);background:var(--ok-bg);}
-  .s-seated{color:#1553B2;background:#DCEAFB;}
-  .s-cancelled{color:var(--muted);background:#EFEBE3;}
-
-  .acts{display:flex;gap:6px;}
-  .mini{font-size:12px;padding:5px 10px;border-radius:5px;border:1px solid var(--line);
-    background:#fff;color:var(--ink-soft);cursor:pointer;}
-  .mini.pri{border-color:var(--accent);color:var(--accent);}
-
-  .foot-note{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
-  code{background:#EFEBE3;padding:1px 6px;border-radius:4px;color:var(--accent);}
-
-  /* Callback / 等位回电 */
-  .callback-sec{margin-top:32px;}
-  .sec-title{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:1px;}
-  .sec-sub{font-size:12px;color:var(--muted);font-weight:400;margin-left:10px;letter-spacing:0;}
-  .s-waiting{color:var(--warn);background:var(--warn-bg);}
-  .s-contacted{color:var(--muted);background:#EFEBE3;}
-
-  /* Passcode gate (single shared passcode, no accounts) */
-  .gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:999;}
-  .gate.hidden{display:none;}
-  .gate-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:40px 36px;width:340px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.08);}
-  .gate-title{font-size:24px;letter-spacing:6px;color:var(--ink);font-weight:600;}
-  .gate-sub{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:8px;}
-  .gate-input{width:100%;margin-top:24px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-size:15px;text-align:center;letter-spacing:2px;box-sizing:border-box;}
-  .gate-input:focus{outline:none;border-color:var(--accent);}
-  .gate-btn{width:100%;margin-top:14px;padding:12px 0;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:15px;letter-spacing:6px;cursor:pointer;}
-  .gate-err{color:#B00020;font-size:12px;margin-top:10px;min-height:16px;}
-  .gate-note{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.7;}
+  .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 48px 0; }
+  .loading { text-align: center; color: var(--muted); font-size: 14px; padding: 32px 0; }
+  .foot { text-align: center; font-size: 11px; color: var(--muted); margin-top: 32px; letter-spacing: 1px; }
 </style>
 </head>
 <body>
-  <div class="gate" id="gate">
-    <div class="gate-card">
-      <div class="gate-title serif">桥水汀</div>
-      <div class="gate-sub">RESERVATION CONSOLE · 店长入口</div>
-      <input class="gate-input" id="passcode" type="password" placeholder="请输入访问口令" autocomplete="off" />
-      <button class="gate-btn" id="enter">进 入</button>
-      <div class="gate-err" id="gate-err"></div>
-      <div class="gate-note">私密链接 + 口令进入（演示口令：qst-2026）。<br/>正式版口令改由 Supabase Edge Function 在服务端校验。</div>
-    </div>
+
+<!-- ===== 登录 ===== -->
+<div id="login">
+  <div class="wordmark serif">桥水汀</div>
+  <div class="en">QIAO SHUI TING</div>
+  <h1 class="serif">店长控制台</h1>
+  <div class="sub">桥水汀 · 预订管理</div>
+  <input id="pass" type="password" placeholder="请输入管理口令" autocomplete="off" />
+  <button id="enter">进 入</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<!-- ===== 控制台 ===== -->
+<div id="dash">
+  <div class="topbar">
+    <div class="title serif">预订管理</div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="refresh">刷新</button>
+    <button class="icon-btn" id="logout">退出</button>
   </div>
 
-  <header>
-    <div class="brand">
-      <span class="name serif">桥水汀</span>
-      <span class="sub">RESERVATION CONSOLE · 千帆路239弄 G60科创云廊</span>
-    </div>
-    <div class="live"><span class="dot"></span> Live · connected (demo)</div>
-  </header>
+  <div class="stats">
+    <div class="stat"><div class="n" id="nToday">0</div><div class="t">今日订单</div></div>
+    <div class="stat pending"><div class="n" id="nPending">0</div><div class="t">待确认</div></div>
+    <div class="stat confirmed"><div class="n" id="nConfirmed">0</div><div class="t">已确认</div></div>
+    <div class="stat cancelled"><div class="n" id="nCancelled">0</div><div class="t">已取消</div></div>
+  </div>
 
-  <main>
-    <section class="stats">
-      <div class="stat"><div class="k">TODAY</div><div class="v" id="st-today">0<small>bookings</small></div></div>
-      <div class="stat"><div class="k">PENDING</div><div class="v" id="st-pending">0<small>to confirm</small></div></div>
-      <div class="stat"><div class="k">GUESTS TODAY</div><div class="v" id="st-guests">0<small>pax</small></div></div>
-      <div class="stat"><div class="k">UPCOMING</div><div class="v" id="st-upcoming">0<small>days ahead</small></div></div>
-    </section>
+  <div class="filters" id="filters">
+    <button class="chip on" data-f="upcoming">待服务</button>
+    <button class="chip" data-f="today">今天</button>
+    <button class="chip" data-f="pending">待确认</button>
+    <button class="chip" data-f="cancelled">已取消</button>
+    <button class="chip" data-f="all">全部</button>
+  </div>
 
-    <div class="toolbar">
-      <div class="filters" id="filters">
-        <span class="chip on" data-f="all">All</span>
-        <span class="chip" data-f="pending">Pending</span>
-        <span class="chip" data-f="confirmed">Confirmed</span>
-        <span class="chip" data-f="seated">Seated</span>
-        <span class="chip" data-f="cancelled">Cancelled</span>
-      </div>
-      <button class="btn" id="simulate">+ Simulate incoming reservation</button>
-    </div>
-
-    <div class="board">
-      <table>
-        <thead>
-          <tr>
-            <th>Code</th><th>Date · Time</th><th>Party</th><th>Room</th>
-            <th>Guest</th><th>Phone</th><th>Note</th><th>Status</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-
-    <section class="callback-sec">
-      <div class="toolbar">
-        <div class="sec-title">Callback · 等位回电 <span class="sec-sub">订满时客人留下的电话，有位后回电通知</span></div>
-        <button class="btn ghost" id="simulate-cb">+ Simulate callback request</button>
-      </div>
-      <div class="board">
-        <table>
-          <thead>
-            <tr>
-              <th>Requested At</th><th>Date · Time</th><th>Party</th><th>Tier</th>
-              <th>Guest</th><th>Phone</th><th>Status</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="cb-rows"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <p class="foot-note">
-      Prototype with sample data. Production connects to <code>Supabase Realtime</code> on
-      <code>table: reservations</code> and <code>table: callback_requests</code> — new bookings and callback requests from the Mini Program appear here instantly.<br/>
-      See <code>docs/backend-architecture.md</code> for schema, API and RLS.
-    </p>
-  </main>
+  <div id="list"><div class="loading">加载中…</div></div>
+  <div class="foot">桥水汀 · 一席山水，等你归来</div>
+</div>
 
 <script>
-  const TODAY = '2026-08-05';
-  let filter = 'all';
+const API = 'https://wkfplrhiigsdfnmylgov.supabase.co/functions/v1/admin-manage';
+const STATUS_TXT = { pending: '待确认', confirmed: '已确认', seated: '已到店', no_show: '未到', cancelled: '已取消' };
+const DAYPART = { lunch: '午市', dinner: '晚市' };
+const TIER = { small: '小包厢', large: '大包厢' };
 
-  let data = [
-    {code:'QST20260805001', date:'2026-08-05', time:'18:00', daypart:'dinner', guests:6,  tier:'垂虹居', ktv:false, name:'张先生', phone:'138****8821', note:'忌辣', status:'confirmed'},
-    {code:'QST20260805002', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:4,  tier:'羡鱼轩', ktv:false, name:'李女士', phone:'139****5566', note:'', status:'seated'},
-    {code:'QST20260805003', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:12, tier:'徽来堂', ktv:true,  name:'王总',   phone:'137****0093', note:'签约庆祝，需布置', status:'pending'},
-    {code:'QST20260806001', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:22, tier:'桥瑜汀+羡鱼轩', ktv:false, name:'赵经理', phone:'135****7788', note:'拼间', status:'confirmed'},
-    {code:'QST20260807001', date:'2026-08-07', time:'11:30', daypart:'lunch',  guests:2,  tier:'桥瑜汀', ktv:false, name:'陈先生', phone:'136****2210', note:'靠窗', status:'pending'},
-    {code:'QST20260804009', date:'2026-08-04', time:'19:30', daypart:'dinner', guests:10, tier:'垂虹居', ktv:false, name:'周女士', phone:'188****4412', note:'', status:'cancelled'}
-  ];
+let passcode = sessionStorage.getItem('qst_admin_pass') || '';
+let all = [];
+let filter = 'upcoming';
 
-  const STATUS_LABEL = {pending:'Pending', confirmed:'Confirmed', seated:'Seated', cancelled:'Cancelled'};
+const $ = (id) => document.getElementById(id);
 
-  function fmtDate(d){
-    const [y,m,day] = d.split('-').map(Number);
-    const wk = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(y,m-1,day).getDay()];
-    return `${m}/${day} ${wk}`;
-  }
-
-  function render(){
-    const rows = document.getElementById('rows');
-    const list = data.filter(r => filter==='all' ? true : r.status===filter);
-    rows.innerHTML = list.map(r => `
-      <tr data-code="${r.code}">
-        <td class="code">#${r.code}</td>
-        <td class="when"><span class="d">${fmtDate(r.date)}</span> · <span class="t">${r.time} ${r.daypart==='lunch'?'午市':'晚市'}</span></td>
-        <td>${r.guests} pax</td>
-        <td><span class="room">${r.tier}${r.ktv?'<span class="ktv">KTV</span>':''}</span></td>
-        <td>${r.name}</td>
-        <td class="phone">${r.phone}</td>
-        <td class="note">${r.note||'—'}</td>
-        <td><span class="status s-${r.status}">${STATUS_LABEL[r.status]}</span></td>
-        <td class="acts">${actions(r)}</td>
-      </tr>`).join('');
-    // stats
-    const today = data.filter(r=>r.date===TODAY && r.status!=='cancelled');
-    document.getElementById('st-today').innerHTML = today.length + '<small>bookings</small>';
-    document.getElementById('st-pending').innerHTML = data.filter(r=>r.status==='pending').length + '<small>to confirm</small>';
-    document.getElementById('st-guests').innerHTML = today.reduce((s,r)=>s+r.guests,0) + '<small>pax</small>';
-    document.getElementById('st-upcoming').innerHTML = new Set(data.filter(r=>r.date>TODAY && r.status!=='cancelled').map(r=>r.date)).size + '<small>days ahead</small>';
-  }
-
-  function actions(r){
-    if(r.status==='pending')  return `<button class="mini pri" data-a="confirm">Confirm</button><button class="mini" data-a="cancel">Cancel</button>`;
-    if(r.status==='confirmed')return `<button class="mini pri" data-a="seat">Seat</button><button class="mini" data-a="cancel">Cancel</button>`;
-    if(r.status==='seated')   return `<span class="note">—</span>`;
-    return `<span class="note">—</span>`;
-  }
-
-  document.getElementById('rows').addEventListener('click', e=>{
-    const btn = e.target.closest('button[data-a]'); if(!btn) return;
-    const code = e.target.closest('tr').dataset.code;
-    const r = data.find(x=>x.code===code); if(!r) return;
-    const a = btn.dataset.a;
-    if(a==='confirm') r.status='confirmed';
-    if(a==='seat')    r.status='seated';
-    if(a==='cancel')  r.status='cancelled';
-    render();
+async function call(action, extra = {}) {
+  const resp = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ passcode, action, ...extra })
   });
+  if (resp.status === 401) throw new Error('unauthorized');
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(data.error || ('HTTP ' + resp.status));
+  return data;
+}
 
-  document.getElementById('filters').addEventListener('click', e=>{
-    const chip = e.target.closest('.chip'); if(!chip) return;
-    filter = chip.dataset.f;
-    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on', c===chip));
-    render();
-  });
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 
-  // Demo of a "new reservation arriving" (what Supabase Realtime would push)
-  let seq = 4;
-  document.getElementById('simulate').addEventListener('click', ()=>{
-    const names=['孙先生','钱女士','吴总','郑经理'];
-    const times=['17:30','18:00','18:30','19:00'];
-    const n = String(seq++).padStart(3,'0');
-    const rooms=['桥瑜汀','羡鱼轩','垂虹居','徽来堂','桥瑜汀+垂虹居'];
-    const rec = {
-      code:'QST20260805'+n, date:TODAY, time:times[Math.floor(Math.random()*times.length)],
-      daypart:'dinner', guests:2+Math.floor(Math.random()*12),
-      tier:rooms[Math.floor(Math.random()*rooms.length)], ktv:Math.random()>0.7,
-      name:names[Math.floor(Math.random()*names.length)],
-      phone:'1'+(3+Math.floor(Math.random()*6))+'0****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
-      note:'', status:'pending'
-    };
-    data.unshift(rec);
-    filter='all';
-    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on', c.dataset.f==='all'));
-    render();
-    const tr = document.querySelector(`tr[data-code="${rec.code}"]`);
-    if(tr){ tr.classList.add('flash'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
-  });
+function enter() {
+  $('login').style.display = 'none';
+  $('dash').style.display = 'block';
+  load();
+}
 
-  render();
-
-  // ---- Callback requests (等位回电) demo ----
-  // Production: Supabase Realtime on table callback_requests — 客人在小程序
-  // 「订满 → 留电话」后出现在这里，回电后标记 Contacted。
-  let callbacks = [
-    {id:'cb01', created:'2026-08-05 10:12', date:'2026-08-05', time:'19:00', daypart:'dinner', guests:4,  tier:'小包厢', name:'刘女士', phone:'138****6677', status:'waiting'},
-    {id:'cb02', created:'2026-08-05 11:03', date:'2026-08-06', time:'18:30', daypart:'dinner', guests:12, tier:'大包厢', name:'孙总',   phone:'139****2233', status:'waiting'},
-    {id:'cb03', created:'2026-08-04 16:40', date:'2026-08-05', time:'12:00', daypart:'lunch',  guests:2,  tier:'',       name:'',       phone:'136****8890', status:'contacted'}
-  ];
-  const CB_STATUS_LABEL = {waiting:'Waiting', contacted:'Contacted'};
-
-  function renderCallbacks(){
-    const rows = document.getElementById('cb-rows');
-    rows.innerHTML = callbacks.map(c => `
-      <tr data-id="${c.id}">
-        <td class="when"><span class="t">${c.created.slice(5)}</span></td>
-        <td class="when"><span class="d">${fmtDate(c.date)}</span> · <span class="t">${c.time} ${c.daypart==='lunch'?'午市':'晚市'}</span></td>
-        <td>${c.guests} pax</td>
-        <td>${c.tier||'无偏好'}</td>
-        <td>${c.name||'—'}</td>
-        <td class="phone">${c.phone}</td>
-        <td><span class="status s-${c.status}">${CB_STATUS_LABEL[c.status]}</span></td>
-        <td class="acts">${c.status==='waiting'
-          ? `<button class="mini pri" data-a="contacted">Mark contacted</button><button class="mini" data-a="close">Close</button>`
-          : `<span class="note">—</span>`}</td>
-      </tr>`).join('');
+async function load() {
+  $('list').innerHTML = '<div class="loading">加载中…</div>';
+  try {
+    const data = await call('list');
+    all = data.reservations || [];
+    renderStats();
+    renderList();
+  } catch (e) {
+    if (e.message === 'unauthorized') return logout('口令已失效，请重新登录');
+    $('list').innerHTML = '<div class="empty">加载失败，请点右上角刷新重试</div>';
   }
+}
 
-  document.getElementById('cb-rows').addEventListener('click', e=>{
-    const btn = e.target.closest('button[data-a]'); if(!btn) return;
-    const id = e.target.closest('tr').dataset.id;
-    const c = callbacks.find(x=>x.id===id); if(!c) return;
-    if(btn.dataset.a==='contacted') c.status='contacted';
-    if(btn.dataset.a==='close') callbacks = callbacks.filter(x=>x.id!==id);
-    renderCallbacks();
-  });
+function renderStats() {
+  const t = todayStr();
+  $('nToday').textContent = all.filter(r => r.reserve_date === t && r.status !== 'cancelled').length;
+  $('nPending').textContent = all.filter(r => r.status === 'pending').length;
+  $('nConfirmed').textContent = all.filter(r => r.status === 'confirmed').length;
+  $('nCancelled').textContent = all.filter(r => r.status === 'cancelled').length;
+}
 
-  let cbSeq = 4;
-  document.getElementById('simulate-cb').addEventListener('click', ()=>{
-    const names=['周先生','吴女士','徐经理',''];
-    const rec = {
-      id:'cb'+String(cbSeq++).padStart(2,'0'), created:'2026-08-05 12:'+String(10+Math.floor(Math.random()*49)),
-      date:TODAY, time:Math.random()>0.5?'18:00':'19:00', daypart:'dinner',
-      guests:2+Math.floor(Math.random()*10), tier:Math.random()>0.5?'小包厢':'大包厢',
-      name:names[Math.floor(Math.random()*names.length)],
-      phone:'1'+(3+Math.floor(Math.random()*6))+'5****'+String(1000+Math.floor(Math.random()*8999)).slice(0,4),
-      status:'waiting'
-    };
-    callbacks.unshift(rec);
-    renderCallbacks();
-    const tr = document.querySelector(`#cb-rows tr[data-id="${rec.id}"]`);
-    if(tr){ tr.classList.add('flash'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
-  });
-
-  renderCallbacks();
-
-  // ---- Passcode gate (UI-only demo) ----
-  // TODO(backend): replace with a Supabase Edge Function that verifies the
-  // passcode server-side; the DB keys must never live in this file.
-  const DEMO_PASSCODE = 'qst-2026';
-  const gate = document.getElementById('gate');
-  function unlock(){ gate.classList.add('hidden'); try{ sessionStorage.setItem('qst_console_ok','1'); }catch(e){} }
-  function tryEnter(){
-    const v = document.getElementById('passcode').value.trim();
-    if(v === DEMO_PASSCODE){ document.getElementById('gate-err').textContent=''; unlock(); }
-    else { document.getElementById('gate-err').textContent = '口令不正确'; }
+function visible() {
+  const t = todayStr();
+  switch (filter) {
+    case 'today': return all.filter(r => r.reserve_date === t);
+    case 'pending': return all.filter(r => r.status === 'pending');
+    case 'cancelled': return all.filter(r => r.status === 'cancelled');
+    case 'upcoming': return all.filter(r => r.reserve_date >= t && (r.status === 'pending' || r.status === 'confirmed'));
+    default: return all;
   }
-  if(sessionStorage.getItem('qst_console_ok')==='1'){ unlock(); }
-  document.getElementById('enter').addEventListener('click', tryEnter);
-  document.getElementById('passcode').addEventListener('keydown', e=>{ if(e.key==='Enter') tryEnter(); });
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderList() {
+  const rows = visible();
+  if (!rows.length) { $('list').innerHTML = '<div class="empty">暂无订单</div>'; return; }
+  let html = '';
+  let lastDay = '';
+  for (const r of rows) {
+    if (r.reserve_date !== lastDay) {
+      lastDay = r.reserve_date;
+      html += `<div class="day-group">${esc(r.reserve_date)}${r.reserve_date === todayStr() ? ' · 今天' : ''}</div>`;
+    }
+    const room = esc(r.room_name || TIER[r.room_tier] || r.room_tier);
+    const dim = (r.status === 'cancelled' || r.status === 'no_show') ? ' dim' : '';
+    html += `<div class="card${dim}">
+      <div class="row1">
+        <span class="code">${esc(r.code)}</span>
+        ${r.has_ktv ? '<span class="st confirmed">KTV</span>' : ''}
+        <span class="st ${esc(r.status)}">${STATUS_TXT[r.status] || esc(r.status)}</span>
+      </div>
+      <div class="meta">
+        ${DAYPART[r.daypart] || ''} ${esc(r.reserve_time)} · ${r.guests}人 · ${room}<br/>
+        <span class="who">${esc(r.contact_name)}</span>　<a href="tel:${esc(r.contact_phone)}">${esc(r.contact_phone)}</a>
+      </div>
+      ${r.note ? `<div class="note">备注：${esc(r.note)}</div>` : ''}
+      ${actions(r)}
+    </div>`;
+  }
+  $('list').innerHTML = html;
+}
+
+function actions(r) {
+  let btns = [];
+  if (r.status === 'pending') {
+    btns = [
+      `<button class="act primary" onclick="setStatus('${r.id}','confirmed',this)">确认</button>`,
+      `<button class="act danger" onclick="setStatus('${r.id}','cancelled',this,true)">取消</button>`
+    ];
+  } else if (r.status === 'confirmed') {
+    btns = [
+      `<button class="act primary" onclick="setStatus('${r.id}','seated',this)">已到店</button>`,
+      `<button class="act" onclick="setStatus('${r.id}','no_show',this,true)">未到</button>`,
+      `<button class="act danger" onclick="setStatus('${r.id}','cancelled',this,true)">取消</button>`
+    ];
+  } else if (r.status === 'cancelled' || r.status === 'no_show') {
+    btns = [`<button class="act" onclick="setStatus('${r.id}','pending',this)">恢复待确认</button>`];
+  } else {
+    return '';
+  }
+  return `<div class="actions">${btns.join('')}</div>`;
+}
+
+async function setStatus(id, to, btn, danger) {
+  const txt = { confirmed: '确认该订单？', cancelled: '确定取消该订单？顾客端不会收到通知，建议电话告知。', no_show: '标记为未到？' }[to];
+  if (danger && !confirm(txt || '确定操作？')) return;
+  btn.disabled = true;
+  try {
+    await call('update_status', { id, to });
+    await load();
+  } catch (e) {
+    btn.disabled = false;
+    alert('操作失败：' + e.message);
+  }
+}
+
+function logout(msg) {
+  sessionStorage.removeItem('qst_admin_pass');
+  passcode = '';
+  $('dash').style.display = 'none';
+  $('login').style.display = 'flex';
+  if (msg) $('loginErr').textContent = msg;
+}
+
+$('enter').addEventListener('click', async () => {
+  passcode = $('pass').value.trim();
+  if (!passcode) { $('loginErr').textContent = '请输入口令'; return; }
+  $('loginErr').textContent = '';
+  $('enter').disabled = true;
+  try {
+    await call('list', { status: 'pending' });
+    sessionStorage.setItem('qst_admin_pass', passcode);
+    enter();
+  } catch (e) {
+    $('loginErr').textContent = e.message === 'unauthorized' ? '口令不正确' : '网络异常，请重试';
+  } finally {
+    $('enter').disabled = false;
+  }
+});
+$('pass').addEventListener('keydown', e => { if (e.key === 'Enter') $('enter').click(); });
+$('refresh').addEventListener('click', load);
+$('logout').addEventListener('click', () => logout());
+$('filters').addEventListener('click', e => {
+  const b = e.target.closest('.chip');
+  if (!b) return;
+  filter = b.dataset.f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b));
+  renderList();
+});
+
+if (passcode) enter();
 </script>
 </body>
 </html>
