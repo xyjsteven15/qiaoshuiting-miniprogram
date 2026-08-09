@@ -244,7 +244,8 @@ module.exports = {
         available: avail(r.room_id),
         roomIds: [r.room_id]
       }))
-      .sort((a, b) => a.maxG - b.maxG);
+      // 可订优先，其次容量最贴合者优先——保证「最合适的可订包间」排在列表最上方
+      .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
 
     const singleFits = singles.length > 0;
     const singleAvailable = singles.some((s) => s.available);
@@ -270,7 +271,7 @@ module.exports = {
         };
       })
       .filter((c) => guests >= c.minG && guests <= c.maxG)
-      .sort((a, b) => a.maxG - b.maxG);
+      .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
 
     return {
       singles,
