@@ -6,9 +6,15 @@ Status: **partially implemented.**
 |---|---|
 | `reservations` table + RLS on Supabase | ✅ done (project `wkfplrhiigsdfnmylgov`) |
 | Mini Program writes bookings to the DB | ✅ done (`utils/supabase.js`) |
+| Mini Program cancels bookings | ✅ done (Edge Function `cancel-reservation`: verifies `code` + `contact_phone` match, then sets `status='cancelled'` via service role; idempotent, returns 404 on mismatch) |
+| Restaurant console reads/manages orders | ✅ done (Edge Function `admin-manage` + `restaurant-admin/index.html`; passcode SHA-256 stored in `admin_credentials`, verified server-side; actions: `list` / `update_status`). Hosted at **https://restaurant-admin-tau-indol.vercel.app** (Vercel, project `xyjsteven15s-projects/restaurant-admin`; redeploy after editing with `vercel deploy --prod --yes` inside `restaurant-admin/`) |
+| New-booking push notification | ✅ live (trigger `reservations_notify_insert` → pg_net → Edge Function `new-reservation-notify` → WeCom group bot; webhook stored in `app_config.wecom_webhook_url`, end-to-end tested 2026-08-07) |
+| Cancellation push notification | ✅ live (trigger `reservations_notify_cancel` AFTER UPDATE OF status, fires only on transition into `cancelled` — catches both customer self-cancel and console cancel; same `new-reservation-notify` function renders a 「预订取消通知」 message, tested 2026-08-07) |
+| Room inventory / overbooking guard | ✅ live (`rooms` table: 3 small + 1 large; BEFORE INSERT trigger `reservations_enforce_capacity` rejects with `room_fully_booked` when active bookings (pending/confirmed/seated) for the same date+daypart+tier reach room count, with per-slot advisory lock against races; Edge Function `check-availability` (JWT) feeds live remaining counts to the room-selection page; tested 2026-08-07: 4th small-room booking rejected, cancellation releases capacity). ⚠️ tier-based — needs updating for per-room/combo model, see §7 |
+| Console→customer status sync | ✅ live (Edge Function `lookup-reservations`: phone+code matched, returns status strings only; `mine` page re-checks active bookings on every open, so manager-side confirm/cancel/seat is reflected on the customer's 「我的预订」; local creation status aligned to `pending`. Tested 2026-08-07: pending→confirmed→cancelled visible, wrong phone yields empty map) |
 | `callback_requests` table + RLS (等位回电) | ⬜ SQL ready in §2 — run it in the Supabase SQL editor, or via the Supabase MCP server (`.cursor/mcp.json`) |
 | Mini Program writes callback requests | ✅ done (`createCallbackRequest` in `utils/supabase.js`; needs the table above) |
-| Restaurant console reads from the DB | ⬜ next (Edge Function + passcode) |
+| Console shows callback requests (等位回电看板) | ⬜ next — extend `admin-manage` with `list_callbacks` / `update_callback` actions |
 | Tracking events pipeline | ⬜ later |
 
 **Access model in place:** the Mini Program ships a *publishable* key that has **INSERT only** — all other privileges were revoked, so a leaked key cannot read customer names or phone numbers. Verified: `POST` → `201`, `GET` → `401 permission denied`. The console will therefore read through an Edge Function using the service role, never the publishable key.
@@ -181,14 +187,24 @@ supabase
 - **Customers**: may `insert` reservations and `select` only their own rows (`openid = auth.jwt()->>'openid'`), if using Supabase auth with a WeChat provider; otherwise route customer writes through the backend service role.
 - **Console access = single passcode / private link** (chosen approach — simplest, no accounts). The 店长 opens a private URL and enters one shared passcode.
   - ⚠️ A passcode checked **in browser JS is not real security** (anyone can read the source). It only hides the UI.
-  - ✅ To make it actually secure without accounts: put the passcode check in a **Supabase Edge Function** that holds the DB access server-side. The browser sends `{ passcode }`; the function verifies it against a secret and returns the reservations. The DB keys never reach the browser.
-  - Passcode is a shared secret → rotate it if leaked; keep the private link unlisted.
+- ✅ To make it actually secure without accounts: put the passcode check in a **Supabase Edge Function** that holds the DB access server-side. The browser sends `{ passcode }`; the function verifies it against a secret and returns the reservations. The DB keys never reach the browser. (Implemented as `admin-manage`.)
+- Passcode is a shared secret → rotate it if leaked; keep the private link unlisted.
+- **Hosting note**: Supabase's gateway rewrites all `text/html` responses (Edge Functions *and* Storage public URLs) to `text/plain` with a sandboxed CSP — so the console page cannot be hosted on `*.supabase.co`. It is therefore hosted on Vercel (static file, no secrets in it; all data still goes through the passcode-gated `admin-manage` function).
 - Never ship the Supabase **service_role** key inside the Mini Program or the console — only the anon key (or go through the Edge Function / backend API).
 
 ## 6. Mini Program changes when the backend lands
 
-- `pages/reserve-confirm/reserve-confirm.js` `submit()` → `POST /reservations` instead of `app.globalData.reservations.unshift(...)`.
-- `pages/room-selection/room-selection.js` availability → `GET /rooms/availability`; when a date/daypart/party-size is fully booked, the page offers 「留电话 · 有位回电」 → `POST /callback_requests` (already wired via `createCallbackRequest`, backed by the local `seededStatus` mock until availability API lands).
-- `pages/mine/mine.js` list → `GET /reservations` for the current user; waitlist entries (`callbackRequests`) likewise stay local until read access exists.
+- `pages/reserve-confirm/reserve-confirm.js` `submit()` → `POST /reservations` instead of `app.globalData.reservations.unshift(...)`. ✅ done
+- `pages/room-selection/room-selection.js` availability → Edge Function `check-availability` (live counts per tier; DB trigger is the hard guard). ✅ done；当无可订方案时页面提供「留电话 · 有位回电」→ `POST /callback_requests`（`createCallbackRequest`，实时库存不可达时退回本地 `seededStatus` 乐观展示）。
+- `pages/mine/mine.js` list → `GET /reservations` for the current user. (intentionally local-only: anon key has no read access; cancellation goes through `cancel-reservation`)；等位登记（`callbackRequests`）同样仅本地留存。
 - `utils/track.js` `flush()` → `POST /track` (currently buffers in storage).
 - Add request domains in the mp console; keep keys in a config not committed to git.
+
+## 7. 包间模型升级后的后端跟进项（per-room / 拼间）
+
+C 端已改为按厅选择 + 可拆卸隔断拼间（桥瑜汀 ≤17 / 羡鱼轩 ≤14 / 垂虹居 ≤10，两两拼 ≤24/≤27/≤31，三间全拼 ≤41；徽来堂 11-20 不变）。现有后端按**档位**计数，需要跟进：
+
+- `rooms` 表种子数据更新各厅 `max_guests`（桥瑜汀 17、羡鱼轩 14、垂虹居 10）
+- `reservations_enforce_capacity` 触发器目前按 `date+daypart+room_tier` 计数：单间预订上送 `room_tier` 仍为 `small`/`large`（小包间共 3 间，语义恰好兼容）；但**拼间上送 `room_tier='combo'` 且无 `room_id`，会被触发器视为未知档位**——需改为按 `room_ids` 逐间占用判定（拼间 = 组成厅同时占用），或临时将 combo 映射为占用 N 个小包间容量
+- `check-availability` 目前返回档位余量；C 端已做映射（小包间单间可订 = small 余量 ≥1，拼间可订 = small 余量 ≥ 组成间数），后续可升级为按 `room_id` 返回逐间余量
+- `admin-manage` 增加 `list_callbacks` / `update_callback`，控制台展示等位回电并支持标记已回电

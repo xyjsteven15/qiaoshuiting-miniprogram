@@ -51,10 +51,37 @@
 
 /* 等位登记卡 */
 .rc-state.wait {
-  color: var(--accent);
+  color: var(--brand-red);
   background: #F5E9E2;
 }
 .wait-hint { font-size: 22rpx; color: var(--muted); }
+
+/* 已取消：整卡置灰，状态章变灰 */
+.rcard.cancelled { opacity: 0.55; }
+.rc-state.off {
+  color: var(--muted);
+  background: var(--rose-bg);
+}
+/* 待确认：金色章，提示店长还未确认 */
+.rc-state.pend {
+  color: #8A6D3F;
+  background: #F4EEE1;
+}
+
+/* 取消操作区 */
+.rc-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4rpx;
+}
+.rc-cancel {
+  font-size: 24rpx;
+  letter-spacing: 2rpx;
+  color: var(--brand-red);
+  border: 1rpx solid var(--brand-red);
+  border-radius: 6rpx;
+  padding: 10rpx 28rpx;
+}
 
 .empty {
   display: flex;

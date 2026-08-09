@@ -1,6 +1,6 @@
 const data = require('../../utils/data.js');
 const { track } = require('../../utils/track.js');
-const { createCallbackRequest } = require('../../utils/supabase.js');
+const { createCallbackRequest, checkAvailability } = require('../../utils/supabase.js');
 const app = getApp();
 
 Page({
@@ -25,25 +25,52 @@ Page({
     const dateStr = d.date || '';
     const daypart = draft.daypart || 'dinner';
 
-    const { singles, combos, allFull } = data.optionsForGuests(guests, dateStr, daypart);
+    this.setData({
+      banner: `${d.md || ''} ${d.week || ''} · ${draft.time || ''} · ${guests}人`
+    });
 
-    // 推荐：优先可订单间中容量最贴合者；单间全满时退到最贴合的可订拼间
-    let recommendKey = '';
-    const bestSingle = singles.find((s) => s.available);
-    const bestCombo = combos.find((c) => c.available);
-    if (bestSingle) recommendKey = bestSingle.key;
-    else if (bestCombo) recommendKey = bestCombo.key;
+    // 先用本地乐观状态渲染，真实库存由 loadAvailability 覆盖
+    // （真正的兜底由数据库容量守卫在提交时拦截）
+    this.renderOptions(guests, dateStr, daypart, null);
+    this.loadAvailability(guests, dateStr, daypart);
+  },
+
+  // 构建选项并应用推荐/选中逻辑；tierRemaining 为空表示本地乐观态
+  renderOptions(guests, dateStr, daypart, tierRemaining) {
+    const { singles, combos, allFull } = data.optionsForGuests(
+      guests,
+      dateStr,
+      daypart,
+      tierRemaining
+    );
+
+    // 推荐：可订且容量最贴合者优先（列表已按此排序，取首个可订项）
+    const best = singles.find((s) => s.available) || combos.find((c) => c.available);
+    const recommendKey = best ? best.key : '';
     singles.concat(combos).forEach((o) => {
       o.recommend = o.key === recommendKey;
     });
 
-    this.setData({
-      banner: `${d.md || ''} ${d.week || ''} · ${draft.time || ''} · ${guests}人`,
-      singles,
-      combos,
-      selectedKey: recommendKey,
-      allFull
-    });
+    // 若当前选中项已订满，自动切换到推荐项
+    const cur = singles.concat(combos).find((o) => o.key === this.data.selectedKey);
+    const selectedKey = cur && cur.available ? cur.key : recommendKey;
+
+    this.setData({ singles, combos, allFull, selectedKey });
+  },
+
+  // 拉取真实库存（同日期+时段，各档位剩余间数）；失败时保留乐观展示
+  loadAvailability(guests, dateStr, daypart) {
+    if (!dateStr) return;
+    checkAvailability(dateStr, daypart)
+      .then((map) => {
+        this.renderOptions(guests, dateStr, daypart, {
+          small: map.small && map.small.remaining,
+          large: map.large && map.large.remaining
+        });
+      })
+      .catch(() => {
+        wx.showToast({ title: '实时库存加载失败，可继续尝试预订', icon: 'none' });
+      });
   },
 
   findOption(key) {

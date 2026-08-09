@@ -1,0 +1,93 @@
+<view class="story">
+
+  <!-- 头图：徽来堂大宴包间 -->
+  <view class="hero-wrap">
+    <image class="hero" src="/assets/room-grand.jpg" mode="aspectFill"></image>
+    <view class="hero-scrim"></view>
+    <view class="hero-title">
+      <text class="ht-sub serif">桥水汀 · 典故</text>
+      <text class="ht-main serif">一席山水，等你归来</text>
+    </view>
+    <view class="hero-mask"></view>
+  </view>
+
+  <!-- 起兴 · 对句 -->
+  <view class="couplet floor-in">
+    <text class="couplet-line serif">从皖江风流，到华亭鹤唳；</text>
+    <text class="couplet-line serif">从归去来兮，到今日相逢。</text>
+    <image class="ornament" src="{{ornament}}" mode="scaleToFill"></image>
+  </view>
+
+  <!-- 一 · 皖江风流 -->
+  <view class="chapter">
+    <view class="chapter-head">
+      <text class="chapter-no serif">壹</text>
+      <text class="chapter-title serif">皖江风流</text>
+    </view>
+    <text class="para">东汉建安年间，孙策与周瑜从攻皖城，史载「策纳大桥，瑜纳小桥」。烽烟远去，英雄与佳人的故事却长留于皖江烟水之间。桥水汀，便从这段千古风流中生发出一重东方意象——</text>
+
+    <view class="triad">
+      <view class="triad-item">
+        <text class="triad-char serif c-red">桥</text>
+        <text class="triad-line serif">一桥相逢</text>
+        <text class="triad-line serif">心意相通</text>
+      </view>
+      <view class="triad-item">
+        <text class="triad-char serif c-teal">水</text>
+        <text class="triad-line serif">一水流年</text>
+        <text class="triad-line serif">百味长新</text>
+      </view>
+      <view class="triad-item">
+        <text class="triad-char serif c-olive">汀</text>
+        <text class="triad-line serif">一方静泊</text>
+        <text class="triad-line serif">身心归安</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 二 · 华亭鹤唳 -->
+  <view class="chapter">
+    <view class="chapter-head">
+      <text class="chapter-no serif">贰</text>
+      <text class="chapter-title serif">华亭鹤唳</text>
+    </view>
+    <text class="para">餐厅所在的上海松江，古称华亭。西晋文学家陆机生于此地，身处人生尽头时，仍惦念故乡的一声鹤唳。</text>
+    <view class="quote">
+      <text class="quote-txt serif">「华亭鹤唳，岂可复闻乎？」</text>
+    </view>
+    <text class="para">千年之后，这份对故土的眷恋，依然藏在每一个远行之人的心中。</text>
+  </view>
+
+  <!-- 三 · 徽来堂 -->
+  <view class="chapter">
+    <view class="chapter-head">
+      <text class="chapter-no serif">叁</text>
+      <text class="chapter-title serif">徽来堂</text>
+    </view>
+    <text class="para">桥水汀将包厢命名为「徽来堂」，取意陶渊明《归去来兮辞》。「徽来」谐音「归来」：不是退回过去，而是在匆忙与喧嚣之后，重新找回食物的本味、团聚的温度，以及那个未被岁月改变的自己。</text>
+  </view>
+
+  <!-- 四 · 同席 -->
+  <view class="chapter">
+    <view class="chapter-head">
+      <text class="chapter-no serif">肆</text>
+      <text class="chapter-title serif">同席</text>
+    </view>
+    <text class="para">于是，徽州风味与江南时令在此同席，传统技法与当代表达彼此相融。每一道菜，都是一封寄往故乡的信；每一次推门而入，都是味蕾的归家、心灵的靠岸。</text>
+    <view class="figure card">
+      <image class="figure-img" src="/assets/room-hall.jpg" mode="aspectFill"></image>
+      <view class="figure-cap">
+        <text class="serif">雅间 · 三五小聚，各得其所</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收束 · 请君入席 -->
+  <view class="finale">
+    <image class="ornament" src="{{ornament}}" mode="scaleToFill"></image>
+    <text class="finale-line serif">桥水汀不只等待一场宴席，</text>
+    <text class="finale-line serif">更在等待每一位穿行城市的人——</text>
+    <text class="finale-big serif">归去来兮，请君入席。</text>
+    <view class="btn-primary finale-btn" hover-class="hover" bindtap="goReserve">立即订座</view>
+  </view>
+</view>

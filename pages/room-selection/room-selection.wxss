@@ -88,7 +88,7 @@
 .badge-full {
   display: inline-block;
   color: var(--muted);
-  background: #EFEBE3;
+  background: #EBECE5;
   border-radius: 4rpx;
 }
 

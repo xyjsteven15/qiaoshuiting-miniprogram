@@ -5,6 +5,26 @@
       {
         "value": "docs",
         "type": "folder"
+      },
+      {
+        "value": "preview",
+        "type": "folder"
+      },
+      {
+        "value": "restaurant-admin",
+        "type": "folder"
+      },
+      {
+        "value": ".agents",
+        "type": "folder"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": "skills-lock.json",
+        "type": "file"
       }
     ],
     "include": []
@@ -15,7 +35,7 @@
     "enhance": true,
     "postcss": true,
     "preloadBackgroundData": false,
-    "minified": false,
+    "minified": true,
     "newFeature": true,
     "coverView": true,
     "nodeModules": false,
@@ -25,7 +45,7 @@
     "uglifyFileName": false,
     "checkInvalidKey": true,
     "checkSiteMap": true,
-    "uploadWithSourceMap": true,
+    "uploadWithSourceMap": false,
     "compileHotReLoad": false,
     "lazyloadPlaceholderEnable": false,
     "useMultiFrameRuntime": true,
@@ -54,7 +74,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.16.2",
-  "appid": "touristappid",
+  "appid": "wx9822cd697c8c1c87",
   "projectname": "qiaoshuiting",
   "condition": {},
   "editorSetting": {
