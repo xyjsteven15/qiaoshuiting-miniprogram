@@ -59,6 +59,35 @@ const ROOM_COMBOS = [
   { combo_id: 'c_all_three', room_ids: ['r_qiaoyu', 'r_xianyu', 'r_chuihong'] }
 ];
 
+// 开放座位区（非包间）：卡座 2 桌（4/6 人位各一）+ 室外座位 4 桌（均 4 人位）
+// C 端按区域合并展示为一张选项卡；库存按桌占用——
+// 云端 rooms 表中每桌一行：r_booth_a(tier=booth_small) / r_booth_b(tier=booth_large) / r_outdoor_1..4(tier=outdoor)，
+// booth 两档各 1 桌，档位余量即桌余量；预订上送所选空桌的 tier（小桌优先）
+const SEAT_AREAS = [
+  {
+    area_id: 'area_booth',
+    name: '卡座',
+    desc: '半围合卡座，临窗观景，宜小聚闲叙。',
+    deposit_meal_standard: 20000, // 分
+    tables: [
+      { room_id: 'r_booth_a', tier: 'booth_small', min_guests: 1, max_guests: 4 },
+      { room_id: 'r_booth_b', tier: 'booth_large', min_guests: 1, max_guests: 6 }
+    ]
+  },
+  {
+    area_id: 'area_outdoor',
+    name: '室外座位',
+    desc: '临水露台，听风观澜，宜晴日小酌。',
+    deposit_meal_standard: 10000, // 分
+    tables: [
+      { room_id: 'r_outdoor_1', tier: 'outdoor', min_guests: 1, max_guests: 4 },
+      { room_id: 'r_outdoor_2', tier: 'outdoor', min_guests: 1, max_guests: 4 },
+      { room_id: 'r_outdoor_3', tier: 'outdoor', min_guests: 1, max_guests: 4 },
+      { room_id: 'r_outdoor_4', tier: 'outdoor', min_guests: 1, max_guests: 4 }
+    ]
+  }
+];
+
 // 生成未来 7 天日期
 function nextDays(n) {
   const days = [];
@@ -197,6 +226,7 @@ const ROOM_SCENES = ROOMS.map((r) => ({
 module.exports = {
   ROOMS,
   ROOM_COMBOS,
+  SEAT_AREAS,
   SET_MENUS,
   CULTURE_ARTICLES,
   INGREDIENT_ORIGINS,
@@ -224,11 +254,14 @@ module.exports = {
   /**
    * 为指定人数/日期/时段构建可选方案：
    * - singles：容量适配的单间（含各自可订状态）
-   * - combos：拼间方案——仅当单间容不下该人数、或适配单间全部订满时返回（作兜底）
-   * - allFull：无任何可订方案（触发「留电话 · 有位回电」）
+   * - areas：开放座位区（卡座/室外），按区域合并展示，按桌判定可订
+   * - needCall：人数超过单间最大容量（>20，需拼间连通）——
+   *   拼间不走线上预订，页面引导致电门店（产品决定 2026-08-10）
+   * - allFull：适配的单间/座位全部订满（触发「留电话 · 有位回电」+ 致电引导）
    *
-   * tierRemaining：来自云端 check-availability 的档位余量 { small, large }；
-   * 传入时以其判定可订状态（档位粒度，DB 触发器做提交硬兜底），
+   * tierRemaining：来自云端 check-availability 的档位余量
+   *   { small, large, booth_small, booth_large, outdoor }；
+   * 传入时以其判定可订状态（DB 触发器做提交硬兜底），
    * 不传则退回本地 seededStatus 乐观展示。
    */
   optionsForGuests(guests, dateStr, daypart, tierRemaining) {
@@ -238,10 +271,10 @@ module.exports = {
       const rem = r.room_size_tier === 'large' ? tierRemaining.large : tierRemaining.small;
       return (rem || 0) >= 1;
     };
-    // 拼间全部由小包间组成：剩余小包间数 >= 拼间所含间数才可订
-    const comboAvail = (parts) => {
-      if (!tierRemaining) return parts.every((r) => seeded(r.room_id));
-      return (tierRemaining.small || 0) >= parts.length;
+    // 开放座位按桌判定：桌所属档位（booth_small/booth_large/outdoor）余量 ≥1 即可订
+    const tableAvail = (t) => {
+      if (!tierRemaining) return seeded(t.room_id);
+      return (tierRemaining[t.tier] || 0) >= 1;
     };
 
     const singles = ROOMS
@@ -261,36 +294,48 @@ module.exports = {
       // 可订优先，其次容量最贴合者优先——保证「最合适的可订包间」排在列表最上方
       .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
 
-    const singleFits = singles.length > 0;
-    const singleAvailable = singles.some((s) => s.available);
-    const showCombos = !singleFits || !singleAvailable;
+    // 开放座位区：整区容量适配该人数才展示；可订 = 适配桌中存在空桌
+    // （卡座 5-6 人时 4 人位桌被过滤，仅剩 6 人位桌参与判定）
+    const areas = SEAT_AREAS.map((a) => {
+      const fitTables = a.tables
+        .filter((t) => guests >= t.min_guests && guests <= t.max_guests)
+        .map((t) => ({ ...t, available: tableAvail(t) }))
+        // 小桌优先：把大桌留给人数更多的订单
+        .sort((x, y) => x.max_guests - y.max_guests);
+      if (!fitTables.length) return null;
+      const freeTables = fitTables.filter((t) => t.available);
+      const minG = Math.min(...a.tables.map((t) => t.min_guests));
+      const maxG = Math.max(...a.tables.map((t) => t.max_guests));
+      const pick = freeTables[0] || fitTables[0];
+      return {
+        key: a.area_id,
+        type: 'area',
+        label: a.name,
+        desc: a.desc,
+        cap: `${minG}-${maxG}人`,
+        maxG,
+        // 提交用：首选空桌的档位（卡座 2-4 人 → booth_small，5-6 人 → booth_large）
+        roomTier: pick.tier,
+        hasKtv: false,
+        available: freeTables.length > 0,
+        leftText: freeTables.length > 0 ? `余${freeTables.length}桌` : '',
+        roomIds: freeTables.map((t) => t.room_id)
+      };
+    }).filter(Boolean);
 
-    const combos = (showCombos ? ROOM_COMBOS : [])
-      .map((c) => {
-        const parts = c.room_ids.map((id) => ROOMS.find((r) => r.room_id === id));
-        const maxG = parts.reduce((s, r) => s + r.max_guests, 0);
-        const minG = Math.max(...parts.map((r) => r.min_guests));
-        return {
-          key: c.combo_id,
-          type: 'combo',
-          label: parts.map((r) => r.name).join(' + '),
-          desc: '可拆卸隔断 · 拼间连通',
-          cap: `最多${maxG}人`,
-          maxG,
-          minG,
-          roomTier: 'combo',
-          hasKtv: parts.some((r) => r.has_ktv),
-          available: comboAvail(parts),
-          roomIds: c.room_ids.slice()
-        };
-      })
-      .filter((c) => guests >= c.minG && guests <= c.maxG)
-      .sort((a, b) => (b.available - a.available) || (a.maxG - b.maxG));
+    // 人数超过单间最大容量（徽来堂 20）：必须拼间连通 → 引导致电，不走线上
+    const maxSingle = Math.max(...ROOMS.map((r) => r.max_guests));
+    const needCall = guests > maxSingle;
+
+    // 适配的单间/座位全部订满 → 等位回电 + 致电引导（拼间兜底同样转线下）
+    const anyAvailable =
+      singles.some((s) => s.available) || areas.some((a) => a.available);
 
     return {
       singles,
-      combos,
-      allFull: !singleAvailable && !combos.some((c) => c.available)
+      areas,
+      needCall,
+      allFull: !needCall && !anyAvailable
     };
   },
 

@@ -1,5 +1,5 @@
 const app = getApp();
-const { track } = require('../../utils/track.js');
+const { track, pageView, pageHide } = require('../../utils/track.js');
 const { cancelReservation, lookupReservations } = require('../../utils/supabase.js');
 
 // 云端状态 → 客人端展示（待确认=店长还没在控制台确认；off=整卡置灰）
@@ -46,7 +46,18 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
+    const activeCount = (app.globalData.reservations || []).filter(
+      (r) => r.status === 'pending' || r.status === 'confirmed'
+    ).length;
+    pageView({
+      active_reservations: activeCount,
+      waitlist_count: (app.globalData.callbackRequests || []).length
+    });
     this.syncCloud();
+  },
+
+  onHide() {
+    pageHide();
   },
 
   renderList() {

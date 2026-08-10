@@ -1,5 +1,5 @@
 const data = require('../../utils/data.js');
-const { track } = require('../../utils/track.js');
+const { track, pageView, pageHide } = require('../../utils/track.js');
 const { createReservation, genCode } = require('../../utils/supabase.js');
 const app = getApp();
 
@@ -25,7 +25,16 @@ Page({
     });
     // 预填个人资料
     const p = app.globalData.profile || {};
+    this.prefilledProfile = !!(p.displayName && p.phone);
     this.setData({ name: p.displayName || '', phone: p.phone || '' });
+  },
+
+  onShow() {
+    pageView();
+  },
+
+  onHide() {
+    pageHide();
   },
 
   onName(e) { this.setData({ name: e.detail.value }); },
@@ -77,7 +86,12 @@ Page({
       code: record.code,
       guests: record.guests,
       tier: record.tierLabel,
-      daypart: record.daypartText
+      tier_key: draft.tierKey || '',
+      date: d.date || '',
+      time: record.time,
+      daypart: draft.daypart || '',
+      has_ktv: record.hasKtv,
+      prefilled_profile: !!this.prefilledProfile
     });
 
     // 写入云端数据库（店长控制台的数据来源）
@@ -116,7 +130,18 @@ Page({
       .catch((err) => {
         wx.hideLoading();
         this.setData({ submitting: false });
-        track('submit_reservation_failed', { code, reason: err.message });
+        // 结构化失败原因：容量拦截（手慢订满）与网络/系统问题分开统计
+        const reasonType = /room_fully_booked/.test((err && err.message) || '')
+          ? 'capacity'
+          : 'network';
+        track('submit_reservation_failed', {
+          code,
+          reason_type: reasonType,
+          reason: err.message,
+          tier_key: draft.tierKey || '',
+          date: d.date || '',
+          daypart: draft.daypart || ''
+        });
 
         // 数据库容量守卫：该时段该档位包厢已被订满（含并发抢单）
         if (/room_fully_booked/.test((err && err.message) || '')) {

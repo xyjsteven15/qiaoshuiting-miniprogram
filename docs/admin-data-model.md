@@ -11,6 +11,10 @@
 > v1.2 变更：新增 `callback_requests`（等位回电）：订满时客人留下电话，有位后门店回电通知。
 >
 > v1.3 变更：「桥遇厅」更名为「桥瑜汀」并扩容至 ≤17 人；羡鱼轩扩容至 ≤14 人；三个小包间为可拆卸隔断，支持任意拼间连通（容量相加，三间全拼 ≤41 人）；徽来堂（11-20 人 + KTV）不变。
+>
+> v1.4 变更：新增开放座位区——**卡座** 2 桌（4 人位 + 6 人位，C 端合并展示为一张选项卡）、**室外座位** 4 桌（均 4 人位）；线上 `rooms` 表按桌建行，档位为 `booth_small` / `booth_large` / `outdoor`，预订按桌占用（卡座 ≤4 人优先占 4 人位桌）。
+>
+> v1.5 变更：**拼间不再支持线上下单**——人数 >20（单间最大容纳）或适配座位全订满需拼间兜底时，C 端引导客人**致电门店**线下预约（拼间席位与菜单需专人安排）；线上不再上送 `room_tier='combo'`。
 
 ---
 
@@ -38,7 +42,7 @@ erDiagram
 | min_guests | int | 是 | 最少容纳人数 |
 | max_guests | int | 是 | 最大容纳人数 |
 | has_ktv | boolean | 是 | 是否含 KTV；一期仅徽来堂为 true |
-| room_size_tier | enum | 是 | `small_medium` \| `large`；辅助人数过滤与文案 |
+| room_size_tier | enum | 是 | 包间：`small_medium` \| `large`；开放座位按桌建行，线上 `rooms.tier` 实际取值 `small` \| `large` \| `booth_small` \| `booth_large` \| `outdoor` |
 | cover_media | string(URL) | 是 | 列表/探景封面 |
 | vr_or_video_url | string(URL) | 否 | VR 全景或漫游视频 |
 | ktv_media_url | string(URL) | 否 | KTV 区域媒体（徽来堂） |
@@ -51,14 +55,19 @@ erDiagram
 
 **一期种子数据建议**
 
-| name | min_guests | max_guests | has_ktv | room_size_tier |
+| name | min_guests | max_guests | has_ktv | tier（线上实际值） |
 |------|------------|------------|---------|----------------|
-| 桥瑜汀 | 2 | 17 | false | small_medium |
-| 羡鱼轩 | 2 | 14 | false | small_medium |
-| 垂虹居 | 2 | 10 | false | small_medium |
+| 桥瑜汀 | 2 | 17 | false | small |
+| 羡鱼轩 | 2 | 14 | false | small |
+| 垂虹居 | 2 | 10 | false | small |
 | 徽来堂 | 11 | 20 | true | large |
+| 室内卡座A | 1 | 4 | false | booth_small |
+| 室内卡座B | 1 | 6 | false | booth_large |
+| 室外座位1-4 | 1 | 4 | false | outdoor |
 
 > 三个小包间（桥瑜汀/羡鱼轩/垂虹居）之间为**可拆卸隔断**，可任意拼间连通：两两拼间 ≤24/≤27/≤31 人，三间全拼 ≤41 人。拼间不单独建 `rooms` 行——预订侧按组成厅的 `room_slots` 同时占用来建模，C 端拼间方案的容量 = 组成厅 `max_guests` 之和。
+>
+> 开放座位（卡座/室外）**按桌建行**：每桌一行 `rooms` 记录，档位容量即桌数（`booth_small`=1、`booth_large`=1、`outdoor`=4），库存守卫与 `check-availability` 按档位计数即可天然适配。C 端将卡座两桌合并为一张「卡座」选项卡（≤4 人优先占 4 人位桌，5-6 人仅占 6 人位桌），室外四桌合并为「室外座位」选项卡（显示余桌数）。
 
 ---
 

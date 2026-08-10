@@ -173,6 +173,37 @@ function createCallbackRequest(payload) {
   });
 }
 
+/**
+ * 批量上报埋点事件到 tracking_events 表
+ * 权限模型同 reservations：publishable key 仅允许 INSERT。
+ * @param {object[]} events 元素字段需与 public.tracking_events 列名一致
+ *   （event_name/page/props/session_id/anonymous_id/scene）
+ * @returns {Promise}
+ */
+function ingestTrackEvents(events) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/rest/v1/tracking_events',
+      method: 'POST',
+      header: headers(),
+      data: events,
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res);
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.hint)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
 /** 生成不易冲突的预订编号：QST + 日期 + 4 位随机 */
 function genCode(dateStr) {
   const chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -183,4 +214,4 @@ function genCode(dateStr) {
   return 'QST' + String(dateStr || '').replace(/-/g, '') + suffix;
 }
 
-module.exports = { createReservation, cancelReservation, checkAvailability, lookupReservations, createCallbackRequest, genCode, SUPABASE_URL };
+module.exports = { createReservation, cancelReservation, checkAvailability, lookupReservations, createCallbackRequest, ingestTrackEvents, genCode, SUPABASE_URL };

@@ -1,12 +1,16 @@
 // 首页逻辑：官方 logo 静态资源 + 页面跳转与埋点
-const { track } = require('../../utils/track.js');
+const { track, pageView, pageHide } = require('../../utils/track.js');
 
 Page({
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
-    track('view_home');
+    pageView();
+  },
+
+  onHide() {
+    pageHide();
   },
 
   goReserve() {

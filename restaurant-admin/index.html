@@ -180,7 +180,7 @@
 const API = 'https://wkfplrhiigsdfnmylgov.supabase.co/functions/v1/admin-manage';
 const STATUS_TXT = { pending: '待确认', confirmed: '已确认', seated: '已到店', no_show: '未到', cancelled: '已取消' };
 const DAYPART = { lunch: '午市', dinner: '晚市' };
-const TIER = { small: '小包厢', large: '大包厢' };
+const TIER = { small: '小包厢', large: '大包厢', booth_small: '卡座·4人位', booth_large: '卡座·6人位', outdoor: '室外座位', combo: '拼间' };
 
 let passcode = sessionStorage.getItem('qst_admin_pass') || '';
 let all = [];

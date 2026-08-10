@@ -11,6 +11,33 @@
   </view>
 
   <view class="rooms floor-in">
+    <!-- 开放座位区：卡座与室外座位各自独立分组；卡座内 4/6 人位桌合并为一张卡 -->
+    <block wx:for="{{areas}}" wx:key="key">
+      <view class="opt-label">
+        <view class="tick"></view><text class="label-txt serif">{{item.label}}</text>
+      </view>
+      <view
+        class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
+        data-k="{{item.key}}"
+        bindtap="pick">
+        <view class="rc-head">
+          <view class="rc-title-wrap">
+            <text class="rc-title serif">{{item.label}}</text>
+            <text class="rc-cap">可容纳 {{item.cap}}</text>
+          </view>
+          <view class="rc-badges">
+            <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
+            <text wx:if="{{item.available}}" class="badge-ok">{{item.leftText || '可预订'}}</text>
+            <text wx:else class="badge-full">已订满</text>
+          </view>
+        </view>
+        <view class="divider-dash"></view>
+        <view class="rc-foot">
+          <text class="rc-right">{{item.desc}}</text>
+        </view>
+      </view>
+    </block>
+
     <!-- 单间 -->
     <view wx:if="{{singles.length > 0}}" class="opt-label">
       <view class="tick"></view><text class="label-txt serif">独立包间</text>
@@ -39,51 +66,39 @@
       </view>
     </view>
 
-    <!-- 拼间（可拆卸隔断）：单间容不下或全订满时出现 -->
-    <view wx:if="{{combos.length > 0}}" class="opt-label">
-      <view class="tick"></view><text class="label-txt serif">拼间 · 隔断可拆卸</text>
+  </view>
+
+  <!-- 多人宴请（>20 人需拼间连通）：致电门店预约，不走线上 -->
+  <view wx:if="{{needCall}}" class="wait-card floor-in">
+    <view class="wc-head">
+      <text class="wc-title serif">多人宴请 · 致电预约</text>
     </view>
-    <view
-      wx:for="{{combos}}"
-      wx:key="key"
-      class="room-card {{selectedKey === item.key ? 'on' : ''}} {{item.available ? '' : 'off'}}"
-      data-k="{{item.key}}"
-      bindtap="pick">
-      <view class="rc-head">
-        <view class="rc-title-wrap">
-          <text class="rc-title serif">{{item.label}}</text>
-          <text class="rc-cap">{{item.cap}}</text>
-        </view>
-        <view class="rc-badges">
-          <text wx:if="{{item.recommend}}" class="badge-accent">推荐</text>
-          <text wx:if="{{item.available}}" class="badge-ok">可预订</text>
-          <text wx:else class="badge-full">已订满</text>
-        </view>
-      </view>
-      <view class="divider-dash"></view>
-      <view class="rc-foot">
-        <text class="rc-right">{{item.desc}}</text>
-      </view>
+    <view class="divider-dash"></view>
+    <view class="wc-body">
+      <text class="wc-desc">{{banner}}：该人数已超过单间最大容纳（20人）。三个小包间隔断可拆卸、拼间连通最多 41 人，席位与菜单需门店专人安排，请直接致电预约。</text>
+      <view class="btn-primary wc-btn" hover-class="hover" bindtap="callRestaurant">致电门店 · 021-57772033</view>
     </view>
   </view>
 
-  <!-- 订满兜底：等位回电 -->
+  <!-- 订满兜底：等位回电 + 拼间致电引导 -->
   <view wx:if="{{allFull}}" class="wait-card floor-in">
     <view class="wc-head">
-      <text class="wc-title serif">该时段包厢已订满</text>
+      <text class="wc-title serif">该时段座位已订满</text>
       <text wx:if="{{cbDone}}" class="badge-ok">已登记</text>
     </view>
     <view class="divider-dash"></view>
     <view wx:if="{{!cbDone}}" class="wc-body">
-      <text class="wc-desc">留下电话，包厢空出时「小桥」将第一时间致电您。</text>
+      <text class="wc-desc">留下电话，座位空出时「小桥」将第一时间致电您。</text>
       <view class="btn-primary wc-btn" hover-class="hover" bindtap="openCallback">留电话 · 有位回电</view>
+      <view class="wc-call" bindtap="callRestaurant">如需拼间连通或多人宴请，也可直接致电 021-57772033</view>
     </view>
     <view wx:else class="wc-body">
-      <text class="wc-desc">已登记 {{cbPhoneMask}}。{{banner}} 包厢空出时，我们将致电您，请留意来电。</text>
+      <text class="wc-desc">已登记 {{cbPhoneMask}}。{{banner}} 座位空出时，我们将致电您，请留意来电。</text>
+      <view class="wc-call" bindtap="callRestaurant">如需拼间连通或多人宴请，也可直接致电 021-57772033</view>
     </view>
   </view>
 
-  <view wx:if="{{!allFull}}" class="action">
+  <view wx:if="{{!allFull && !needCall}}" class="action">
     <view class="btn-primary {{selectedKey ? '' : 'disabled'}}" hover-class="hover" bindtap="confirm">确认选择</view>
   </view>
 

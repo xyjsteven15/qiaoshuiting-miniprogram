@@ -129,6 +129,14 @@
 }
 .wc-desc { font-size: 24rpx; color: var(--ink-soft); line-height: 1.7; }
 .wc-btn { letter-spacing: 4rpx; font-size: 28rpx; padding: 24rpx 0; }
+.wc-call {
+  font-size: 22rpx;
+  color: var(--accent);
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 6rpx;
+  padding: 4rpx 0;
+}
 
 /* 等位回电弹层 */
 .cb-mask {

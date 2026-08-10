@@ -2,7 +2,7 @@
 // 已栅格化为本地 PNG（内联 SVG data-uri 在小程序 image 组件中兼容性差）。
 const ORNAMENT = '/assets/ornament.png';
 
-const { track } = require('../../utils/track.js');
+const { track, pageView, pageHide } = require('../../utils/track.js');
 
 Page({
   data: {
@@ -10,7 +10,11 @@ Page({
   },
 
   onShow() {
-    track('view_story');
+    pageView();
+  },
+
+  onHide() {
+    pageHide();
   },
 
   goReserve() {
