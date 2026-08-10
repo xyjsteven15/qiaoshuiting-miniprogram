@@ -112,6 +112,38 @@ function checkAvailability(date, daypart) {
 }
 
 /**
+ * 按包厢订日历：未来 N 天逐日午/晚市的档位余量（一次请求）
+ * 余量按档位计：徽来堂独占 large 档（=该房真实库存）；
+ * 三间小包间共用 small 档，remaining>=1 仅表示档内有空房。
+ * @param {string} tier  small | large
+ * @param {number} days  天数（默认 30）
+ * @returns {Promise<{dates: Object<string,{lunch:number,dinner:number>}>}>
+ */
+function checkAvailabilityCalendar(tier, days) {
+  return new Promise((resolve, reject) => {
+    wx.request({
+      url: SUPABASE_URL + '/functions/v1/availability-calendar',
+      method: 'POST',
+      header: headers(),
+      data: { tier, days: days || 30 },
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300 && res.data && res.data.ok) {
+          resolve(res.data);
+        } else {
+          const msg =
+            (res.data && (res.data.message || res.data.error)) ||
+            'HTTP ' + res.statusCode;
+          reject(new Error(msg));
+        }
+      },
+      fail(err) {
+        reject(new Error((err && err.errMsg) || '网络请求失败'));
+      }
+    });
+  });
+}
+
+/**
  * 核对本地订单在云端的最新状态（店长在控制台的操作会反映回来）
  * 校验方式与取消一致：手机号 + 预订编号双匹配；仅返回状态字符串。
  * @param {string} phone 下单手机号
@@ -214,4 +246,4 @@ function genCode(dateStr) {
   return 'QST' + String(dateStr || '').replace(/-/g, '') + suffix;
 }
 
-module.exports = { createReservation, cancelReservation, checkAvailability, lookupReservations, createCallbackRequest, ingestTrackEvents, genCode, SUPABASE_URL };
+module.exports = { createReservation, cancelReservation, checkAvailability, checkAvailabilityCalendar, lookupReservations, createCallbackRequest, ingestTrackEvents, genCode, SUPABASE_URL };

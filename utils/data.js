@@ -235,6 +235,19 @@ module.exports = {
   nextDays,
   seededStatus,
 
+  // 按 id 取单间包厢
+  getRoom(roomId) {
+    return ROOMS.find((r) => r.room_id === roomId) || null;
+  },
+
+  // 「按包厢订」用：指定包厢某日午市/晚市是否可订（本地乐观判定，提交时由 DB 容量守卫兜底）
+  daypartAvailability(roomId, dateStr) {
+    return {
+      lunch: seededStatus(roomId, dateStr, 'lunch') === 'available',
+      dinner: seededStatus(roomId, dateStr, 'dinner') === 'available'
+    };
+  },
+
   // 按人数过滤可选包间
   roomsForGuests(count) {
     return ROOMS.filter((r) => count >= r.min_guests && count <= r.max_guests);

@@ -5,6 +5,30 @@
   flex-direction: column;
 }
 
+/* 预订方式切换：按时间订 / 按包厢订 */
+.mode-switch {
+  margin: 8rpx 48rpx 0;
+  display: flex;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.mode-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  letter-spacing: 6rpx;
+  text-indent: 6rpx;
+  color: var(--ink-soft);
+}
+.mode-item.on {
+  background: var(--accent);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
 .form-body {
   padding: 16rpx 48rpx 0;
   display: flex;
@@ -17,39 +41,77 @@
   gap: 24rpx;
 }
 
-/* 日期条 */
-.date-strip {
-  white-space: nowrap;
+/* 按包厢订：包厢选择 */
+.room-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
-.date-card {
-  display: inline-flex;
+.room-chip {
+  width: calc(50% - 8rpx);
+  box-sizing: border-box;
+  display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 8rpx;
-  width: 116rpx;
-  padding: 20rpx 0;
-  margin-right: 16rpx;
+  padding: 20rpx 24rpx;
   background: var(--card);
   border: 1rpx solid var(--line);
   border-radius: 8rpx;
-  box-sizing: border-box;
 }
-.date-card .dc-week {
-  font-size: 22rpx;
+.rch-name {
+  font-size: 28rpx;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+.rch-cap {
+  font-size: 20rpx;
   color: var(--ink-soft);
 }
-.date-card .dc-md {
-  font-size: 26rpx;
-  color: var(--ink);
-  font-weight: 700;
-}
-.date-card.on {
+.room-chip.on {
   background: var(--accent);
   border-color: var(--accent);
 }
-.date-card.on .dc-week,
-.date-card.on .dc-md {
+.room-chip.on .rch-name {
   color: #FFFFFF;
+}
+.rch-cap.on,
+.room-chip.on .rch-cap {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* 日期条：已选日期 + 日历入口 */
+.date-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 8rpx;
+}
+.db-main {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.db-date {
+  font-size: 30rpx;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+.db-tag {
+  font-size: 20rpx;
+  color: #FFFFFF;
+  background: var(--accent);
+  border-radius: 4rpx;
+  padding: 2rpx 12rpx;
+}
+.db-open {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+  letter-spacing: 2rpx;
 }
 
 /* 时段 */
@@ -59,10 +121,22 @@
   gap: 16rpx;
   margin-top: 8rpx;
 }
+.tg-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
 .tg-title {
   font-size: 24rpx;
   color: var(--ink-soft);
   font-style: italic;
+}
+.tg-full {
+  font-size: 20rpx;
+  color: var(--muted);
+  background: #EBECE5;
+  border-radius: 4rpx;
+  padding: 2rpx 10rpx;
 }
 .chips {
   display: flex;
@@ -82,6 +156,12 @@
   border-color: var(--accent);
   color: #FFFFFF;
   font-weight: 600;
+}
+.chip.disabled {
+  opacity: 0.4;
+}
+.chip.disabled.on {
+  opacity: 0.7;
 }
 
 /* 人数 */
@@ -119,3 +199,132 @@
   margin-top: auto;
 }
 .hover { opacity: 0.88; }
+
+/* ===== 日历弹层 ===== */
+.cal-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(27, 30, 25, 0.5);
+  /* 必须高于自定义 tabbar（z-index:100），否则弹层底部会被遮住且无法点击 */
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.cal-panel {
+  width: 100%;
+  /* 面板高度兜底：月份头/星期行/最多 6 行日期/提示行，
+     flex 侧用 max-height 限制，避免任何环境下被挤出屏幕 */
+  height: 900rpx;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-radius: 16rpx 16rpx 0 0;
+  padding: 32rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  animation: calUp 0.24s ease-out;
+}
+@keyframes calUp {
+  from {
+    transform: translateY(60rpx);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8rpx;
+}
+.cal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  color: var(--ink);
+}
+.cal-nav {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 44rpx;
+  color: var(--ink);
+}
+.cal-nav.off {
+  color: var(--line);
+}
+.cal-week {
+  display: flex;
+  margin-top: 24rpx;
+  padding-bottom: 8rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+.cal-week text {
+  width: calc(100% / 7);
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--muted);
+}
+.cal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 8rpx;
+  flex: 1;
+  align-content: flex-start;
+}
+.cal-cell {
+  width: calc(100% / 7);
+  height: 92rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  border-radius: 8rpx;
+}
+.cal-cell.blank {
+  background: transparent;
+}
+.cc-day {
+  font-size: 26rpx;
+  color: var(--ink);
+  font-weight: 500;
+}
+.cc-tag {
+  font-size: 18rpx;
+  color: var(--brand-red);
+  line-height: 1;
+}
+.cc-tag.today {
+  color: var(--muted);
+}
+.cal-cell.on {
+  background: var(--accent);
+}
+.cal-cell.on .cc-day {
+  color: #FFFFFF;
+  font-weight: 700;
+}
+.cal-cell.on .cc-tag,
+.cal-cell.on .cc-tag.today {
+  color: rgba(255, 255, 255, 0.8);
+}
+.cal-cell.off {
+  opacity: 0.35;
+}
+.cal-hint {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 20rpx;
+  color: var(--muted);
+  letter-spacing: 1rpx;
+}

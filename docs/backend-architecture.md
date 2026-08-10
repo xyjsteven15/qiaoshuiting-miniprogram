@@ -211,4 +211,5 @@ C 端已改为按厅选择 + 可拆卸隔断拼间（桥瑜汀 ≤17 / 羡鱼轩
 - ~~`rooms` 表种子数据更新各厅 `max_guests`（桥瑜汀 17、羡鱼轩 14、垂虹居 10）~~ ✅ done 2026-08-10（含「桥遇厅」更名为「桥瑜汀」）
 - `reservations_enforce_capacity` 触发器目前按 `date+daypart+room_tier` 计数：单间预订上送 `room_tier` 仍为 `small`/`large`（小包间共 3 间，语义恰好兼容）；**卡座/室外上送 `booth_small`/`booth_large`/`outdoor`，档位容量=桌数，天然兼容**；~~拼间上送 `room_tier='combo'`~~ **拼间已转线下**（2026-08-10 产品决定）：>20 人或适配座位全满需拼间时，C 端展示「致电门店预约」卡片（021-57772033），不再在线下单，故 `reservations_room_tier_check` 未含 `combo` 不再阻塞 C 端；**若未来恢复线上拼间**，需：① CHECK 约束枚举补 `combo`；② 触发器对 combo 按组成间数占用 `small` 容量判定（或上送 `room_ids` 逐间占用）
 - `check-availability` 已动态从 `rooms` 表读取全部档位（2026-08-10 实测返回 small/large/booth_small/booth_large/outdoor 五档），新增座位类型无需改函数；后续仍可升级为按 `room_id` 返回逐间余量
+- `availability-calendar`（2026-08-10 上线）：订座页「按包厢订」日历专用，入参 `{tier, days}` 一次返回未来 N 天逐日午/晚市档位余量（同 check-availability 口径：rooms 计数为容量，pending/confirmed/seated 记占用）；C 端拉到后覆盖日历满档标记与日期禁用，失败回退本地 `seededStatus` 乐观展示，提交仍由 DB 触发器硬兜底。徽来堂独占 large 档故逐日余量精确；小包间三间共用 small 档，remaining≥1 表示档内有空房
 - `admin-manage` 增加 `list_callbacks` / `update_callback`，控制台展示等位回电并支持标记已回电

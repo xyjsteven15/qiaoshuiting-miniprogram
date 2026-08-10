@@ -5,44 +5,74 @@
     <view class="sh-line"></view>
   </view>
 
+  <!-- 预订方式：按时间订 / 按包厢订 -->
+  <view class="mode-switch">
+    <view
+      class="mode-item serif {{mode === 'time' ? 'on' : ''}}"
+      data-m="time"
+      bindtap="switchMode">按时间订</view>
+    <view
+      class="mode-item serif {{mode === 'room' ? 'on' : ''}}"
+      data-m="room"
+      bindtap="switchMode">按包厢订</view>
+  </view>
+
   <view class="form-body floor-in">
-    <!-- 选择日期 -->
+    <!-- 选择包厢（按包厢订） -->
+    <view class="section" wx:if="{{mode === 'room'}}">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">选择包厢</text></view>
+      <view class="room-chips">
+        <view
+          wx:for="{{rooms}}"
+          wx:key="id"
+          class="room-chip {{roomId === item.id ? 'on' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="pickRoom">
+          <text class="rch-name serif">{{item.name}}</text>
+          <text class="rch-cap {{roomId === item.id ? 'on' : ''}}">{{item.cap}}{{item.hasKtv ? ' · KTV' : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 选择日期：已选日期条 + 日历弹层 -->
     <view class="section">
       <view class="label"><view class="tick"></view><text class="label-txt serif">选择日期</text></view>
-      <scroll-view scroll-x class="date-strip" enhanced show-scrollbar="{{false}}">
-        <view
-          wx:for="{{dates}}"
-          wx:key="date"
-          class="date-card {{dateIdx === index ? 'on' : ''}}"
-          data-i="{{index}}"
-          bindtap="pickDate">
-          <text class="dc-week">{{item.week}}</text>
-          <text class="dc-md">{{item.md}}</text>
+      <view class="date-bar" hover-class="hover" bindtap="openCalendar">
+        <view class="db-main">
+          <text class="db-date serif">{{dates[dateIdx].md}} {{dates[dateIdx].week}}</text>
+          <text class="db-tag" wx:if="{{dates[dateIdx].label === '今日' || dates[dateIdx].label === '明日'}}">{{dates[dateIdx].label}}</text>
         </view>
-      </scroll-view>
+        <text class="db-open serif">日历 ›</text>
+      </view>
     </view>
 
     <!-- 选择时间 -->
     <view class="section">
       <view class="label"><view class="tick"></view><text class="label-txt serif">选择时间</text></view>
       <view class="time-group">
-        <text class="tg-title serif">午餐 Lunch</text>
+        <view class="tg-head">
+          <text class="tg-title serif">午餐 Lunch</text>
+          <text class="tg-full" wx:if="{{lunchFull}}">已满</text>
+        </view>
         <view class="chips">
           <view
             wx:for="{{lunch}}"
             wx:key="*this"
-            class="chip {{time === item ? 'on' : ''}}"
+            class="chip {{time === item ? 'on' : ''}} {{lunchFull ? 'disabled' : ''}}"
             data-t="{{item}}"
             bindtap="pickTime">{{item}}</view>
         </view>
       </view>
       <view class="time-group">
-        <text class="tg-title serif">晚餐 Dinner</text>
+        <view class="tg-head">
+          <text class="tg-title serif">晚餐 Dinner</text>
+          <text class="tg-full" wx:if="{{dinnerFull}}">已满</text>
+        </view>
         <view class="chips">
           <view
             wx:for="{{dinner}}"
             wx:key="*this"
-            class="chip {{time === item ? 'on' : ''}}"
+            class="chip {{time === item ? 'on' : ''}} {{dinnerFull ? 'disabled' : ''}}"
             data-t="{{item}}"
             bindtap="pickTime">{{item}}</view>
         </view>
@@ -61,6 +91,36 @@
   </view>
 
   <view class="action">
-    <view class="btn-primary" hover-class="hover" bindtap="next">查看可用包厢</view>
+    <view class="btn-primary" hover-class="hover" bindtap="next">{{mode === 'room' ? '立即预订' : '查看可用包厢'}}</view>
+  </view>
+
+  <!-- 日历弹层 -->
+  <view class="cal-mask" wx:if="{{showCalendar}}" bindtap="closeCalendar">
+    <view class="cal-panel" catchtap="noop">
+      <view class="cal-head">
+        <view class="cal-nav {{calIdx === 0 ? 'off' : ''}}" bindtap="prevMonth">‹</view>
+        <text class="cal-title serif">{{calMonths[calIdx].year}}年{{calMonths[calIdx].month}}月</text>
+        <view class="cal-nav {{calIdx === calMonths.length - 1 ? 'off' : ''}}" bindtap="nextMonth">›</view>
+      </view>
+      <view class="cal-week">
+        <text wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="cal-grid">
+        <block wx:for="{{calMonths[calIdx].cells}}" wx:key="key">
+          <view wx:if="{{item.blank}}" class="cal-cell blank"></view>
+          <view
+            wx:else
+            class="cal-cell {{item.selected ? 'on' : ''}} {{item.disabled ? 'off' : ''}}"
+            data-date="{{item.date}}"
+            data-disabled="{{item.disabled}}"
+            bindtap="pickCalDate">
+            <text class="cc-day">{{item.day}}</text>
+            <text class="cc-tag" wx:if="{{item.tag}}">{{item.tag}}</text>
+            <text class="cc-tag today" wx:elif="{{item.isToday}}">今日</text>
+          </view>
+        </block>
+      </view>
+      <view class="cal-hint" wx:if="{{mode === 'room' && roomId}}">灰色日期午市/晚市均已订满，不可选择</view>
+    </view>
   </view>
 </view>

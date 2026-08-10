@@ -141,13 +141,45 @@
   /* 订座 */
   .form-body { padding:8px 24px 0; display:flex; flex-direction:column; gap:28px; }
   .section { display:flex; flex-direction:column; gap:12px; }
-  .date-strip { display:flex; gap:8px; overflow-x:auto; }
-  .date-strip::-webkit-scrollbar { height:0; }
-  .date-card { flex:0 0 auto; width:58px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 0; background:var(--card); border:1px solid var(--line); border-radius:4px; }
-  .dc-week { font-size:11px; color:var(--ink-soft); }
-  .dc-md { font-size:13px; color:var(--ink); font-weight:700; }
-  .date-card.on { background:var(--accent); border-color:var(--accent); }
-  .date-card.on .dc-week, .date-card.on .dc-md { color:#fff; }
+  /* 模式切换：按时间订 / 按包厢订 */
+  .mode-switch { margin:4px 24px 0; display:flex; background:var(--card); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .mode-item { flex:1; text-align:center; padding:10px 0; font-size:14px; letter-spacing:3px; text-indent:3px; color:var(--ink-soft); }
+  .mode-item.on { background:var(--accent); color:#fff; font-weight:600; }
+  /* 包厢选择（按包厢订） */
+  .room-chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .room-chip { width:calc(50% - 4px); box-sizing:border-box; display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:var(--card); border:1px solid var(--line); border-radius:4px; }
+  .rch-name { font-size:14px; color:var(--ink); font-weight:600; letter-spacing:1px; }
+  .rch-cap { font-size:10px; color:var(--ink-soft); }
+  .room-chip.on { background:var(--accent); border-color:var(--accent); }
+  .room-chip.on .rch-name { color:#fff; }
+  .room-chip.on .rch-cap { color:rgba(255,255,255,.75); }
+  /* 日期条 + 日历弹层 */
+  .date-bar { display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--card); border:1px solid var(--line); border-radius:4px; }
+  .db-main { display:flex; align-items:center; gap:8px; }
+  .db-date { font-size:15px; color:var(--ink); font-weight:600; letter-spacing:1px; }
+  .db-tag { font-size:10px; color:#fff; background:var(--accent); border-radius:2px; padding:1px 6px; }
+  .db-open { font-size:12px; color:var(--ink-soft); letter-spacing:1px; }
+  .tg-head { display:flex; align-items:center; gap:6px; }
+  .tg-full { font-size:10px; color:var(--muted); background:#EBECE5; border-radius:2px; padding:1px 5px; }
+  .chip.disabled { opacity:.4; }
+  .cal-mask { position:absolute; inset:0; background:rgba(27,30,25,.5); z-index:10; display:flex; align-items:flex-end; }
+  .cal-panel { width:100%; background:var(--paper); border-radius:8px 8px 0 0; padding:16px 16px 20px; }
+  .cal-head { display:flex; align-items:center; justify-content:space-between; padding:0 4px; }
+  .cal-title { font-size:16px; font-weight:600; letter-spacing:2px; color:var(--ink); }
+  .cal-nav { width:32px; height:32px; line-height:30px; text-align:center; font-size:22px; color:var(--ink); }
+  .cal-nav.off { color:var(--line); }
+  .cal-week { display:flex; margin-top:12px; padding-bottom:4px; border-bottom:1px solid var(--line); }
+  .cal-week span { width:calc(100%/7); text-align:center; font-size:11px; color:var(--muted); }
+  .cal-grid { display:flex; flex-wrap:wrap; margin-top:4px; }
+  .cal-cell { width:calc(100%/7); height:46px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border-radius:4px; }
+  .cc-day { font-size:13px; color:var(--ink); }
+  .cc-tag { font-size:9px; color:var(--brand-red); line-height:1; }
+  .cc-tag.today { color:var(--muted); }
+  .cal-cell.on { background:var(--accent); }
+  .cal-cell.on .cc-day { color:#fff; font-weight:700; }
+  .cal-cell.on .cc-tag { color:rgba(255,255,255,.8); }
+  .cal-cell.off { opacity:.35; }
+  .cal-hint { margin-top:10px; text-align:center; font-size:10px; color:var(--muted); letter-spacing:1px; }
   .time-group { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
   .tg-title { font-size:12px; color:var(--ink-soft); font-style:italic; }
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
@@ -358,27 +390,25 @@
       </div>
     </div>
 
-    <!-- ============ 订座 ============ -->
+    <!-- ============ 订座 · 按时间订 ============ -->
     <div class="device">
-      <div class="device-label">订座 · Reservation</div>
+      <div class="device-label">订座 · 按时间订</div>
       <div class="phone">
         <div class="screen">
           <div class="screen-header"><div class="sh-title serif">在线订座</div><div class="sh-sub">RESERVATION</div><div class="sh-line"></div></div>
+          <div class="mode-switch"><div class="mode-item serif on">按时间订</div><div class="mode-item serif">按包厢订</div></div>
           <div class="form-body">
             <div class="section">
               <div class="label"><div class="tick"></div><div class="label-txt serif">选择日期</div></div>
-              <div class="date-strip">
-                <div class="date-card"><div class="dc-week">周四</div><div class="dc-md">7/24</div></div>
-                <div class="date-card on"><div class="dc-week">周五</div><div class="dc-md">7/25</div></div>
-                <div class="date-card"><div class="dc-week">周六</div><div class="dc-md">7/26</div></div>
-                <div class="date-card"><div class="dc-week">周日</div><div class="dc-md">7/27</div></div>
-                <div class="date-card"><div class="dc-week">周一</div><div class="dc-md">7/28</div></div>
+              <div class="date-bar">
+                <div class="db-main"><div class="db-date serif">8/10 周一</div><div class="db-tag">今日</div></div>
+                <div class="db-open serif">日历 ›</div>
               </div>
             </div>
             <div class="section">
               <div class="label"><div class="tick"></div><div class="label-txt serif">选择时间</div></div>
-              <div class="time-group"><div class="tg-title serif">午餐 Lunch</div><div class="chips"><div class="chip">11:30</div><div class="chip">12:00</div><div class="chip">12:30</div></div></div>
-              <div class="time-group"><div class="tg-title serif">晚餐 Dinner</div><div class="chips"><div class="chip">17:30</div><div class="chip on">18:00</div><div class="chip">18:30</div><div class="chip">19:00</div><div class="chip">19:30</div></div></div>
+              <div class="time-group"><div class="tg-head"><div class="tg-title serif">午餐 Lunch</div></div><div class="chips"><div class="chip">11:30</div><div class="chip">12:00</div><div class="chip">12:30</div></div></div>
+              <div class="time-group"><div class="tg-head"><div class="tg-title serif">晚餐 Dinner</div></div><div class="chips"><div class="chip">17:30</div><div class="chip on">18:00</div><div class="chip">18:30</div><div class="chip">19:00</div><div class="chip">19:30</div></div></div>
             </div>
             <div class="guests-row">
               <div class="label"><div class="tick"></div><div class="label-txt serif">用餐人数</div></div>
@@ -386,6 +416,79 @@
             </div>
           </div>
           <div class="action"><div class="btn-primary serif">查看可用包厢</div></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
+          <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
+          <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 订座 · 按包厢订（日历选期） ============ -->
+    <div class="device">
+      <div class="device-label">订座 · 按包厢订 · 日历选期</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="screen-header"><div class="sh-title serif">在线订座</div><div class="sh-sub">RESERVATION</div><div class="sh-line"></div></div>
+          <div class="mode-switch"><div class="mode-item serif">按时间订</div><div class="mode-item serif on">按包厢订</div></div>
+          <div class="form-body">
+            <div class="section">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">选择包厢</div></div>
+              <div class="room-chips">
+                <div class="room-chip"><div class="rch-name serif">桥瑜汀</div><div class="rch-cap">2-15人</div></div>
+                <div class="room-chip"><div class="rch-name serif">羡鱼轩</div><div class="rch-cap">2-12人</div></div>
+                <div class="room-chip"><div class="rch-name serif">垂虹居</div><div class="rch-cap">2-12人</div></div>
+                <div class="room-chip on"><div class="rch-name serif">徽来堂</div><div class="rch-cap">11-20人 · KTV</div></div>
+              </div>
+            </div>
+            <div class="section">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">选择日期</div></div>
+              <div class="date-bar">
+                <div class="db-main"><div class="db-date serif">8/10 周一</div><div class="db-tag">今日</div></div>
+                <div class="db-open serif">日历 ›</div>
+              </div>
+            </div>
+            <div class="section">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">选择时间</div></div>
+              <div class="time-group"><div class="tg-head"><div class="tg-title serif">午餐 Lunch</div><div class="tg-full">已满</div></div><div class="chips"><div class="chip disabled">11:30</div><div class="chip disabled">12:00</div><div class="chip disabled">12:30</div></div></div>
+              <div class="time-group"><div class="tg-head"><div class="tg-title serif">晚餐 Dinner</div></div><div class="chips"><div class="chip">17:30</div><div class="chip on">18:00</div><div class="chip">18:30</div><div class="chip">19:00</div><div class="chip">19:30</div></div></div>
+            </div>
+          </div>
+          <div class="action"><div class="btn-primary serif">立即预订</div></div>
+        </div>
+        <!-- 日历弹层：午晚双满日期置灰不可选 -->
+        <div class="cal-mask">
+          <div class="cal-panel">
+            <div class="cal-head"><div class="cal-nav off">‹</div><div class="cal-title serif">2026年8月</div><div class="cal-nav">›</div></div>
+            <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+            <div class="cal-grid">
+              <div class="cal-cell blank"></div>
+              <div class="cal-cell on"><div class="cc-day">10</div><div class="cc-tag today">今日</div></div>
+              <div class="cal-cell"><div class="cc-day">11</div></div>
+              <div class="cal-cell"><div class="cc-day">12</div></div>
+              <div class="cal-cell"><div class="cc-day">13</div><div class="cc-tag">午满</div></div>
+              <div class="cal-cell"><div class="cc-day">14</div></div>
+              <div class="cal-cell off"><div class="cc-day">15</div><div class="cc-tag">已满</div></div>
+              <div class="cal-cell"><div class="cc-day">16</div></div>
+              <div class="cal-cell"><div class="cc-day">17</div></div>
+              <div class="cal-cell"><div class="cc-day">18</div><div class="cc-tag">晚满</div></div>
+              <div class="cal-cell"><div class="cc-day">19</div></div>
+              <div class="cal-cell"><div class="cc-day">20</div></div>
+              <div class="cal-cell"><div class="cc-day">21</div></div>
+              <div class="cal-cell off"><div class="cc-day">22</div><div class="cc-tag">已满</div></div>
+              <div class="cal-cell"><div class="cc-day">23</div></div>
+              <div class="cal-cell"><div class="cc-day">24</div></div>
+              <div class="cal-cell"><div class="cc-day">25</div></div>
+              <div class="cal-cell"><div class="cc-day">26</div><div class="cc-tag">午满</div></div>
+              <div class="cal-cell"><div class="cc-day">27</div></div>
+              <div class="cal-cell"><div class="cc-day">28</div></div>
+              <div class="cal-cell"><div class="cc-day">29</div></div>
+              <div class="cal-cell"><div class="cc-day">30</div></div>
+              <div class="cal-cell"><div class="cc-day">31</div></div>
+            </div>
+            <div class="cal-hint">灰色日期午市/晚市均已订满，不可选择</div>
+          </div>
         </div>
         <div class="tabbar">
           <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
