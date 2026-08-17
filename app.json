@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/home/home",
+    "pages/arrive/arrive",
     "pages/story/story",
     "pages/reserve/reserve",
     "pages/room-selection/room-selection",

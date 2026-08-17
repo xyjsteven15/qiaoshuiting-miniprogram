@@ -1,4 +1,5 @@
 const track = require('./utils/track.js');
+const { openArriveFromShare } = require('./utils/share.js');
 
 App({
   globalData: {
@@ -38,6 +39,8 @@ App({
   onShow(options) {
     // 从后台切回前台时场景值可能变化（如从分享卡片再次进入）
     track.setScene(options && options.scene);
+    // 热启动：点群聊分享卡片时把用户送到这笔预订，而不是停留在首页/订座
+    openArriveFromShare(options);
   },
 
   onHide() {

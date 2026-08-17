@@ -1,4 +1,6 @@
 const app = getApp();
+const { RESTAURANT } = require('../../utils/data.js');
+const { shareMessage, copyArriveText, openRestaurantMap, callRestaurant, reservationFromDataset } = require('../../utils/share.js');
 const { track, pageView, pageHide } = require('../../utils/track.js');
 const { cancelReservation, lookupReservations } = require('../../utils/supabase.js');
 
@@ -18,19 +20,11 @@ function decorate(list) {
       ...r,
       statusText: v.text,
       statusOff: v.off,
-      canCancel: r.status === 'pending' || r.status === 'confirmed'
+      canCancel: r.status === 'pending' || r.status === 'confirmed',
+      canShare: r.status === 'pending' || r.status === 'confirmed' || r.status === 'seated'
     };
   });
 }
-
-// 餐厅定位信息（坐标为 GCJ-02，对应地图POI：桥水汀（龙湖上海云廊天街店））
-const RESTAURANT = {
-  name: '桥水汀（龙湖上海云廊天街店）',
-  address: '上海市松江区千帆路239弄8号楼2楼',
-  latitude: 31.088473,
-  longitude: 121.324174,
-  phone: '021-57772033'
-};
 
 Page({
   data: {
@@ -38,7 +32,8 @@ Page({
     reservations: [],
     waitlists: [],
     servicePhone: RESTAURANT.phone,
-    address: RESTAURANT.address
+    address: RESTAURANT.address,
+    wayfinding: RESTAURANT.wayfinding
   },
 
   onShow() {
@@ -146,20 +141,47 @@ Page({
       });
   },
 
+  reservationById(id) {
+    return (app.globalData.reservations || []).find((r) => r.reservation_id === id) || null;
+  },
+
+  onCopy(e) {
+    const r = this.reservationById(e.currentTarget.dataset.id);
+    if (!r) return;
+    copyArriveText(r)
+      .then(() => {
+        track('copy_arrive_info', {
+          from: 'mine',
+          guests: r.guests || 0,
+          tier: r.tierLabel || ''
+        });
+      })
+      .catch(() => {
+        wx.showToast({ title: '复制失败', icon: 'none' });
+      });
+  },
+
+  onShareAppMessage(e) {
+    let r = null;
+    if (e && e.from === 'button') {
+      const ds = (e.target && e.target.dataset) || {};
+      r = this.reservationById(ds.id) || reservationFromDataset(ds);
+    } else {
+      r = (this.data.reservations || []).find((x) => x.canShare) || null;
+    }
+    track('share_reservation', {
+      from: 'mine',
+      guests: (r && r.guests) || 0,
+      tier: (r && r.tierLabel) || ''
+    });
+    return shareMessage(r);
+  },
+
   callXiaoqiao() {
-    wx.makePhoneCall({ phoneNumber: RESTAURANT.phone, fail() {} });
+    callRestaurant();
   },
 
   openLocation() {
-    wx.openLocation({
-      latitude: RESTAURANT.latitude,
-      longitude: RESTAURANT.longitude,
-      name: RESTAURANT.name,
-      address: RESTAURANT.address,
-      scale: 16,
-      fail() {
-        wx.showToast({ title: '暂无法打开地图', icon: 'none' });
-      }
-    });
+    openRestaurantMap();
   }
 });

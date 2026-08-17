@@ -68,11 +68,24 @@
   background: #F4EEE1;
 }
 
-/* 取消操作区 */
+/* 取消 / 分享操作区 */
 .rc-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16rpx;
   margin-top: 4rpx;
+}
+.rc-share {
+  font-size: 24rpx;
+  letter-spacing: 2rpx;
+  color: var(--accent);
+  border: 1rpx solid var(--accent);
+  border-radius: 6rpx;
+  padding: 10rpx 28rpx;
+  background: transparent;
+  line-height: 1.4;
 }
 .rc-cancel {
   font-size: 24rpx;
@@ -111,6 +124,7 @@
 }
 .contact-k { font-size: 30rpx; color: var(--ink); }
 .contact-sub { font-size: 24rpx; color: var(--ink-soft); }
+.contact-hint { font-size: 22rpx; color: var(--brand-olive); }
 .contact-act { font-size: 26rpx; color: var(--accent); }
 
 .foot {

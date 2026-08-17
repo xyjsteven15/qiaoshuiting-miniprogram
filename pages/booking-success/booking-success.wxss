@@ -57,9 +57,41 @@
 .row .k { font-size: 26rpx; color: var(--ink-soft); }
 .row .v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
 .row .code { font-weight: 600; }
+.wayfind-row {
+  align-items: flex-start;
+}
+.wayfind-row .k { padding-top: 4rpx; }
+.wayfind-v {
+  max-width: 70%;
+  text-align: right;
+  line-height: 1.5;
+}
+
+.share-card {
+  margin: 24rpx 48rpx 0;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.share-hint {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.share-row {
+  display: flex;
+  gap: 20rpx;
+}
+.share-half {
+  flex: 1;
+  padding: 22rpx 0;
+  font-size: 28rpx;
+  letter-spacing: 4rpx;
+}
 
 .actions {
-  padding: 64rpx 48rpx 48rpx;
+  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
   margin-top: auto;
   display: flex;
   flex-direction: column;

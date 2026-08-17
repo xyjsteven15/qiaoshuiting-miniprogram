@@ -16,6 +16,19 @@
       <view class="row"><text class="k">包厢类型</text><text class="v accent serif">{{r.tierText}}</text></view>
       <view class="row"><text class="k">联系人</text><text class="v">{{r.name}}</text></view>
       <view class="row"><text class="k">手机号</text><text class="v">{{r.phoneMask}}</text></view>
+      <view class="row wayfind-row">
+        <text class="k">寻店</text>
+        <text class="v wayfind-v">{{wayfinding}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card share-card">
+    <view class="label"><view class="tick"></view><text class="label-txt serif">发给同行</text></view>
+    <text class="share-hint">复制后粘贴到群聊即可看到全文；分享卡片点开可导航到店</text>
+    <view class="share-row">
+      <view class="btn-secondary share-half" hover-class="hover" bindtap="onCopy">复制信息</view>
+      <button class="btn-secondary share-half share-reset" open-type="share" hover-class="hover">分享到微信</button>
     </view>
   </view>
 

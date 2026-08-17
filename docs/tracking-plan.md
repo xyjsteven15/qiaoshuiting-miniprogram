@@ -41,7 +41,7 @@ session 定义:`session_id` 相同的一段连续使用。超时口径 = 任意�
 | `page_view` | 每页 `onShow` | `referrer_page`(上一页路由)、各页附加(见下) | 页面流量、漏斗各层、路径分析 |
 | `page_hide` | 每页 `onHide` | `page_route`、`stay_ms` | 页面停留时长,识别流失/纠结点 |
 
-各页 `page_view` 附加属性:`reserve` 带 `restored_draft`(是否草稿回填,区分新发起与继续);`mine` 带 `active_reservations`/`waitlist_count`。
+各页 `page_view` 附加属性:`reserve` 带 `restored_draft`(是否草稿回填,区分新发起与继续);`mine` 带 `active_reservations`/`waitlist_count`;`arrive` 带 `from_share`(是否从分享卡片带预订 query 打开)。
 
 ### 3.2 预订漏斗(按步骤)
 
@@ -76,6 +76,8 @@ session 定义:`session_id` 相同的一段连续使用。超时口径 = 任意�
 |---|---|---|
 | `cancel_reservation` | 我的页取消成功 | `code` |
 | `cancel_reservation_failed` | 取消失败 | `code`、`reason` |
+| `copy_arrive_info` | 成功页 / 我的页点「复制信息」且写入剪贴板成功 | `from: success \| mine`、`guests`、`tier` |
+| `share_reservation` | 成功页 / 我的页 / 到店页拉起微信转发面板 | `from: success \| mine \| arrive`、`guests`、`tier` |
 
 ## 4. 分析视图
 

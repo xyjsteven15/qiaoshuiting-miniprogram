@@ -1,0 +1,52 @@
+<view class="arrive">
+  <view class="screen-header">
+    <text class="sh-title serif">预订详情</text>
+    <text class="sh-sub">RESERVATION</text>
+    <view class="sh-line"></view>
+  </view>
+
+  <view class="body">
+    <view wx:if="{{hasBooking}}" class="card details">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">宴请信息</text></view>
+      <view class="divider-dash"></view>
+      <view class="grid">
+        <view wx:if="{{booking.dateText}}" class="row"><text class="k">用餐日期</text><text class="v serif">{{booking.dateText}}</text></view>
+        <view wx:if="{{booking.time}}" class="row"><text class="k">用餐时间</text><text class="v">{{booking.time}}<text wx:if="{{booking.daypartText}}"> · {{booking.daypartText}}</text></text></view>
+        <view wx:if="{{booking.guests}}" class="row"><text class="k">用餐人数</text><text class="v">{{booking.guests}}人</text></view>
+        <view wx:if="{{booking.tierLabel}}" class="row"><text class="k">厅房</text><text class="v accent serif">{{booking.tierLabel}}</text></view>
+      </view>
+    </view>
+    <view wx:else class="card details">
+      <text class="empty-txt">未找到这笔预订信息，可先查看到店指引。</text>
+    </view>
+
+    <view class="card wayfind">
+      <view class="label"><view class="tick"></view><text class="label-txt serif">寻店</text></view>
+      <text class="wayfind-txt serif">{{restaurant.wayfinding}}</text>
+      <view class="divider-dash"></view>
+      <text class="addr-k">地址</text>
+      <text class="addr-v">{{restaurant.address}}</text>
+      <text class="addr-name">{{restaurant.name}}</text>
+    </view>
+
+    <view class="card contact">
+      <view class="contact-row" bindtap="openLocation">
+        <view class="contact-main">
+          <text class="contact-k serif">打开地图</text>
+          <text class="contact-sub">导航至云廊天街 8 号楼</text>
+        </view>
+        <text class="contact-act">地图定位 ›</text>
+      </view>
+      <view class="divider"></view>
+      <view class="contact-row" bindtap="callXiaoqiao">
+        <view class="contact-main">
+          <text class="contact-k serif">联系「小乔」客服</text>
+          <text class="contact-sub">{{restaurant.phone}}</text>
+        </view>
+        <text class="contact-act">致电 ›</text>
+      </view>
+    </view>
+
+    <view class="foot">桥水汀 · 大隐于市的一席私宴</view>
+  </view>
+</view>

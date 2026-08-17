@@ -75,7 +75,7 @@
     </view>
     <view class="divider-dash"></view>
     <view class="wc-body">
-      <text class="wc-desc">{{banner}}：该人数已超过单间最大容纳（20人）。三个小包间隔断可拆卸、拼间连通最多 41 人，席位与菜单需门店专人安排，请直接致电预约。</text>
+      <text class="wc-desc">{{banner}}：该人数已超过单间最大容纳（20人）。三个小包间隔断可拆卸、拼间连通最多 39 人，席位与菜单需门店专人安排，请直接致电预约。</text>
       <view class="btn-primary wc-btn" hover-class="hover" bindtap="callRestaurant">致电门店 · 021-57772033</view>
     </view>
   </view>
@@ -88,7 +88,7 @@
     </view>
     <view class="divider-dash"></view>
     <view wx:if="{{!cbDone}}" class="wc-body">
-      <text class="wc-desc">留下电话，座位空出时「小桥」将第一时间致电您。</text>
+      <text class="wc-desc">留下电话，座位空出时「小乔」将第一时间致电您。</text>
       <view class="btn-primary wc-btn" hover-class="hover" bindtap="openCallback">留电话 · 有位回电</view>
       <view class="wc-call" bindtap="callRestaurant">如需拼间连通或多人宴请，也可直接致电 021-57772033</view>
     </view>

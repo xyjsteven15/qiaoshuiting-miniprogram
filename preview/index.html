@@ -238,7 +238,11 @@
   .check-badge { width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; }
   .s-title { font-size:24px; color:var(--accent); font-weight:600; letter-spacing:2px; }
   .s-sub { font-size:13px; color:var(--ink-soft); }
-  .actions { padding:32px 24px 24px; margin-top:auto; display:flex; flex-direction:column; gap:12px; }
+  .actions { padding:24px 24px 24px; margin-top:auto; display:flex; flex-direction:column; gap:12px; }
+  .share-card { margin:12px 24px 0; padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .share-hint { font-size:12px; color:var(--ink-soft); line-height:1.6; }
+  .share-row { display:flex; gap:10px; }
+  .share-half { flex:1; padding:11px 0; font-size:14px; letter-spacing:2px; }
 
   /* 我的预订 */
   .mine-body { padding:4px 24px 24px; display:flex; flex-direction:column; gap:16px; }
@@ -248,7 +252,8 @@
   .rc-state { margin-left:auto; font-size:11px; color:var(--ok); background:var(--ok-bg); border-radius:2px; padding:2px 8px; }
   .rcard.cancelled { opacity:.55; }
   .rc-state.off { color:var(--muted); background:var(--rose-bg); }
-  .rc-actions { display:flex; justify-content:flex-end; margin-top:2px; }
+  .rc-actions { display:flex; justify-content:flex-end; align-items:center; flex-wrap:wrap; gap:8px; margin-top:2px; }
+  .rc-share { font-size:12px; letter-spacing:1px; color:var(--accent); border:1px solid var(--accent); border-radius:3px; padding:5px 14px; }
   .rc-cancel { font-size:12px; letter-spacing:1px; color:var(--brand-red); border:1px solid var(--brand-red); border-radius:3px; padding:5px 14px; }
   .rc-line { display:flex; justify-content:space-between; align-items:center; }
   .rc-k { font-size:13px; color:var(--ink-soft); }
@@ -258,8 +263,17 @@
   .contact-main { display:flex; flex-direction:column; gap:4px; }
   .contact-k { font-size:15px; color:var(--ink); }
   .contact-sub { font-size:12px; color:var(--ink-soft); }
+  .contact-hint { font-size:11px; color:var(--brand-olive); }
   .contact-act { font-size:13px; color:var(--accent); }
   .foot { text-align:center; font-size:12px; color:var(--muted); margin-top:8px; }
+
+  /* 到店指引 */
+  .arrive-body { padding:4px 24px 24px; display:flex; flex-direction:column; gap:16px; }
+  .wayfind { padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .wayfind-txt { font-size:17px; color:var(--accent); font-weight:600; line-height:1.5; }
+  .addr-k { font-size:12px; color:var(--ink-soft); }
+  .addr-v { font-size:14px; color:var(--ink); line-height:1.6; }
+  .addr-name { font-size:12px; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -513,12 +527,12 @@
                 <div class="rc-badges"><div class="badge-accent">推荐</div><div class="badge-ok">余1桌</div></div>
               </div>
               <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-right">半围合卡座，临窗观景，宜小聚闲叙。</div></div>
+              <div class="rc-foot"><div class="rc-right">半围合卡座，隔而不断、闹中取静，宜小聚闲叙。</div></div>
             </div>
             <div class="label"><div class="tick"></div><div class="label-txt serif">独立包间</div></div>
             <div class="room-card">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">垂虹居</div><div class="rc-cap">可容纳 2-10人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">垂虹居</div><div class="rc-cap">可容纳 2-12人</div></div>
                 <div class="rc-badges"><div class="badge-ok">可预订</div></div>
               </div>
               <div class="divider-dash"></div>
@@ -526,7 +540,7 @@
             </div>
             <div class="room-card">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">羡鱼轩</div><div class="rc-cap">可容纳 2-14人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">羡鱼轩</div><div class="rc-cap">可容纳 2-12人</div></div>
                 <div class="rc-badges"><div class="badge-ok">可预订</div></div>
               </div>
               <div class="divider-dash"></div>
@@ -534,11 +548,11 @@
             </div>
             <div class="room-card off">
               <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">桥瑜汀</div><div class="rc-cap">可容纳 2-17人</div></div>
+                <div class="rc-title-wrap"><div class="rc-title serif">桥瑜汀</div><div class="rc-cap">可容纳 2-15人</div></div>
                 <div class="rc-badges"><div class="badge-full">已订满</div></div>
               </div>
               <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-right">临水一隅，宜二三知己小酌雅叙。</div></div>
+              <div class="rc-foot"><div class="rc-right">瑜乔相遇，知音满座，宜宾朋欢聚。</div></div>
             </div>
           </div>
           <div class="action"><div class="btn-primary serif">确认选择</div></div>
@@ -551,38 +565,20 @@
       </div>
     </div>
 
-    <!-- ============ 选择包厢（订满 · 等位回电） ============ -->
+    <!-- ============ 选择包厢（多人宴请 · 致电预约） ============ -->
     <div class="device">
-      <div class="device-label">选择包厢 · 订满 → 留电话等回电</div>
+      <div class="device-label">选择包厢 · 超20人 → 致电门店预约</div>
       <div class="phone">
         <div class="screen">
           <div class="screen-header"><div class="sh-title serif">选择包厢</div><div class="sh-sub">SELECT ROOM</div><div class="sh-line"></div></div>
           <div class="banner"><div class="banner-dot">◈</div><div class="banner-txt">7/25 周五 · 19:00 · 22人</div></div>
-          <div class="rooms">
-            <div class="label"><div class="tick"></div><div class="label-txt serif">拼间 · 隔断可拆卸</div></div>
-            <div class="room-card off">
-              <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">羡鱼轩 + 垂虹居</div><div class="rc-cap">最多24人</div></div>
-                <div class="rc-badges"><div class="badge-full">已订满</div></div>
-              </div>
-              <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-right">可拆卸隔断 · 拼间连通</div></div>
-            </div>
-            <div class="room-card off">
-              <div class="rc-head">
-                <div class="rc-title-wrap"><div class="rc-title serif">桥瑜汀 + 羡鱼轩 + 垂虹居</div><div class="rc-cap">最多41人</div></div>
-                <div class="rc-badges"><div class="badge-full">已订满</div></div>
-              </div>
-              <div class="divider-dash"></div>
-              <div class="rc-foot"><div class="rc-right">可拆卸隔断 · 拼间连通</div></div>
-            </div>
-          </div>
+          <div class="rooms"></div>
           <div class="wait-card">
-            <div class="wc-head"><div class="wc-title serif">该时段包厢已订满</div></div>
+            <div class="wc-head"><div class="wc-title serif">多人宴请 · 致电预约</div></div>
             <div class="divider-dash"></div>
             <div class="wc-body">
-              <div class="wc-desc">留下电话，包厢空出时「小桥」将第一时间致电您。</div>
-              <div class="btn-primary serif">留电话 · 有位回电</div>
+              <div class="wc-desc">该人数已超过单间最大容纳（20人）。三个小包间隔断可拆卸、拼间连通最多 39 人，席位与菜单需门店专人安排，请直接致电预约。</div>
+              <div class="btn-primary serif">致电门店 · 021-57772033</div>
             </div>
           </div>
         </div>
@@ -608,7 +604,7 @@
                 <div class="row"><div class="k">用餐日期</div><div class="v serif">7/25 周五</div></div>
                 <div class="row"><div class="k">用餐时间</div><div class="v">18:00</div></div>
                 <div class="row"><div class="k">用餐人数</div><div class="v">6人</div></div>
-                <div class="row"><div class="k">包厢类型</div><div class="v accent serif">垂虹居（2-10人）</div></div>
+                <div class="row"><div class="k">包厢类型</div><div class="v accent serif">垂虹居（2-12人）</div></div>
               </div>
             </div>
             <div class="stack16">
@@ -646,9 +642,18 @@
               <div class="row"><div class="k">用餐日期</div><div class="v serif">7/25 周五</div></div>
               <div class="row"><div class="k">用餐时间</div><div class="v">18:00</div></div>
               <div class="row"><div class="k">用餐人数</div><div class="v">6人</div></div>
-              <div class="row"><div class="k">包厢类型</div><div class="v accent serif">垂虹居（2-10人）</div></div>
+              <div class="row"><div class="k">包厢类型</div><div class="v accent serif">垂虹居（2-12人）</div></div>
               <div class="row"><div class="k">联系人</div><div class="v">张先生</div></div>
               <div class="row"><div class="k">手机号</div><div class="v">138****8888</div></div>
+              <div class="row"><div class="k">寻店</div><div class="v">车停地库咖啡色 / F区 · 8号楼 2楼</div></div>
+            </div>
+          </div>
+          <div class="card share-card">
+            <div class="label"><div class="tick"></div><div class="label-txt serif">发给同行</div></div>
+            <div class="share-hint">复制后粘贴到群聊即可看到全文；分享卡片点开可导航到店</div>
+            <div class="share-row">
+              <div class="btn-secondary share-half serif">复制信息</div>
+              <div class="btn-secondary share-half serif">分享到微信</div>
             </div>
           </div>
           <div class="actions"><div class="btn-primary serif">查看我的预订</div><div class="btn-secondary serif">返回首页</div></div>
@@ -675,7 +680,7 @@
               <div class="rc-line"><div class="rc-k">用餐时间</div><div class="rc-v">18:00 · 晚市</div></div>
               <div class="rc-line"><div class="rc-k">用餐人数</div><div class="rc-v">12人</div></div>
               <div class="rc-line"><div class="rc-k">预订编号</div><div class="rc-v code">#QST20250725001</div></div>
-              <div class="rc-actions"><div class="rc-cancel">取消预订</div></div>
+              <div class="rc-actions"><div class="rc-share">复制信息</div><div class="rc-share">分享到微信</div><div class="rc-cancel">取消预订</div></div>
             </div>
             <div class="card rcard cancelled">
               <div class="rc-top"><div class="rc-tier serif">羡鱼轩</div><div class="rc-state off">已取消</div></div>
@@ -693,14 +698,14 @@
               <div class="rc-line"><div class="rc-k">用餐日期</div><div class="rc-v serif">7/25 周五</div></div>
               <div class="rc-line"><div class="rc-k">用餐时间</div><div class="rc-v">19:00</div></div>
               <div class="rc-line"><div class="rc-k">回电号码</div><div class="rc-v code">138****8888</div></div>
-              <div class="wait-hint">包厢空出时「小桥」将致电您，请留意来电。</div>
+              <div class="wait-hint">包厢空出时「小乔」将致电您，请留意来电。</div>
             </div>
 
             <div class="label" style="margin-top:8px;"><div class="tick"></div><div class="label-txt serif">联系与到店</div></div>
             <div class="card contact">
-              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小桥」客服</div><div class="contact-sub">021-57772033</div></div><div class="contact-act">致电 ›</div></div>
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小乔」客服</div><div class="contact-sub">021-57772033</div></div><div class="contact-act">致电 ›</div></div>
               <div class="divider"></div>
-              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">餐厅地址</div><div class="contact-sub">上海市松江区千帆路239弄8号楼2楼</div></div><div class="contact-act">地图定位 ›</div></div>
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">餐厅地址</div><div class="contact-sub">上海市松江区千帆路239弄8号楼2楼</div><div class="contact-hint">车停地库咖啡色 / F区 · 8号楼 2楼</div></div><div class="contact-act">地图定位 ›</div></div>
             </div>
             <div class="foot">桥水汀 · 大隐于市的一席私宴</div>
           </div>
@@ -709,6 +714,42 @@
           <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><polyline points='3,12 3,10 6,10 6,8 9,8 9,6 12,4 15,6 15,8 18,8 18,10 21,10 21,12'/><path d='M5 12v8h14v-8'/><path d='M10 20v-4h4v4'/></svg><span>首页</span></div>
           <div class="tab"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='5' width='16' height='15' rx='2'/><line x1='4' y1='9.5' x2='20' y2='9.5'/><line x1='8' y1='3' x2='8' y2='6.5'/><line x1='16' y1='3' x2='16' y2='6.5'/><circle cx='12' cy='14.5' r='2' fill='currentColor' stroke='none'/></svg><span>订座</span></div>
           <div class="tab on"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8.5' r='3.6'/><path d='M5.5 20a6.5 6.5 0 0 1 13 0'/></svg><span>我的预订</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 到店指引 ============ -->
+    <div class="device">
+      <div class="device-label">预订详情 · Arrive</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="screen-header"><div class="sh-title serif">预订详情</div><div class="sh-sub">RESERVATION</div><div class="sh-line"></div></div>
+          <div class="arrive-body">
+            <div class="card pad20 stack16">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">宴请信息</div></div>
+              <div class="divider-dash"></div>
+              <div class="grid">
+                <div class="row"><div class="k">用餐日期</div><div class="v serif">7/25 周五</div></div>
+                <div class="row"><div class="k">用餐时间</div><div class="v">18:00 · 晚市</div></div>
+                <div class="row"><div class="k">用餐人数</div><div class="v">6人</div></div>
+                <div class="row"><div class="k">厅房</div><div class="v accent serif">垂虹居</div></div>
+              </div>
+            </div>
+            <div class="card wayfind">
+              <div class="label"><div class="tick"></div><div class="label-txt serif">寻店</div></div>
+              <div class="wayfind-txt serif">车停地库咖啡色 / F区 · 8号楼 2楼</div>
+              <div class="divider-dash"></div>
+              <div class="addr-k">地址</div>
+              <div class="addr-v">上海市松江区千帆路239弄8号楼2楼</div>
+              <div class="addr-name">桥水汀（龙湖上海云廊天街店）</div>
+            </div>
+            <div class="card contact">
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">打开地图</div><div class="contact-sub">导航至云廊天街 8 号楼</div></div><div class="contact-act">地图定位 ›</div></div>
+              <div class="divider"></div>
+              <div class="contact-row"><div class="contact-main"><div class="contact-k serif">联系「小乔」客服</div><div class="contact-sub">021-57772033</div></div><div class="contact-act">致电 ›</div></div>
+            </div>
+            <div class="foot">桥水汀 · 大隐于市的一席私宴</div>
+          </div>
         </div>
       </div>
     </div>

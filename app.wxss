@@ -112,6 +112,19 @@ page {
   font-weight: 600;
 }
 
+/* 微信分享按钮：去掉原生 button 默认边框与外边距 */
+button.share-reset {
+  margin: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+button.share-reset::after {
+  border: none;
+}
+
 /* 卡片 */
 .card {
   background: var(--card);

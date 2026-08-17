@@ -9,10 +9,10 @@ const ROOMS = [
     room_id: 'r_qiaoyu',
     name: '桥瑜汀',
     min_guests: 2,
-    max_guests: 17,
+    max_guests: 15,
     has_ktv: false,
     room_size_tier: 'small_medium',
-    description: '临水一隅，宜二三知己小酌雅叙。',
+    description: '瑜乔相遇，知音满座，宜宾朋欢聚。',
     deposit_meal_standard: 88800, // 分：餐标定金
     tone: '#37474A'
   },
@@ -20,7 +20,7 @@ const ROOMS = [
     room_id: 'r_xianyu',
     name: '羡鱼轩',
     min_guests: 2,
-    max_guests: 14,
+    max_guests: 12,
     has_ktv: false,
     room_size_tier: 'small_medium',
     description: '临渊羡鱼之意，取臭鳜鱼一味成席。',
@@ -31,7 +31,7 @@ const ROOMS = [
     room_id: 'r_chuihong',
     name: '垂虹居',
     min_guests: 2,
-    max_guests: 10,
+    max_guests: 12,
     has_ktv: false,
     room_size_tier: 'small_medium',
     description: '长桥卧波，垂虹入席，商务小宴之选。',
@@ -51,7 +51,7 @@ const ROOMS = [
   }
 ];
 
-// 可拆卸隔断拼间：三个小包间任意组合，容量相加（三间全拼最多 17+14+10=41 人）
+// 可拆卸隔断拼间：三个小包间任意组合，容量相加（三间全拼最多 15+12+12=39 人）
 const ROOM_COMBOS = [
   { combo_id: 'c_qiaoyu_xianyu', room_ids: ['r_qiaoyu', 'r_xianyu'] },
   { combo_id: 'c_qiaoyu_chuihong', room_ids: ['r_qiaoyu', 'r_chuihong'] },
@@ -67,7 +67,7 @@ const SEAT_AREAS = [
   {
     area_id: 'area_booth',
     name: '卡座',
-    desc: '半围合卡座，临窗观景，宜小聚闲叙。',
+    desc: '半围合卡座，隔而不断、闹中取静，宜小聚闲叙。',
     deposit_meal_standard: 20000, // 分
     tables: [
       { room_id: 'r_booth_a', tier: 'booth_small', min_guests: 1, max_guests: 4 },
@@ -77,7 +77,7 @@ const SEAT_AREAS = [
   {
     area_id: 'area_outdoor',
     name: '室外座位',
-    desc: '临水露台，听风观澜，宜晴日小酌。',
+    desc: '露天雅座，天光云影、晚风入席，宜晴日小酌。',
     deposit_meal_standard: 10000, // 分
     tables: [
       { room_id: 'r_outdoor_1', tier: 'outdoor', min_guests: 1, max_guests: 4 },
@@ -212,6 +212,18 @@ const CHEF_INTERVIEWS = [
   }
 ];
 
+// 门店信息（一期单店硬编码；字段对齐 restaurant_info）
+// 坐标为 GCJ-02，对应地图 POI：桥水汀（龙湖上海云廊天街店）
+const RESTAURANT = {
+  name: '桥水汀（龙湖上海云廊天街店）',
+  shortName: '桥水汀（龙湖上海云廊天街）',
+  address: '上海市松江区千帆路239弄8号楼2楼',
+  wayfinding: '车停地库咖啡色 / F区 · 8号楼 2楼',
+  latitude: 31.088473,
+  longitude: 121.324174,
+  phone: '021-57772033'
+};
+
 // 包厢探景（复用 ROOMS，附探景意象文案）
 const ROOM_SCENES = ROOMS.map((r) => ({
   room_id: r.room_id,
@@ -220,10 +232,11 @@ const ROOM_SCENES = ROOMS.map((r) => ({
   scene_desc:
     r.room_id === 'r_huilai'
       ? '大厅回廊 · KTV 欢唱区 · 360° 探景'
-      : '临水窗景 · 马头墙意象 · 短片漫游'
+      : '水墨光影 · 马头墙意象 · 短片漫游'
 }));
 
 module.exports = {
+  RESTAURANT,
   ROOMS,
   ROOM_COMBOS,
   SEAT_AREAS,
@@ -258,7 +271,7 @@ module.exports = {
     return Math.max(...ROOMS.map((r) => r.max_guests));
   },
 
-  // 全部拼间后的最大容纳人数（三间小包间全拼 = 41）
+  // 全部拼间后的最大容纳人数（三间小包间全拼 = 39）
   maxComboGuests() {
     return ROOMS.filter((r) => r.room_size_tier === 'small_medium')
       .reduce((s, r) => s + r.max_guests, 0);

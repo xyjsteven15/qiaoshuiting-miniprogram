@@ -1,0 +1,88 @@
+.arrive {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.body {
+  padding: 8rpx 48rpx calc(64rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.details {
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.row .k { font-size: 26rpx; color: var(--ink-soft); }
+.row .v { font-size: 28rpx; color: var(--ink); font-weight: 500; }
+
+.wayfind {
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.wayfind-txt {
+  font-size: 34rpx;
+  color: var(--accent);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 1rpx;
+}
+.addr-k {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+}
+.addr-v {
+  font-size: 28rpx;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.addr-name {
+  font-size: 24rpx;
+  color: var(--muted);
+}
+
+.contact {
+  padding: 8rpx 40rpx;
+}
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 0;
+}
+.contact-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.contact-k { font-size: 30rpx; color: var(--ink); }
+.contact-sub { font-size: 24rpx; color: var(--ink-soft); }
+.contact-act { font-size: 26rpx; color: var(--accent); }
+
+.empty-txt {
+  font-size: 26rpx;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.foot {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--muted);
+  margin-top: 8rpx;
+}

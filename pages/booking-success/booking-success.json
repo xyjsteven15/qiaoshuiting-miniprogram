@@ -1,4 +1,5 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "预订成功"
+  "navigationBarTitleText": "预订成功",
+  "enableShareAppMessage": true
 }

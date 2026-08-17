@@ -19,8 +19,10 @@
         <view class="rc-line"><text class="rc-k">用餐时间</text><text class="rc-v">{{item.time}} · {{item.daypartText}}</text></view>
         <view class="rc-line"><text class="rc-k">用餐人数</text><text class="rc-v">{{item.guests}}人</text></view>
         <view class="rc-line"><text class="rc-k">预订编号</text><text class="rc-v code">{{item.code}}</text></view>
-        <view wx:if="{{item.canCancel}}" class="rc-actions">
-          <view class="rc-cancel" hover-class="hover" catchtap="onCancel" data-id="{{item.reservation_id}}" data-code="{{item.code}}" data-phone="{{item.phone}}">取消预订</view>
+        <view wx:if="{{item.canShare || item.canCancel}}" class="rc-actions">
+          <view wx:if="{{item.canShare}}" class="rc-share" hover-class="hover" catchtap="onCopy" data-id="{{item.reservation_id}}">复制信息</view>
+          <button wx:if="{{item.canShare}}" class="rc-share share-reset" open-type="share" hover-class="hover" data-id="{{item.reservation_id}}" data-d="{{item.dateRaw}}" data-dt="{{item.dateText}}" data-t="{{item.time}}" data-g="{{item.guests}}" data-r="{{item.tierLabel}}" data-p="{{item.daypartText}}">分享到微信</button>
+          <view wx:if="{{item.canCancel}}" class="rc-cancel" hover-class="hover" catchtap="onCancel" data-id="{{item.reservation_id}}" data-code="{{item.code}}" data-phone="{{item.phone}}">取消预订</view>
         </view>
       </view>
       <view wx:if="{{reservations.length === 0}}" class="empty">
@@ -41,7 +43,7 @@
         <view class="rc-line"><text class="rc-k">用餐日期</text><text class="rc-v serif">{{item.dateText}}</text></view>
         <view class="rc-line"><text class="rc-k">用餐时间</text><text class="rc-v">{{item.time}}</text></view>
         <view class="rc-line"><text class="rc-k">回电号码</text><text class="rc-v code">{{item.phoneMask}}</text></view>
-        <view class="wait-hint">包厢空出时「小桥」将致电您，请留意来电。</view>
+        <view class="wait-hint">包厢空出时「小乔」将致电您，请留意来电。</view>
       </view>
     </view>
 
@@ -50,7 +52,7 @@
     <view class="card contact">
       <view class="contact-row" bindtap="callXiaoqiao">
         <view class="contact-main">
-          <text class="contact-k serif">联系「小桥」客服</text>
+          <text class="contact-k serif">联系「小乔」客服</text>
           <text class="contact-sub">{{servicePhone}}</text>
         </view>
         <text class="contact-act">致电 ›</text>
@@ -60,6 +62,7 @@
         <view class="contact-main">
           <text class="contact-k serif">餐厅地址</text>
           <text class="contact-sub">{{address}}</text>
+          <text class="contact-hint">{{wayfinding}}</text>
         </view>
         <text class="contact-act">地图定位 ›</text>
       </view>
